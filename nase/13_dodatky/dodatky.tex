@@ -1,0 +1,179 @@
+\noindent \textbf{Dodatek A:  Základní pojmy a vztahy počtu pravděpodobnosti}
+
+\noindent Pro zavedení potřebné terminologie, symboliky a pro pohodlí čtenáře uvádíme v tomto dodatku přehled základních vztahů z počtu pravděpodobnosti, kterých využíváme v~tomto textu.
+
+\noindent \textbf{A.1  Náhodná proměnná}
+
+\noindent Výsledkem statistického experimentu je nějaký elementární jev $\omega$. Množina všech elementárních jevů, které mohou při experimentu nastat, je $\Omega$=$\{$$\omega$1,$\omega$2,$\omega$3,...$\}$. Ke každému elementárnímu jevu $\omega$\textit{i}$\in$$\Omega$ můžeme přiřadit reálné číslo (pravděpodobnost) \textit{pi} tak, že \textit{pi}$\geq$0  a  $\Sigma$\textit{pi}=1. Nechť \textit{A} je podmnožinou množiny $\Omega$. Množinu \textit{A} nazýváme událostí. Také samotná množina $\Omega$ je událostí (jistá událost). Prázdná množina je rovněž událostí. Jestliže \textit{Ai}, \textit{Aj} jsou události, pak také \textit{Ai}, \textit{Ai}$\cap$ \textit{Aj}, \textit{Ai}$\cup$\textit{Aj} jsou události. Dvě události \textit{Ai}, \textit{Aj} se vzájemně vylučují právě když \textit{Ai}$\cap$\textit{Aj} = $\emptyset$. Přiřaďme události \textit{A} pravděpodobnost \textbf{P}(\textit{A}) podle pravidel
+
+  \textbf{P}(\textit{A}) $\geq$ 0,     \textbf{P}($\Omega$) = 1,     je-li \textit{Ai}$\cap$\textit{Aj} = $\emptyset$,  pak \textbf{P}(\textit{Ai}$\cup$\textit{Aj}) = \textbf{P}(\textit{Ai}) + \textbf{P}(\textit{Aj}). (A.1)
+
+\noindent Je zřejmé, že pravděpodobnost \textbf{P}(\textit{A}) je rovna součtu pravděpodobností těch elementárních jevů, které jsou v \textit{A} obsaženy. Uvažujme nyní funkci \textbf{f}($\omega$\textit{i}), která ke každému elementárnímu jevu přiřadí reálné číslo. Funkce \textbf{f}($\omega$\textit{i}) se nazývá náhodná proměnná. Zápis $\{$\textbf{f} $\leq$ \textit{z}$\}$ označuje událost \{$\omega$\textit{i} \textbar  \textbf{f}($\omega$\textit{i}) $\leq$ \textit{z}\}. Podobně označují $\{$\textit{z}1 $<$ \textbf{f} $\leq$ \textit{z}2$\}$, $\{$\textbf{f} = \textit{z}$\}$ události \{$\omega$\textit{i} \textbar  \textit{z}1 $<$ \textbf{f}($\omega$\textit{i}) $\leq$ \textit{z}2\} nebo \{$\omega$\textit{i} \textbar  \textbf{f}($\omega$\textit{i}) = \textit{z}\}. Pravděpodobnost \textbf{P}$\{$\textbf{f} $\leq$ \textit{z}$\}$ události $\{$\textbf{f} $\leq$ \textit{z}$\}$ je funkcí \textit{z}. Tuto funkci nazveme distribuční funkcí náhodné proměnné \textbf{f} a označíme \textit{P}f(\textit{z}). Je tedy
+
+ \textit{P}f(\textit{z}) = \textbf{P}$\{$ \textbf{f} $\leq$ \textit{z} $\}$. (A.2)
+
+\noindent Distribuční funkce má následující vlastnosti
+
+ \textit{P}f($-$$\infty$) = \textbf{P}$\{$ \textbf{f} $\leq$ $-$$\infty$ $\}$ = 0,     \textit{P}f($\infty$) = \textbf{P}$\{$ \textbf{f} $\leq$ +$\infty$ $\}$ = 1, (A.3a)
+
+ \textit{P}f(\textit{z}1) $\leq$ \textit{P}f(\textit{z}2)   $\Leftrightarrow$   \textit{z}1 $\leq$ \textit{z}2, (A.3b)
+
+\textbf{ P}$\{$ \textit{z}1 $<$ \textbf{f} $\leq$ \textit{z}2 $\}$ = \textit{P}f(\textit{z}2) $-$ \textit{P}f(\textit{z}1). (A.3c)
+
+\noindent Derivace \textit{p}f(\textit{z}) distribuční funkce\textit{ P}f(\textit{z}) se nazývá hustota pravděpodobnosti náhodné proměnné \textbf{f}. Máme tedy
+
+ ,     . (A.4,5)
+
+\noindent Z vlastnosti (A.3c) distribuční funkce a z rovnice (A.5) máme
+
+ . (A.6)
+
+\noindent Pro dostatečně malé $\Delta$\textit{z} lze psát\textbf{ P}$\{$ \textit{z} $<$ \textbf{f} $\leq$ \textit{z} + $\Delta$\textit{z} $\}$ $\approx$ \textit{p}f(\textit{z}) $\Delta$\textit{z.} (A.7)
+
+\noindent Odtud máme . (A.8)
+
+\noindent Rovnice naznačuje možný postup při praktickém stanovení hustoty pravděpodobnosti: Proveďme \textit{N} (velký počet) experimentů. \textit{Nz} nechť je počet experimentů, kdy náhodná proměnná padla do intervalu  (\textit{z}, \textit{z} + $\Delta$\textit{z}$\rangle$. Hodnota \textit{p}f(\textit{z}) v bodě \textit{z} je pak přibližně dána podílem \textit{Nz} / (\textit{N} $\Delta$\textit{z}). Střední (očekávaná) hodnota E$\{$\textbf{f}$\}$ náhodné proměnné \textbf{f} je definována vztahem
+
+ . (A.9)
+
+\noindent Význam uvedeného vztahu je lépe patrný, aproximujeme-li integrál sumací
+
+ . (A.10)
+
+\noindent Nechť \textbf{g} je náhodná proměnná, která je funkcí náhodné proměnné \textbf{f}. Je tedy \textbf{g} = \textbf{L}(\textbf{f}). Pak platí
+
+ . (A.11)
+
+\noindent Nechť $\mu$f označuje střední hodnotu náhodné proměnné \textbf{f}. Pak variance (rozptyl) $\sigma$f2 náhodné proměnné \textbf{f} je definován vztahem
+
+ . (A.12)
+
+\noindent Odmocnina z variance se nazývá směrodatná odchylka. Náhodná proměnná \textbf{f} má normální rozložení, jestliže její hustota \textit{p}f(\textit{z}) pravděpodobnosti je Gaussova křivka. Máme proto
+
+ . (A.13)
+
+\noindent \textbf{A.2  Podmíněná pravděpodobnost}
+
+\noindent Uvažujme dvě události \textit{A},\textit{B}. Jak bylo uvedeno dříve, je \textit{A}$\cap$\textit{B} také událost. Podmíněná pravděpodobnost \textbf{P}\{\textit{A} \textbar  \textit{B}\} události \textit{A} za předpokladu, že nastala událost \textit{B}, je definována vztahem
+
+\textbf{ P}(\textit{A} \textbar  \textit{B}) = \textbf{P}(\textit{A}$\cap$\textit{B}) / \textbf{P}(\textit{B}). (A.14)
+
+\noindent Distribuční funkce \textit{P}f(\textit{z} \textbar  \textit{B}) podmíněné pravděpodobnosti náhodné proměnné \textbf{f} za předpokladu, že nastala událost \textit{B}, je definována jako podmíněná pravděpodobnost události \{\textbf{f} $\leq$ \textit{z}\}. Je tedy
+
+ \textit{P}f(\textit{z} \textbar  \textit{B}) = \textbf{P}\{\textbf{f} $\leq$ \textit{z} \textbar  \textit{B}\} = \textbf{P}(\{\textbf{f} $\leq$ \textit{z}\}$\cap$\textit{B}) / \textbf{P}(\textit{B}). (A.15)
+
+\noindent (Čitatel tedy zahrnuje všechny elementární události $\omega$\textit{i}, pro které platí  \textbf{f}($\omega$\textit{i})$\leq$\textit{z} a současně $\omega$\textit{i}$\in$\textit{B}). Podmíněná hustota pravděpodobnosti je definována vztahem
+
+ . (A.16)
+
+\noindent Podmíněná střední hodnota E\{\textbf{f} \textbar  \textit{B}\} je pak ve shodě s výrazem (A.9) dána předpisem
+
+ . (A.17)
+
+\noindent Pro pravděpodobnost \textbf{P}(\textit{A}$\cap$\textit{B}) součinu událostí \textit{A},\textit{B} platí
+
+\textbf{ P}(\textit{A}$\cap$\textit{B}) = \textbf{P}(\textit{A} \textbar  \textit{B}) \textbf{P}(\textit{B}) = \textbf{P}(\textit{B} \textbar  \textit{A}) \textbf{P}(\textit{A}). (A.18)
+
+\noindent Vztah (A.18) bývá nazýván Bayesovým vztahem. Jestliže jsou události \textit{A},\textit{B} nezávislé, pak \textbf{P}(\textit{A} \textbar  \textit{B}) = \textbf{P}(\textit{A}),  \textbf{P}(\textit{B} \textbar  \textit{A}) = \textbf{P}(\textit{B})  a vztah (A.18) tak přechází na tvar
+
+\textbf{ P}(\textit{A}$\cap$\textit{B}) = \textbf{P}(\textit{A}) \textbf{P}(\textit{B}). (A.19)
+
+\noindent \textbf{A.3  Sdružená pravděpodobnost}
+
+\noindent Nechť $\Omega$=\{$\omega$1,$\omega$2,...\} je opět množina všech možných elementárních jevů. Na této množině definujme nyní \textit{n} funkcí \textbf{f}1($\omega$\textit{i}), \textbf{f}2($\omega$\textit{i}),..., \textbf{f}\textit{n}($\omega$\textit{i}). Každá z těchto funkcí zobrazuje množinu $\Omega$ elementárních jevů do množiny reálných čísel, a každá je proto náhodnou proměnnou. Podle podkapitoly A.1 je každá z množin \{\textbf{f}1$\leq$z1\}, \{\textbf{f}2$\leq$z2\},..., \{\textbf{f}\textit{n}$\leq$z\textit{n}\} událostí. Uvažujme událost, která vznikne součinem
+
+ \{\textbf{f}1 $\leq$ \textit{z}1\} $\cap$ \{\textbf{f}2 $\leq$ \textit{z}2\} $\cap$ ... $\cap$ \{\textbf{f}\textit{n} $\leq$ \textit{zn}\} $\equiv$ \{\textbf{f}1 $\leq$ \textit{z}1, \textbf{f}2 $\leq$ \textit{z}2,..., \textbf{f}\textit{n} $\leq$ \textit{zn}\}.
+
+\noindent Tato událost obsahuje ty elementární jevy $\omega$\textit{i}, pro které platí \textbf{f}1($\omega$\textit{i}) $\leq$ \textit{z}1, \textbf{f}2($\omega$\textit{i}) $\leq$ \textit{z}2,..., \textbf{f}\textit{n}($\omega$i) $\leq$ \textit{zn}.  Pravděpodobnost této události (v závislosti na \textit{z}1,\textit{z}2,..., \textit{zn}) nazveme sdruženou distribuční funkcí. Je tedy
+
+ . (A.20)
+
+\noindent Sdružená hustota pravděpodobnosti je opět derivací distribuční funkce:
+
+ . (A.21)
+
+\noindent Někdy chceme vyšetřovat situace, kdy na hodnotách některých náhodných proměnných nezáleží (řekněme, že se jedná o proměnné \textbf{f}i+1,..., \textbf{f}\textit{n}, kde \textit{i}$<$\textit{n}). V takovém případě můžeme událost \{\textbf{f}1 $\leq$ \textit{z}1\}$\cap$\{\textbf{f}2 $\leq$ \textit{z}2\}$\cap$ ... $\cap$\{\textbf{f}\textit{i} $\leq$ \textit{zi}\} zapsat ve tvaru  \{\textbf{f}1 $\leq$ \textit{z}1\}$\cap$\{\textbf{f}2 $\leq$ \textit{z}2\}$\cap$ ... $\cap$\{\textbf{f}i $\leq$ \textit{zi}\}$\cap$\{\textbf{f}i+1 $\leq$ $\infty$\}$\cap$ ... $\cap$\{\textbf{f}\textit{n} $\leq$ $\infty$\}. Proto platí
+
+ . (A.22)
+
+\noindent Analogicky ke vztahu (A.5) pro jednu náhodnou proměnnou platí i zde
+
+ . (A.23)
+
+\noindent Dále platí  (A.24)
+
+\noindent a . (A.25)
+
+\noindent Nechť náhodná proměnná \textbf{g} je funkcí náhodných proměnných \textbf{f}1,\textbf{f}2,..., \textbf{f}\textit{n} , tedy \textbf{ g} = \textbf{L}\{\textbf{f}1,\textbf{f}2,..., \textbf{f}\textit{n}\}, Pak střední hodnota náhodné proměnné \textbf{g} je dána výrazem
+
+ . (A.26)
+
+\noindent Náhodné proměnné \textbf{f}1,\textbf{f}2,..., \textbf{f}\textit{n} nazveme nezávislými, když platí
+
+ . (A.27)
+
+\noindent Náhodné proměnné \textbf{f}1,\textbf{f}2,..., \textbf{f}\textit{n} nazveme nekorelovanými, když pro každé  \textit{i} $\neq$ \textit{j} platí
+
+ E\{\textbf{f}\textit{i} \textbf{f}\textit{j}\} = E\{\textbf{f}\textit{i}\} E\{\textbf{f}\textit{j}\}. (A.28)
+
+\noindent Kovarianci \textit{C}f\textit{i},f\textit{j} dvou náhodných proměnných \textbf{f}\textit{i},\textbf{f}\textit{j} definujeme vztahem
+
+ \textit{C}f\textit{i},f\textit{j} = E\{(\textbf{f}\textit{i} $-$ $\mu$f\textit{i}) (\textbf{f}\textit{j} $-$ $\mu$f\textit{j})\}. (A.29)
+
+\noindent Roznásobením členů v závorkách a uplatněním střední hodnoty na každý ze sčítanců lze dokázat, že je 
+
+ \textit{C}f\textit{i},f\textit{j} = E\{\textbf{f}\textit{i} \textbf{f}\textit{j}\} $-$ $\mu$f\textit{i} $\mu$f\textit{j}. (A.30)
+
+\noindent Odtud vidíme, že náhodné proměnné \textbf{f}1,\textbf{f}2,..., \textbf{f}\textit{n} jsou nekorelované právě tehdy, jestliže kovariance každých dvou různých z nich se rovná nule.
+
+\noindent \textbf{Dodatek B:  Řešení předeterminovaných systémů lineárních rovnic}
+
+\noindent Mějme systém \textit{m} rovnic o \textit{n} neznámých. Jestliže platí \textit{m}$>$\textit{n}, pak je systém přederminovaný. Předeterminované systémy bývají v praxi často nekonzistentní. K nekonzistenci dojde např. tehdy, jestliže jednotlivé rovnice byly sestaveny na základě měření, která byla zatížena nepřesnostmi. Přísně vzato si rovnice v nekonzistentním systému odporují a systém by tak teoreticky neměl mít žádné řešení. Prakticky může být ale zajímavé najít hodnoty neznámých, které v jistém smyslu všem rovnicím systému vyhovují co nejlépe. Tyto hodnoty budeme nazývat řešením předeterminovaného nekonzistentního systému. Uvažujme systém tvaru
+
+ $Ax=b$, (B.1)
+
+\noindent kde \textbf{x} je vektor hledaných hodnot, \textbf{b} je vektor pravých stran a \textbf{A} je matice soustavy. Rozměry vektorů \textbf{x},\textbf{b} a matice \textbf{A} jsou postupně \textit{n}, \textit{m}, \textit{m}$\times$\textit{n}. Reziduum (míru nesplnění jednotlivých rovnic) soustavy (B.1) můžeme vyjádřit vztahem
+
+ $r=Ax-b$. (B.2)
+
+\noindent Řešení \textbf{x} soustavy (B.1) můžeme najít tak, aby minimalizovalo délku vektoru \textbf{r}. Hledáme tedy
+
+ $\mathop{\min }\limits_{x} \left[r^{{\rm T}} r\right]=\mathop{\min }\limits_{x} \left[\left(Ax-b\right)^{{\rm T}} \left(Ax-b\right)\right]$. (B.3)
+
+\noindent Ukážeme, že řešení získané na základě vztahu (B.3) je ekvivalentní s řešením získaným tzv. zobecnělou inverzí, které lze získat jednoduchou úpravou vztahu (B.1). Dostaneme
+
+ $x^{*} =\left(A^{{\rm T}} A\right)^{-1} A^{{\rm T}} b$. (B.4)
+
+\noindent 
+
+\noindent Je tedy \textbf{x}* řešením, které ve smyslu vztahu (B.3) nejlépe vyhovuje dané soustavě. Zdůvodnění uvedeného tvrzení je následující: Všechna možná rezidua vyplní \textit{m}-rozměrný euklidovský prostor E\textit{m}, všechna řešení vyplní \textit{n}-rozměrný euklidovský prostor E\textit{n}. Součin \textbf{Ax} zobrazuje prostor E\textit{n} do prostoru E\textit{m}. Obecně obrazy všech prvků z E\textit{n} vytvoří v E\textit{m} \textit{n}-rozměrný podprostor prostoru E\textit{m}. Uvažujme například následující systém dvou rovnic o jedné neznámé: 2\textit{x}=1, 3\textit{x}=2. V tomto případě má matice \textbf{A} tvar \textbf{A}=(2,3)T. Jednorozměrný prostor E1 je prostor všech možných hodnot \textit{x}. Tento prostor se zobrazuje do dvojrozměrného prostoru E2 jako přímka (2\textit{x},3\textit{x}) o směrnici 3/2. Délka vektoru \textbf{r} z rovnice (B.2) je vzdáleností mezi body, které jsou v E\textit{m} reprezentovány vektory \textbf{Ax}, \textbf{b} (obr. B.1). Reziduum \textbf{r} bude nejmenší, jestliže \textbf{x} nabude takové hodnoty \textbf{x}*, při níž je vektor \textbf{r} kolmý k vektoru \textbf{Ax}. Podmínku kolmosti vektorů \textbf{Ax}*, \textbf{r} můžeme vyjádřit pomocí skalárního součinu ve tvaru 
+
+ $\left(Ax^{*} \right)^{{\rm T}} \left(Ax^{*} -b\right)=0$. (B.5)
+
+\noindent Úpravou dostaneme $\left(x^{*} \right)^{{\rm T}} \left(A^{{\rm T}} Ax^{*} -A^{{\rm T}} b\right)=0$. (B.6)
+
+\noindent Rovnice (B.6) bude splněna, když výraz ve druhé závorce na levé straně rovnice bude nulovým vektorem (varianta, kdy by nulovým vektorem byl samotný vektor \textbf{x}*, není prakticky zajímavá). Řešením rovnice \textbf{A}T\textbf{Ax}*\textbf{ }$-$\textbf{A}T\textbf{b}= \textbf{0} snadno získáváme hledaný vztah (B.4).
+
+\noindent 
+\subsection{Dodatek C:  Hledání minima s podmínkou}
+
+\noindent Úlohou je najít vektor \textbf{x}=(\textit{x}${}_{1}$,\textit{x}${}_{2}$,..., \textit{x${}_{n}$}) hodnot, v nichž daná funkce \textit{f}(\textbf{x}) nabývá lokálního minima. Při tom mají být dále splněny podmínky \textit{g}${}_{1}$(\textbf{x})=0, \textit{g}${}_{2}$(\textbf{x})=0,..., \textit{g${}_{p}$}(\textbf{x})=0, kde \textit{g${}_{i}$}(\textbf{x}) jsou známé funkce. Úlohu lze řešit metodou Lagrangeových multiplikátorů. Metoda se opírá o tvrzení, že hledané řešení minimalizuje funkci
+
+ $F\left(x,\lambda _{1} ,\lambda _{2} ,...,\lambda _{p} \right)=f\left(x\right)+\sum _{i=1}^{p}\lambda _{i} g_{i} \left(x\right) $. (C.1)
+
+\noindent Původní problém s doplňujícími podmínkami je tak převeden na problém bez podmínek. Nyní je třeba najít hodnoty \textbf{x},$\lambda$${}_{1}$,$\lambda$${}_{2}$,..., $\lambda$\textit{${}_{p}$}, pro které funkce \textit{F} nabývá minima. Minimum lze nalézt uplatněním obvyklého postupu tak, že položíme $\partial$\textit{F}/$\partial$\textbf{x}=\textbf{0}, $\partial$\textit{F}/$\partial$$\lambda$\textit{${}_{i}$}=0. Dostaneme
+
+ $\frac{\partial F\left(x,\lambda _{1} ,\lambda _{2} ,...,\lambda _{p} \right)}{\partial x} =\frac{f\left(x\right)}{\partial x} +\sum _{i=1}^{p}\lambda _{i} \frac{\partial g_{i} \left(x\right)}{\partial x}  =0$, (C.2)
+
+ $\frac{\partial F\left(x,\lambda _{1} ,\lambda _{2} ,...,\lambda _{p} \right)}{\partial \lambda _{i} } =g_{i} \left(x\right)=0$. (C.3)
+
+\noindent Vztah (C.2) dává \textit{n} rovnic, vztah (C.3) dává \textit{p} rovnic. Z uvedené soustavy můžeme řešit \textit{n}+\textit{p} neznámých \textit{x}${}_{1}$,\textit{x}${}_{2}$,..., \textit{x${}_{n}$}, $\lambda$${}_{1}$,$\lambda$${}_{2}$,..., $\lambda$\textit{${}_{p}$}. Komplikace nastanou, jestliže soustava (C.2), (C.3) vyjde nelineární, což je v praxi bohužel dosti časté. Pro tento případ je v dodatku D popsána metoda, kterou lze pro minimalizaci funkce \textit{F} snadno použít, aniž by na její derivace byl kladen požadavek linearity. Rovnice (C.3) také ukazuje, že minimalizace nově zavedené funkce \textit{F} skutečně zajistí splnění požadovaných doplňujících podmínek. 
+
+\noindent 
+\subsection{Dodatek D:  Hledání minima gradientní metodou}
+
+\noindent Úlohou je najít vektor \textbf{x}=(\textit{x}${}_{1}$,\textit{x}${}_{2}$,..., \textit{x${}_{n}$}), v němž daná reálná funkce \textit{f}(\textbf{x}) nabývá minima. Gradientní metoda je metodou iterační. Její princip vychází z jednoduché představy: Během iterací počítáme posloupnost \textbf{x}${}^{(}$\textit{${}^{i}$}${}^{)}$ hodnot vektoru \textbf{x} tak, že vždy postupujeme proti směru gradientu funkce \textit{f}(\textbf{x}) o nějaký jeho přiměřený násobek tak dlouho, dokud se délka gradientu dostatečně nepřiblíží nule (vždy tedy postupujeme ve směru, v němž hodnota funkce nejvíce klesá). Nechť \textbf{x}${}^{(}$\textit{${}^{i}$}${}^{)}$ označuje hodnotu vypočítanou v \textit{i}-tém kroku. Hodnotu \textbf{x}${}^{(}$\textit{${}^{i}$}${}^{+1)}$ v (\textit{i}+1)-vém kroku počítáme podle předpisu 
+
+ $x^{(i+1)} =x^{(i)} -kgrad\left[f\left(x\right)\right]_{x=x^{(i)} } $, (D.1)
+
+\noindent kde \textit{k} je reálná dostatečně malá hodnota (tak malá, abychom minimum nevhodně velkým krokem „nepřeskočili``). Výhodou gradientní metody je, že ji lze jednoduše aplikovat zejména v nelineárních úlohách, v nichž by uplatnění obvyklé podmínky $\partial$\textit{f}/$\partial$\textbf{x}=\textbf{0} vedlo na soustavu nelineárních rovnic. Gradientní metodu lze obvykle velmi snadno implementovat. Nevýhody jsou obdobné jako u ostatních iteračních metod: Je nutné řešit otázky konvergence a otázku vhodné volby výchozí hodnoty \textbf{x}. Z principu metody je též zřejmé, že gradientní metoda hledá minimum lokální, ačkoli při řešení praktických úloh bychom často požadovali minimum globální (odtud opět vyplývá potřeba dostatečně dobrého odhadu počáteční hodnoty \textbf{x}). Gradientní metoda je známá svojí pomalou konvergencí. Rychlost konvergence navíc klesá s tím, jak se délka gradientu blíží k nule, když se \textbf{x} přibližuje k hledanému řešení. I přes uvedené nedostatky však může být gradientní metoda dobrou metodou pro první experimentování s řešeným problémem.

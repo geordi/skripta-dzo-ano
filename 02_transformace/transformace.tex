@@ -1,0 +1,869 @@
+\chapter{Transformace obrazovıch signálù} \label{sec:transformace_obrazovych_signalu}
+
+Pøi zpracování signálù, a to vèetnì signálù obrazovıch, se èasto uplatòují techniky opírající se o transformace signálu.
+V této kapitole se budeme problematice transformací signálu vìnovat podrobnìji.
+Nejprve se zamìøíme na obecnı pohled na transformace.
+Dále se pak budeme vìnovat transformaci Fourierovì, která mezi transformacemi zaujímá vıznamné postavení a v praxi se èasto uplatòuje.
+Koneènì uvedeme i nìkteré další transformace.
+
+Transformací obecnì rozumíme získání popisu signálu jako lineární kombinace funkcí jisté zvolené báze.
+Velmi èasto je vstupem transformace signál popsanı obrazovou funkcí pøímo udávající intenzitu jasu v jednotlivıch bodech obrazu.
+Nejprve ukáeme, e i tento nejbìnìjší zpùsob reprezentace obrazu lze interpretovat jako lineární kombinaci jistıch bázovıch funkcí.
+Na transformaci lze pak tedy vdy pohlíet jako na proces, v nìm jsme se z nìjakıch dùvodù rozhodli zmìnit bázové funkce.
+
+\section{Báze $\delta$}
+Uvaujme nejprve prostor $\mathscr{S}$ diskrétních signálù, kde definièním oborem signálù je mnoina $\Omega = \{0, 1, \dots, M-1\}$.
+V tomto prostoru uvaujme bázi
+\begin{equation} \label{eq:2_1}
+    \{\varphi_k(m) = \delta(k-m) \, | \, k, m = 0, 1, \dots, M-1 \} \, .
+\end{equation}
+Je zøejmé, e tato báze je ortonormální.
+V prostoru $\mathscr{S}$ dále uvaujme signál popsanı funkcí $f(m)$ udávající intenzitu signálu v jednotlivıch bodech.
+Ze vztahu \eqref{eq:1_2} víme, e kadı signál je moné vyjádøit jako lineární kombinaci bázovıch funkcí.
+Je tedy
+\begin{equation}
+    f(m) = \sum\limits^{M-1}_{k=0} F(k)\delta(k-m) \, .
+\end{equation}
+Hledejme nyní funkci $F(k)$.
+S vyuitím vztahu \eqref{eq:1_30} máme
+\begin{equation} \label{eq:2_3}
+    F(k) = \sum\limits^{M-1}_{k=0} f(m)\delta(k-m) = f(k) \, , \quad k = 0, 1, \dots, M-1 \, .
+\end{equation}
+Na základì vztahu \eqref{eq:2_3} zjišujeme, e pro bázi dle \eqref{eq:2_1} platí $F(k) = f(k)$.
+Tento závìr není pøekvapivı (je spíše triviální).
+Chtìli jsme zde pouze ukázat, e i bìnı zpùsob praktické reprezentace diskrétního signálu pomocí $M$-tice $(f_0, f_1, \dots, f_{M-1})$ intenzit lze interpretovat z pohledu pouití bázovıch funkcí.
+
+Analogicky mùeme postupovat také v prostoru spojitıch signálù. Zvolme bázi ve tvaru
+\begin{equation} \label{eq:2_4}
+    \varphi(u, x) = \delta(u-x) \, .
+\end{equation}
+Opìt je zøejmé, e takto zvolená báze je ortonormální. Uvaujme nyní v prostoru $\mathscr{S}$ spojitı signál $f(x)$ definovanı nad oblastí $\Omega$.
+Ze vztahu \eqref{eq:1_3} víme, e tento signál je moné zapsat ve tvaru lineární kombinace
+\begin{equation} \label{eq:2_5}
+    f(x) = \int\limits_U F(u) \delta(u-x) \, \dif u \, .
+\end{equation}
+Na základì vztahu \eqref{eq:1_33} pak máme
+\begin{equation} \label{eq:2_6}
+    F(u) = \int\limits_\Omega f(x) \delta(u-x) \, \dif x = f(u) \, .
+\end{equation}
+Vztah \eqref{eq:2_6} ukazuje, e pøi volbì báze dle \eqref{eq:2_4} je hledaná funkce $F$ rovna pøímo funkci $f$.
+I zde jsme chtìli pouze ukázat, e i reprezentace signálu funkcí $f$ má interpretaci z pohledu bázovıch funkcí.
+Pro bázi dle vztahu \eqref{eq:2_1}, \eqref{eq:2_4} budeme v dalším textu pouívat názvu báze $\delta$.
+
+\section{Transformace signálu} \label{sec:transformace_signalu}
+
+Mìjme unitární prostor signálù. V tomto prostoru zvolme bázi.
+Transformací rozumíme pochod, kdy pro signál popsanı pomocí obrazové funkce (tedy jako lineární kombinace funkcí báze $\delta$, jak jsme ukázali v pøedchozím odstavci) urèujeme jeho popis pomocí zvolené báze (urèujeme tedy koeficienty do lineární kombinace zvolenıch bázovıch funkcí).
+Zpìtnou (inverzní) transformací pak nazıváme pochod opaènı, kdy pro signál popsanı pomocí zvolené báze urèujeme obrazovou funkci.
+
+Uvaujme nejprve diskrétní jednorozmìrné signály.
+Transformací signálu $f(m)$ rozumíme nalezení funkce $F(k)$ ze vztahu \eqref{eq:1_2}, která signál reprezentuje s ohledem na zvolenou bázi $\{\varphi_k\}$.
+Je-li báze $\{\varphi_k\}$ ortonormální (co je vıhodné a èasté), pak lze pro vıpoèet koeficientù pouít vztahu \eqref{eq:1_30}.
+Známe-li naopak funkci $F(k)$, pak lze obrazovou funkci $f(m)$ urèit jako lineární kombinaci \eqref{eq:1_2}.
+Pro diskrétní dvojrozmìrné signály je odpovídající zobecnìní popsáno vztahy \eqref{eq:1_34}, \eqref{eq:1_4}.
+
+Transformaci diskrétního dvojrozmìrného signálu nazveme separabilní, jestlie pro bázové funkce platí
+\begin{equation} \label{eq:2_7}
+    \varphi_{k,l}(m, n) = \varphi_k(m)\varphi_l(n) \, .
+\end{equation}
+Je-li \emph{transformace separabilní \index{transformace!separabilní}}, pak ze vztahù \eqref{eq:1_34} a \eqref{eq:2_7} plyne
+\begin{equation} \label{eq:2_8}
+    F(k,l) = \sum\limits_{m=0}^{M-1}\left[\sum\limits_{n=0}^{N-1}f(m, n) \varphi_l^*(n)\right] \varphi_k^*(m) \, .
+\end{equation}
+Vztah \eqref{eq:2_8} ukazuje, e jestlie je transformace separabilní, pak ji lze provádìt oddìlenì po øádcích a po sloupcích bodù oblasti $\Omega$, nad ní je signál definován.
+To je prakticky vıznamné, protoe lze takto, podle okolností, zkrátit èas vıpoètu.
+
+Pøedpokládejme nyní, e diskrétní dvojrozmìrnı signál je reprezentován jednorozmìrnım vektorem $\mathbf{f}$ (staèí zvolit pravidlo, podle kterého hodnoty $f(m,n)$ umisujeme do jednorozmìrného vektoru; obraz lze napø. procházet po øádcích) a podobnì pøedpokládejme, e i vısledek transformace je reprezentován jednorozmìrnım vektorem $\mathbf{F}$.
+Kadı z tìchto vektorù má $MN$ prvkù.
+Ze vztahu \eqref{eq:1_34} vidíme, e kadı prvek vektoru $\mathbf{F}$ je lineární kombinací prvkù z $\mathbf{f}$.
+Lze tedy transformaci \eqref{eq:1_34} vyjádøit té maticovım zápisem
+\begin{eqnarray} \label{eq:2_9_10}
+    &\mathbf{F} = \mathbf{\Phi}\mathbf{f} \, , \\
+    &\mathbf{f} = \mathbf{\Phi}^{-1}\mathbf{F} \, ,
+\end{eqnarray}
+kde matice $\mathbf{\Phi}$ je rozmìru $MN \times MN$.
+Poznamenejme, e je-li báze $\varphi_{k,l}(m,n)$ ortonormální, pak platí
+\begin{equation} \label{eq:2_11}
+    \mathbf{\Phi}^{-1} = \mathbf{\Phi}^{*\top} \, .
+\end{equation}
+Jestlie je transformace separabilní (vztah \eqref{eq:2_7}), pak lze nalézt maticovı zápis, kterı je co do rozmìru matic ponìkud úspornìjší.
+Nech je tentokrát signál pøed a po transformaci reprezentován maticemi $\mathbf{f}$ a $\mathbf{F}$, které jsou rozmìru $M \times N$.
+Separabilní transformaci lze pak vyjádøit ve tvaru (praktickı pøíklad uvedeme pozdìji v souvislosti s vıpoètem Fourierovy transformace)
+\begin{eqnarray} \label{eq:2_12_13}
+    &\mathbf{F} = \mathbf{\Phi}_{\mathrm{C}} \mathbf{f} \mathbf{\Phi}_{\mathrm{R}}^{\top} \, , \\ 
+    &\mathbf{f} = \mathbf{\Phi}_\mathrm{C}^{-1} \mathbf{F} \mathbf{\Phi}_{\mathrm{R}}^{\top^{-1}} \, .
+\end{eqnarray}
+
+Podle oèekávání lze analogicky postupovat také v prostoru spojitıch signálù.
+Nech $\mathscr{S}$ je takovı prostor. V $\mathscr{S}$ zvolme bázi $\varphi(u,x)$. Dále v $\mathscr{S}$ uvaujme signál $f(x)$.
+Transformací signálu rozumíme stanovení funkce $F(u)$, která uvaovanı signál reprezentuje s ohledem na zvolenou bázi.
+Splòuje-li báze podmínku ortonormality \eqref{eq:1_19}, pak lze pro vıpoèet této funkce pouít vztahu \eqref{eq:1_33}.
+Známe-li naopak funkci $F(u)$, lze podle vztahu \eqref{eq:1_3} zapsat funkci $f(x)$ jako lineární kombinaci.
+Pro spojité dvojrozmìrné signály lze obdobnì uplatnit vztahy \eqref{eq:1_35}, \eqref{eq:1_5}.
+
+\section{Fourierova transformace}
+Ústøední místo mezi transformacemi signálu zaujímá \emph{transformace Fourierova \index{transformace!Fourierova}}.
+V této podkapitole se zamìøíme nejprve na Fourierovu transformaci spojitou, pak na transformaci diskrétní.
+%Koneènì uvedeme také pøíklad algoritmu vıpoètu rychlé Fourierovy transformace.
+
+\subsection{Spojitá Fourierova transformace}
+%===========================================
+Uvaujme prostor signálù, kde oblast $\Omega$ definice signálu je dvojrozmìrnı euklidovskı prostor $E^2$.
+Fourierovu transformaci obdríme, jestlie bázi volíme ve tvaru
+\begin{equation} \label{eq:2_14}
+    \varphi(u, v, x, y) = \exp \left[ \mathrm{j} 2 \pi (ux + vy) \right] \, .
+\end{equation}
+Ponecháváme na ètenáøi, aby si sám ovìøil, e uvedená báze je ortonormální - tj., e ve shodì se vztahem \eqref{eq:1_25} platí
+\begin{equation} \label{eq:2_15}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} \exp \left[ \mathrm{j} 2 \pi ( u_1 x + v_1 y ) \right] \exp \left[ - \mathrm{j} 2 \pi ( u_2 x + v_2 y ) \right]\, \dif x \, \dif y = \delta(u_1 - u_2, v_1 - v_2) \, .
+\end{equation}
+(Návod: Pouijte vlastnost (\ref{eq:1_48}) Diracova impulzu.)
+Na základì døíve odvozeného vztahu \eqref{eq:1_35}, \eqref{eq:1_5} mùeme tedy pro spojitou Fourierovu transformaci dvojrozmìrnıch signálù psát
+\begin{eqnarray}\label{eq:2_16}
+    F(u,v) &=& \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(x,y) \exp \left[ - \mathrm{j} 2 \pi ( ux + vy ) \right]\,\dif x \, \dif y \\
+    &=& \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(x,y) \left[ \cos 2 \pi (ux + vy) - \mathrm{j} \sin 2 \pi (ux + vy) \right] \, \dif x \, \dif y \, . \nonumber
+\end{eqnarray}
+\begin{eqnarray} \label{eq:2_17}
+    f(x,y) &=& \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} F(u,v) \exp \left[\mathrm{j} 2 \pi ( ux + vy ) \right]\, \dif u \, \dif v \\
+    &=& \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} F(u,v) \left[ \cos 2 \pi (ux + vy) + \mathrm{j} \sin 2 \pi (ux + vy) \right] \, \dif u \, \dif v \, . \nonumber
+\end{eqnarray}
+Ze vztahu \eqref{eq:2_16} vyplıvá, e obecnì je $F(u,v)$ komplexní funkce. Rozepsáním na reálnou a imaginární sloku máme
+\begin{equation} \label{eq:2_18}
+    F(u, v) = R(u, v) + \mathrm{j} I(u, v) \, .
+\end{equation}
+Pro amplitudu $|F(u, v)|$ a fázovı posuv $\Phi(u,v)$ pak platí
+\begin{eqnarray} \label{eq:2_19}
+    |F(u, v)| &=& \sqrt{R^2(u, v) + I^2(u, v)} \, , \nonumber \\ 
+    \Phi(u, v) &=& \arctan \left( \frac{I(u, v)}{R(u, v)} \right) \, .
+\end{eqnarray}
+Hodnota $|F(u, v)|$ vyjadøuje, jak je frekvence $u$, $v$ obsaena v pùvodní funkci $f(x, y)$.
+Funkce $|F(u, v)|^2$ se nazıvá \emph{energetické spektrum signálu \index{energetické spektrum signálu}} $f(x,y)$.
+Vztahy \eqref{eq:2_16}, \eqref{eq:2_17} provádí zobrazení komplexního signálového prostoru na sebe a jsou tedy operátorem nad tímto prostorem.
+Øíkáme, e funkce $F(u, v)$ je Fourierovou transformací funkce $f(x, y)$ a funkce $f(x, y)$ je zpìtnou (inverzní) Fourierovou transformací funkce $F(u, v)$.
+Tyto skuteènosti struènì zapisujeme takto
+\begin{equation} \label{eq:2_20}
+    F(u, v) = \mathscr{F}\{ f(x, y)\}, \quad f(x, y) = \mathscr{F}^{-1}\{F(u, v)\} \, .
+\end{equation}
+Poznamenejme ještì, e pøi zpracování obrazového signálu $f(x,y)$ chápeme frekvenci jako ,,frekvenci délkovou``, tj. kolik period se vejde na jednotku délky obrazu.
+
+Je dále zajímavé poukázat na souvislost Fourierovy transformace s Fourierovımi øadami, které jsou dobøe známé ze základního kurzu matematiky.
+Nech $f(x,y)$ je periodická funkce s periodou $l_x$ ve smìru osy $x$ a periodou $l_y$ ve smìru osy $y$.
+Fourierovou øadou funkce $f(x,y)$ pak nazıváme trigonometrickou øadu
+\begin{eqnarray} \label{eq:2_21}
+    f(x, y) &=& \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} c_{mn} \exp \left[ + \mathrm{j} 2 \pi \left( \frac{mx}{l_x} + \frac{ny}{l_y} \right) \right] \\
+    &=& \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} c_{mn} \left[ \cos 2 \pi \left( \frac{mx}{l_x} + \frac{ny}{l_y} \right) + \mathrm{j} \sin 2 \pi \left( \frac{mx}{l_x} + \frac{ny}{l_y} \right)\right] \, , \nonumber 
+\end{eqnarray}
+kde
+\begin{equation} \label{eq:2_22}
+    c_{mn} = \frac{1}{l_x l_y} \int\limits_{-l_x/2}^{l_x/2} \int\limits_{-l_y/2}^{l_y/2} f(x, y) \exp \left[ - \mathrm{j} 2 \pi \left( \frac{mx}{l_x} + \frac{ny}{l_y} \right) \right]\, \dif x \, \dif y \, .
+\end{equation}
+K pøechodu od Fourierovy øady k Fourierovì transformaci staèí obecnou (a tedy neperiodickou) funkci povaovat za speciální pøípad funkce periodické, kdy je perioda nekoneènì dlouhá, a dále vyjít z pøedpisu \eqref{eq:2_21} pro Fourierovu øadu.
+Uvaujme periodickou funkci $f(x,y)$ s periodami $l_x$, $l_y$.
+Jestlie se periody $l_x$, $l_y$ prodluují, pak se podle vztahu \eqref{eq:2_21} jednotlivé sloky spektra navzájem pøibliují, a je nakonec pøi nekoneènì dlouhıch periodách vzdálenost mezi sousedními slokami spektra nekoneènì malá.
+Diskrétní spektrum se tak zmìnilo ve spektrum spojité.
+
+Pro ilustraci spojité Fourierovy transformace uvedeme nìkolik pøíkladù, jejich vısledkù pozdìji pouijeme.
+
+\begin{prik} \label{example:2_1}
+Najdeme Fourierovu øadu pro funkci $f(x,y)$, která je tvoøena nekoneènım polem Diracovıch impulzù, které se opakují ve vzdálenostech $\Delta_x$, $\Delta_y$.
+(Vısledek øešení tohoto pøíkladu budeme pozdìji potøebovat v kapitole o vzorkování.)
+\end{prik}
+
+\begin{reseni}
+Funkce, kterou máme transformovat, má tvar
+\begin{equation}
+    f(x, y) = \sum\limits_{k=-\infty}^{\infty} \sum\limits_{l=-\infty}^{\infty} \delta( x - k\Delta_x, y - l\Delta_y ) \, .\nonumber
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.1]{02_transformace/images/img_2_1.pdf}
+    \end{center}
+    \caption{ Pole Diracovıch impulzù}
+    \label{img:2_1}
+\end{figure}
+
+\noindent
+Funkce je vyobrazena na obr. \ref{img:2_1}. Podle vztahu \eqref{eq:2_22} máme
+\begin{eqnarray}
+    %c_{mn} &=& \nonumber \\
+    c_{mn} &=&\frac{1}{\Delta_x \Delta_y} \int\limits_{-\Delta_x/2}^{\Delta_x/2} \int\limits_{-\Delta_y/2}^{\Delta_y/2} \delta(x - k\Delta_x, y - l\Delta_y) \exp \left[ - \mathrm{j} 2 \pi \left( \frac{mx}{\Delta_x} + \frac{ny}{\Delta_y} \right) \right]\, \dif x \, \dif y \nonumber \\
+    &=& \frac{1}{\Delta_x \Delta_y} \, .\nonumber
+\end{eqnarray}
+Vztah pro $c_{mn}$ jsme obdreli s uváením skuteènosti, e integrujeme po délce jedné periody; v našem pøípadì tedy od $-\Delta_x/2$ do $+\Delta_x/2$ a od $-\Delta_y/2$ do $+\Delta_y/2$, kde $\delta(x-k\Delta_x, y-l\Delta_y)$ nabıvá nenulové hodnoty pouze pro $k=l=0$.
+Dále jsme vyuili vlastnosti \eqref{eq:1_46} Diracova impulzu.
+Pro hledanou øadu pak podle vztahu \eqref{eq:2_21} vychází
+\begin{equation}
+    f(x, y) = \frac{1}{\Delta x \Delta y} \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} \exp \left[ \mathrm{j} 2 \pi \left( \frac{mx}{\Delta x} + \frac{ny}{\Delta y} \right) \right] \, .\nonumber
+\end{equation}
+\end{reseni}
+
+\begin{prik}
+Nalezneme Fourierovu transformaci funkce $\delta_n$(\textit{x},\textit{y}), kterou jsme zavedli v podkapitole \ref{sec:dirac_impulse}. Vısledek øešení pøíkladu je pro zpracování signálu vıznamnı a mnohokrát jej pozdìji vyuijeme. 
+\end{prik}
+
+\begin{reseni}
+Na základì pøedpisu \eqref{eq:2_16} postupnì dostáváme
+\begin{eqnarray}
+    F(u, v) &=& \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \delta_n(x, y) \exp \left[ - \mathrm{j} 2 \pi \left( ux + vy \right) \right]\, \dif x \, \dif y \nonumber \\
+    &=& n^2 \int\limits_{-1/2n}^{1/2n} \int\limits_{-1/2n}^{1/2n} \exp \left[ - \mathrm{j} 2 \pi \left( ux + vy \right)\right]\, \dif x \, \dif y \nonumber \\
+    &=& \left[ n \int\limits_{-1/2n}^{1/2n} \exp\left[ - \mathrm{j} 2 \pi ux \right]\, \dif x \right]
+        \left[ n\int\limits_{-1/2n}^{1/2n} \exp \left[ - \mathrm{j} 2 \pi vy \right]\, \dif y \right]\, . \nonumber
+\end{eqnarray}
+S vyuitím Eulerova vztahu  $e^{\mathrm{j}\varphi}$ = $\cos \varphi + \mathrm{j} \sin \varphi$ a po integraci (oba integrály v hranatıch závorkách mají stejnı tvar) pak vyjde
+\begin{equation}
+    F(u, v) = n^2 \frac{\sin (\pi u/ n)}{\pi u} \frac{\sin( \pi v / n )}{\pi v} \, .\nonumber
+\end{equation}
+Zavedeme dále funkci (obr. \ref{img:2_2})
+\begin{equation}
+    \mathrm{sinc}(u, v) = \mathrm{sinc}(u)\mathrm{sinc}(v) = \frac{\sin (\pi u)}{\pi u} \frac{\sin( \pi v )}{\pi v} \, .\nonumber
+\end{equation}
+Pak vychází
+\begin{equation} \label{eq:2_23}
+    F(u, v) = \mathscr{F} \{ \delta_n(x, y) \} = \frac{\sin (\frac{\pi u}{n})}{\frac{\pi u}{n}} \frac{\sin (\frac{\pi v}{n})}{\frac{\pi v}{n}} = \mathrm{sinc} \left( \frac{u}{n}, \frac{v}{n} \right) \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.1]{02_transformace/images/img_2_2.pdf}
+    \end{center}
+    \caption{ Funkce $\sinc(x)$}
+    \label{img:2_2}
+\end{figure}
+\noindent
+Konstatujeme, e obdélníkovı impulz $\delta_n(x, y)$ má nekoneèné spojité reálné frekvenèní spektrum.
+Amplituta sloek spektra je vyjádøena funkcí $\sinc(u/n,v/n)$.
+Protoe se s funkcí $\sinc$ budeme setkávat velmi èasto, uvádíme na obr. \ref{img:2_2} graf funkce $\sinc(x)$.
+\end{reseni}
+
+\begin{prik}
+Nalezneme Fourierovu transformaci Diracova impulzu $\delta(x,y)$.
+\end{prik}
+
+\begin{reseni}
+Vyuijeme vısledku z pøedchozího pøíkladu, kde poloíme $n \rightarrow \infty$. Máme proto
+\begin{equation}
+    \mathscr{F} \{ \delta(x, y) \} = \lim\limits_{n \rightarrow \infty} \left[ \mathrm{sinc} \left( \frac{u}{n}, \frac{v}{n} \right) \right] = 1 \, .  \nonumber
+\end{equation}
+Frekvenèní spektrum Diracova impulzu $\delta$(\textit{x},\textit{y}) je opìt spojité reálné a nekoneèné.
+Amplituda všech sloek spektra je konstantní a je rovna 1.
+\end{reseni}
+
+
+\begin{prik} \label{example:2_4}
+Nalezneme Fourierovu transformaci funkce $f(x,y)$,
+která je tvoøena nekoneènım polem Diracovıch impulzù opakujících se ve vzdálenostech $\Delta_x$, $\Delta_y$.
+\end{prik}
+
+\begin{reseni}
+Funkci lze zapsat ve tvaru
+\begin{equation}
+    f(x, y) = \sum\limits_{k=-\infty}^{\infty} \sum\limits_{k=-\infty}^{\infty} \delta(x - k\Delta_x, y - l\Delta_y) \, .\nonumber
+\end{equation}
+Uvedená funkce je vyobrazena na obr. \ref{img:2_1}.
+V pøíkladì \ref{example:2_1} jsme pro tuto funkci ji našli Fourierovu øadu (funkce je periodická). Abychom obdreli ,,pìknı`` vısledek, provedeme nyní místo Fourierovy transformace pùvodní funkce transformaci jejího Fourierova rozvoje, kterı jsme obdreli v pøíkladu \ref{example:2_1}.
+Z~pøíkladu \ref{example:2_1} máme
+\begin{equation}
+    f(x, y) = \frac{1}{\Delta_x \Delta_y} \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} \exp \left[ \mathrm{j} 2 \pi \left( \frac{mx}{\Delta_x} + \frac{ny}{\Delta_y} \right) \right] \, .\nonumber
+\end{equation}
+Dosazením uvedeného vztahu do pøedpisu \eqref{eq:2_16} máme
+\begin{eqnarray}
+    F(u,v) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \frac{1}{\Delta_x \Delta_y} \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} \exp \left[ \mathrm{j} 2 \pi \left( \frac{mx}{\Delta_x} + \frac{ny}{\Delta_y} \right) \right] \exp \left[ - \mathrm{j} 2 \pi (ux + vy) \right] \dif x \, \dif y. \nonumber
+\end{eqnarray}
+Po zámìnì poøadí integrování a sumace a po úpravì dostaneme
+\begin{eqnarray}
+    F(u,v) = \frac{1}{\Delta_x \Delta_y} \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \exp \left\{ - \mathrm{j} 2 \pi \left[ \left( u - \frac{m}{\Delta_x} \right)x + \left( v - \frac{n}{\Delta_y} \right)y \right] \right\} \dif x \, \dif y. \nonumber
+\end{eqnarray}
+S uváením vlastnosti \eqref{eq:1_48} Diracova impuzu pak koneènì obdríme vztah
+\begin{equation}
+    F(u, v) = \frac{1}{\Delta_x \Delta_y} \sum\limits_{m=-\infty}^{\infty} \sum\limits_{n=-\infty}^{\infty} \delta \left( u - \frac{m}{\Delta_x}, v - \frac{n}{\Delta_y} \right) \,. \nonumber
+\end{equation}
+Vidíme, e Fourierovım obrazem nekoneèného pole Diracovıch impulzù vzdálenıch vzájemnì o $\Delta_x$, $\Delta_y$
+je opìt nekoneèné pole Diracovıch impulzù, kde jsou impulzy vzájemnì vzdáleny o $1/\Delta_x$, $1/\Delta_y$.
+\end{reseni}
+
+\begin{prik}
+Ukate, e Fourierovou transformací funkce $\cos(2\pi a x)$ je funkce $[$$\delta(u-a)+\delta(u+a)]/2$.
+\end{prik}
+
+\begin{reseni}
+Pøíklad je zajímavı, protoe ilustruje, co Fourierova transformace poèítá.
+Promyslete nejprve, jakı vısledek byste na základì toho, co o Fourierovì transformaci víte, intuitivnì oèekávali.
+Provedení pøíkladu pak ponecháváme ètenáøi jako cvièení. Návod: Pouijte vztahu $\cos \varphi = (e^{\mathrm{j}\varphi} + e^{-\mathrm{j}\varphi})/2$ a dále pouijte vlastnosti \eqref{eq:1_48} Diracova impulzu.
+Z pøíkladu vidíme, e spektrum funkce $\cos(2\pi a x)$ obsahuje pouze sloky $u = a$, $u = -a$.
+To je souèasnì vısledek, kterı jste pøedem pravdìpodobnì oèekávali.
+\end{reseni}
+
+\subsection{Vlastnosti spojité Fourierovy transformace}
+%======================================================
+V tomto odstavci uvedeme nìkolik vlastností Fourierovy transformace, které se ve zpracování obrazu èasto uplatòují.
+Protoe dùkazy uvedenıch vlastností jsou vesmìs jednoduché, ponecháváme je ètenáøi jako cvièení (zpravidla však uvádíme struènı návod, jak pøi dùkazu postupovat).
+Ve shodì s døíve pouívanım znaèením je i zde $F(u,v) = \mathscr{F}\{f(x,y)\}$ Fourierùv obraz funkce $f(x,y)$, $G(u,v) = \mathscr{F}\{g(x,y)\}$
+Fourierùv obraz funkce $g(x,y)$; $a$, $b$ jsou èísla. Obecnì mohou bıt funkce $f(x,y)$, $g(x,y)$ i èísla $a$, ${b}$ komplexní.
+
+\vspace{4 mm}\noindent
+{\em a) Linearita:} Fourierova transformace je lineární, protoe platí
+\begin{eqnarray} \label{eq:2_24}
+    &\mathscr{F}\{af(x, y) + bg(x, y)\} = a\mathscr{F}\{f(x,y)\} + b\mathscr{F}\{g(x, y)\}& \nonumber \\
+    &= aF(u, v) + bG(u, v) \, .&
+\end{eqnarray}
+\noindent K dùkazu této vlastnosti pouijte pøedpis \eqref{eq:2_16} pro Fourierovu transformaci. Dále ji vlastnost pøímo vyplıvá z vlastností integrování.
+
+\vspace{4 mm}\noindent
+{\em b) Mìøítko:} Nech $\alpha$, $\beta$ jsou reálná èísla. Pak platí
+\noindent
+\begin{equation} \label{eq:2_25}
+    \mathscr{F}\{f ( \alpha x, \beta y)\} = F( u / \alpha, v / \beta) / | \alpha \beta | \, .
+\end{equation}
+\noindent K dùkazu této vlastnosti vyjdìte z pøedpisu pro Fourierovu transformaci a zaveïte transformaci promìnnıch $x' = \alpha x$, $y' = \beta y$.
+
+\vspace{4 mm}\noindent
+{\em c) Posuv:}
+\begin{equation} \label{eq:2_26a}
+    \mathscr{F}\{f(x - x_o, y - y_o)\} = F(u, v) \exp \left[ - \mathrm{j} 2 \pi (ux_o + vy_o)\right] \, .
+\end{equation}
+K dùkazu této vlastnosti vyjdìte z pøedpisu pro Fourierovu transformaci a zaveïte transformaci promìnnıch $x' = x - x_o$, $y' = y - y_o$.
+Podobnou vlastnost lze nalézt také ve frekvenèní doménì. Má tvar
+\begin{equation} \label{eq:2_26b}
+    \mathscr{F}^{-1}\{F(u - u_o, v - v_o)\} = f(x, y) \exp \left[ \mathrm{j} 2 \pi (u_o x + v_o y)\right] \, .
+\end{equation}
+Vlastnost \eqref{eq:2_26b} bıvá nazıvána modulací.
+Ponecháváme na ètenáøi, aby promyslel oprávnìnost tohoto názvu.
+
+\vspace{4 mm}\noindent
+{\em d) Reflexe:} Platí následující vztahy
+\begin{eqnarray} \label{eq:2_27a}
+    &\mathscr{F}\{f(-x,y)\} = F(-u,v) \, , \quad \mathscr{F}\{f(x, -y)\} = F(u,-v) \, ,& \nonumber \\
+    &\mathscr{F}\{f(-x,-y)\} = {F}(-u,-v)&
+\end{eqnarray}
+a také
+\begin{equation} \label{eq:2_27b}
+    \mathscr{F}\{f^*( -x, -y)\} = F^*(u, v) \, ,
+\end{equation}
+kde $^*$ oznaèuje komplexnì sdruenou velièinu.
+K dùkazu vlastností \eqref{eq:2_27a} opìt postaèí substituce $x' = -x$, $y' = -y$.
+K dùkazu vlastnosti \eqref{eq:2_27b} pouijte pøedpisu \eqref{eq:2_16} pro $F(u,v)$, proveïte komplexní sdruení a vısledek dále upravte.
+
+\vspace{4 mm}\noindent
+{\em e) Konvoluèní teorém\index{teorém!Konvoluèní}:}
+\begin{equation} \label{eq:2_28a}
+    \mathscr{F}\{f(x, y) * g(x, y)\} = F(u, v) G(u, v) \, ,
+\end{equation}
+\begin{equation} \label{eq:2_28b}
+    \mathscr{F}\{f(x, y) g(x, y)\} = F(u, v) * G(u, v) \, .
+\end{equation}
+Vlastnost \eqref{eq:2_28a}, \eqref{eq:2_28b} je vıznamná a pozdìji ji mnohokrát vyuijeme.
+Øíká, e Fourierovım obrazem konvoluce funkcí $f$, $g$ je souèin jejich Fourierovıch obrazù $F$, $G$.
+Podobnì je Fourierovım obrazem souèinu funkcí $f$, $g$ konvoluce Fourierovıch obrazù $F$, $G$ obou funkcí.
+S ohledem na mimoøádnı vıznam uvedenıch tvrzení provedeme tentokrát i dùkaz.
+
+\noindent
+\textbf{Dùkaz.} Dokáeme vlastnost \eqref{eq:2_28a}. Dùkaz druhé vlastnosti lze provést obdobnì.
+Víme, e konvoluce funkcí je definována pøedpisem
+\begin{equation}
+    f(x, y) * g(x, y) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(a, b) g( x - a, y - b)\dif a \, \dif b \,.\nonumber
+\end{equation}
+Pro Fourierovu transformaci konvoluce pak podle pøedpisu \eqref{eq:2_16} máme
+\begin{eqnarray}
+    &&\mathscr{F}\{ f(x, y) * g(x, y) \} = \nonumber \\
+    &&\int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \left[ \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(a, b) g( x - a, y - b)\,\dif a \, \dif b \right] \exp \left[ - \mathrm{j} 2 \pi (ux + vy) \right]\, \dif x \, \dif y \, . \nonumber
+\end{eqnarray}
+Zámìnou poøadí integrace dostáváme
+\begin{eqnarray}
+    &&\mathscr{F}\{ f(x, y) * g(x, y) \} = \nonumber \\
+    &&\int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(a, b) \left[ \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} g( x - a, y - b) \exp \left[ - \mathrm{j} 2 \pi (ux + vy) \right]\, \dif x \, \dif y \right]\, \dif a \, \dif b \, . \nonumber
+\end{eqnarray}
+Uplatnìním vlastnosti \eqref{eq:2_26a} získáme
+\begin{equation}
+    \mathscr{F}\{ f(x, y) * g(x, y) \} = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(a, b) G(u, v) \exp \left[ - \mathrm{j} 2 \pi (ua + vb) \right]\, \dif a \, \dif b \, .\nonumber
+\end{equation}
+Tento vztah lze pak ji koneènì upravit na tvar
+\begin{eqnarray}
+    \mathscr{F}\{ f(x, y) * g(x, y) \} &=& G(u, v)  \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(a, b) \exp \left[ - \mathrm{j} 2 \pi (ua + vb) \right]\, \dif a \, \dif b \nonumber \\
+    &=& F(u, v)G(u, v) \, . \nonumber
+\end{eqnarray}
+
+\vspace{4 mm}\noindent
+{\em f) Parsevalùv teorém\index{teorém!Parsevalùv}: }Pøedpokládejme, e obecnì jsou funkce $f(x,y)$, $g(x,y)$ komplexní a pouijme symbolu $^*$ pro oznaèení funkce komplexnì sdruené. Parsevalùv teorém tvrdí následující
+\begin{equation} \label{eq:2_29}
+    \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x, y) g^*(x, y)\, \dif x \, \dif y = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} F(u, v) G^*(u, v)\, \dif u \, \dif v \,.
+\end{equation}
+Ve speciálním pøípadì, kdy je $f(x,y) = g(x,y)$,  pøechází uvedenı vıraz na tvar
+\begin{equation} \label{eq:2_30}
+    \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} |f(x, y)|^2 \, \dif x \, \dif y = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} |F(u, v)|^2 \, \dif u \, \dif v \, .
+\end{equation}
+Vıraz na levé stranì vztahu \eqref{eq:2_30} mùe bıt interpretován jako celkovı vıkon signálu $f(x,y)$.
+Vıraz $|F(u, v)|^2$ má proto vıznam vıkonového spektra signálu $f(x,y)$.
+
+\vspace{4 mm}\noindent
+{\em g) Korelaèní teorém\index{teorém!Korelaèní}:} Opìt pøedpokládejme, e obecnì jsou funkce $f(x,y)$, $g(x,y)$ komplexní.
+Køíová korelace $R_{fg}$ a autokorelace $R_{ff}$ deterministickıch funkcí $f(x,y)$ a $g(x,y)$ jsou definovány pomocí vztahù
+\begin{equation} \label{eq:2_31}
+    R_{fg} (a, b) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f^*(x - a, y - b) g(x, y) \, \dif x \, \dif y \, ,
+\end{equation}
+\begin{eqnarray} \label{eq:2_32}
+    R_{ff} (a,b) &=& \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f^*(x-a,y-b) f(x,y)\, \dif x \, \dif y \nonumber \\
+    &=& \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} f(x+a,y+b) f^*(x,y) \, \dif x \, \dif y \, .
+\end{eqnarray}
+Ne náhodou uvedené vztahy pøipomínají ètenáøi vztah pro konvoluci. Jedinı rozdíl je skuteènì ve znaménku èlenu $(x-a, y-b)$.
+Také tvrzení korelaèního teorému koresponduje s tvrzením teorému konvoluèního. Korelaèní teorém toti tvrdí:
+\begin{equation} \label{eq:2_33}
+    \mathscr{F}\{R_{fg}\} = F^*(u, v) G(u, v) \, ,
+\end{equation}
+\begin{equation} \label{eq:2_34}
+    \mathscr{F}\{R_{ff}\} = F^*(u, v) F(u, v) = |F(u, v)|^2 \, .
+\end{equation}
+Dùkaz vztahu \eqref{eq:2_33} lze provést podobnì jako u konvoluèního teorému.
+Vztah \eqref{eq:2_34} vyplıvá ze vztahu \eqref{eq:2_33}.
+
+\vspace{4 mm}\noindent
+{\em h) Derivace: }Pro Fourierùv obraz derivace funkce platí vztahy
+\begin{equation} \label{eq:2_35}
+    \mathscr{F}\left\{\frac{\partial f(x, y)}{\partial x}\right\} = \mathrm{j} 2 \pi u F(u, v) \, , \quad \mathscr{F}\left\{\frac{\partial f(x, y)}{\partial y}\right\} = \mathrm{j} 2 \pi v F(u, v) \, .
+\end{equation}
+\noindent K dùkazu této vlastnosti staèí vyjít z definice Fourierovy transformace a pouít integrace per partes.
+Pøi tom pøedpokládáme, e platí $f(-\infty,y) = f(\infty,y) = f(x,-\infty) = f(x,\infty) = 0$.
+Analogicky lze také odvodit napø. vztah pro Fourierùv obraz laplaciánu funkce. Dostaneme
+\begin{equation} \label{eq:2_36}
+    \mathscr{F}\left\{\frac{\partial^2 f(x, y)}{\partial x^2} + \frac{\partial^2 f(x, y)}{\partial y^2} \right\} = - 4 \pi^2 ( u^2 + v^2 ) F(u, v) \, .
+\end{equation}
+
+\subsection{Diskrétní Fourierova transformace}
+%=============================================
+\noindent Uvaujme prostor signálù, kde je oblast $\Omega$, nad ní jsou signály definovány, tvoøena mnoinou bodù,
+které indexujeme pomocí dvojice indexù $m = 0, 1, \dots, M-1,$ $n = 0, 1, \dots, N-1$.
+Diskrétní Fourierovu transformaci v~tomto prostoru obdríme, jestlie bázi volíme ve tvaru
+\begin{eqnarray} \label{eq:2_37}
+    \varphi_{k,l}(m, n) &=& \frac{1}{\sqrt{M\!N}} \exp \left[ \mathrm{j} 2 \pi \left( \frac{mk}{M} + \frac{nl}{N} \right) \right] \\
+    k &=& 0, 1, \dots, M-1 \, , \nonumber \\
+    l &=& 0, 1, \dots, N-1 \, . \nonumber
+\end{eqnarray}
+Opìt ponecháváme na ètenáøi, aby ovìøil, e takto zvolená báze je ortonormální - tj., e platí
+\begin{eqnarray} \label{eq:2_38}
+    \frac{1}{\sqrt{M\!N}} \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} \exp \left[ \mathrm{j} 2 \pi \left( \frac{mk_1}{M} + \frac{nl_1}{N} \right) \right] \exp \left[ - \mathrm{j} 2 \pi \left( \frac{mk_2}{M} + \frac{nl_2}{N} \right) \right]& \nonumber \\ 
+    = \delta( k_1 - k_2, l_1 - l_2 ) \, .
+\end{eqnarray}
+Podle vztahu \eqref{eq:1_34} pak pro diskrétní Fourierovu transformaci platí
+\begin{eqnarray} \label{eq:2_39}
+    F(k, l) &=& \frac{1}{\sqrt{M\!N}} \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} f(m, n) \exp \left[ - \mathrm{j} 2 \pi \left( \frac{mk}{M} + \frac{nl}{N} \right) \right], \nonumber \\
+    k &=& 0, 1, \dots, M-1 \, , \nonumber \\
+    l &=& 0, 1, \dots, N-1 \, . \nonumber
+\end{eqnarray}
+V souladu se vztahem \eqref{eq:1_4} pro zpìtnou Fourierovu transformaci dostáváme
+\begin{equation} \label{eq:2_40}
+    f(m, n) = \frac{1}{\sqrt{M\!N}} \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} F(k, l) \exp \left[ \mathrm{j} 2 \pi \left( \frac{mk}{M} + \frac{nl}{N} \right) \right].
+\end{equation}
+Pøedpokládejme nyní, e signál je reprezentován maticí $\mathbf{f}$ a jeho Fourierùv obraz maticí $\mathbf{F}$.
+Obì matice mají rozmìr $M \times N$.
+Protoe Fourierova transformace je separabilní, lze ji zapsat podle vztahu \eqref{eq:2_12_13} ve tvaru
+\begin{equation} \label{eq:2_41}
+    \mathbf{F} = \mathbf{\Phi}_{\mathrm{C}} \mathbf{f} \mathbf{\Phi}_{\mathrm{R}} \, .
+\end{equation}
+Zaveïme oznaèení
+\begin{equation} \label{eq:2_42}
+    W_M = \exp \left[ \frac{ - \mathrm{j} 2 \pi}{M} \right] \, .
+\end{equation}
+Pro matice $\mathbf{\Phi}_{\mathrm{R}}$, $\mathbf{\Phi}_{\mathrm{C}}$ pak platí
+\begin{equation} \label{eq:2_43} 
+    \mathbf{\Phi}_{\mathrm{R}} = \frac{1}{\sqrt{N}} \left[
+    \begin{array}{ccccc}
+    W_N^0 & W_N^0 & W_N^0 & \cdots & W_N^0\\
+    W_N^0 & W_N^1 & W_N^2 & \cdots & W_N^{N-1} \\
+    W_N^0 & W_N^2 & W_N^4 & \cdots & W_N^{2(N-1)} \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    W_N^0 & W_N^{N-1} & W_N^{2(N-1)} & \cdots & W_N^{(N-1)^2} \\
+    \end{array}\right],
+\end{equation} 
+\begin{equation} \label{eq:2_44} 
+    \mathbf{\Phi}_{\mathrm{C}} = \frac{1}{\sqrt{M}} \left[
+    \begin{array}{ccccc}
+    W_M^0 & W_M^0 & W_M^0 & \cdots & W_M^0\\
+    W_M^0 & W_M^1 & W_M^2 & \cdots & W_M^{M-1} \\
+    W_M^0 & W_M^2 & W_M^4 & \cdots & W_M^{2(M-1)} \\
+    \cdots & \cdots & \cdots & \ddots & \cdots \\
+    W_M^0 & W_M^{M-1} & W_M^{2(M-1)} & \cdots & W_M^{(M-1)^2} \\
+    \end{array}\right].
+\end{equation} 
+Zpìtnou Fourierovu transformaci lze pak zapsat maticovım vztahem
+\begin{equation} \label{eq:2_45}
+    \mathbf{f} = \mathbf{\Phi}_{\mathrm{C}}^* \mathbf{F} \mathbf{\Phi}_{\mathrm{R}}^* \, ,
+\end{equation}
+kde * znamená komplexnì sdruené matice.
+
+\subsection{Vlastnosti diskrétní Fourierovy transformace}
+%========================================================
+V tomto odstavci uvedeme nìkolik vıznamnìjších vlastností diskrétní Fourierovy transformace.
+Jistì nepøekvapí, e vìtšina z nich koresponduje s vlastnostmi Fourierovy transformace spojité.
+Vlastnosti proto uvedeme pouze ve struèném pøehledu.
+Pøedpokládejme, e $f(m,n)$, $g(m,n)$ jsou diskrétní signály;
+$F(k,l)$, $G(k,l)$ jsou Fourierovy obrazy tìchto signálù;
+$a$, $b$ jsou èísla (obecnì komplexní).
+Vybrané vlastnosti diskrétní Fourierovy transformace pak mùeme formulovat takto:
+
+\vspace{4 mm}\noindent
+{\em a) Linearita:}
+\begin{eqnarray} \label{eq:2_46}
+    &\mathscr{F}\{af(m, n) + bg(m, n)\} = a\mathscr{F}\{f(m, n)\} + b\mathscr{F}\{g(m, n)\}& \nonumber \\
+    &= aF(k, l) + bG(k, l) \, .&
+\end{eqnarray}
+
+\vspace{4 mm}\noindent
+{\em b) Periodicita:} Ve vırazu \eqref{eq:2_39} pro Fourierovu transformaci jsme pøedpokládali, e $k$ je z rozsahu $0, 1, 2, \dots, M-1$ a  $l$ z rozsahu $0, 1, 2, \dots, N-1$.
+Pokud bychom se pokoušeli vypoèítat hodnoty Fourierova obrazu pro $k$, $l$  mimo uvedené meze, pak analızou vztahu \eqref{eq:2_39} zjistíme, e platí
+\begin{eqnarray} \label{eq:2_47}
+    &F(k, -l) = F(k, N-l) \, ,& \nonumber \\
+    &F(-k, l) = F(M-k, l) \, ,& \nonumber \\
+    &F(-k, -l) = F(M-k, N-l) \, ,& 
+\end{eqnarray}
+\begin{equation} \label{eq:2_48}
+    F(\alpha M + k, \beta N + l) = F(k, l), \quad \alpha, \beta = 0, \pm 1, \pm 2, \dots \,\,.
+\end{equation}
+Podobnì také z pøedpisu \eqref{eq:2_40} pro zpìtnou transformaci vychází
+\begin{eqnarray} \label{eq:2_49}
+    &f(-m, n) = f(M -m, n) \, ,& \nonumber \\
+    &f(m, -n) = f(m, N-n) \, ,& \nonumber \\
+    &f(-m, -n) = f(M-m, N-n) \, ,&
+\end{eqnarray}
+\begin{equation} \label{eq:2_50}
+    f(\alpha M+m, \beta N+n) = f(m, n), \quad \alpha, \beta = 0, \pm 1, \pm 2, \dots \,\,.
+\end{equation}
+Uvedené vlastnosti vyplıvají z periodicity exponenciálního èlenu ve vırazech \eqref{eq:2_39}, \eqref{eq:2_40}.
+
+\vspace{4 mm}\noindent
+{\em c) Kruhovı posuv:} Nech $f(m,n)$ je periodická funkce s periodou $M$, $N$.
+Pro Fourierovu transformaci funkce $f(m-m_0,n-n_0)$ platí
+\begin{equation} \label{eq:2_51a}
+    \mathscr{F}\{ f(m - m_0, n - n_0)\} = F(k, l) \exp \left[ - \mathrm{j} 2 \pi \left( \frac{m_0 k}{M} + \frac{n_0 l}{N}\right) \right].
+\end{equation}
+Podobnou vlastnost lze nalézt také ve frekvenèní doménì. Je vyjádøena vztahem
+\begin{equation} \label{eq:2_51b}
+    \mathscr{F}^{-1}\{ F(k - k_0, l - l_0)\} = f(m, n) \exp \left[ \mathrm{j} 2 \pi \left( \frac{m k_0}{M} + \frac{n l_0}{N}\right) \right].
+\end{equation}
+Poznamenejme, e z pøedpokladu periodicity funkce $f(m,n)$ plyne, e hodnota $f(m-m_0,n-n_0)$ je definována
+pro kadé $m_0 = 0, 1, \dots, M-1$, $n_0 = 0, 1, \dots, N-1$.
+
+\vspace{4 mm}\noindent
+{\em d) Komplexnì sdruená hodnota:} Je-li funkce $f(m,n)$ reálná, pak platí
+\begin{equation} \label{eq:2_52}
+    F(\alpha M-k, \beta N-l) = F^*(k, l) \, , \quad \alpha, \beta = 1, 2, \dots \,\, .
+\end{equation}
+Vlastnost snadno dokáeme, jestlie levou i pravou stranu rovnice \eqref{eq:2_52} rozepíšeme podle vztahu \eqref{eq:2_39}.
+Pro praktickı vıpoèet diskrétní Fourierovy transformace reálnıch signálù má vlastnost vıznam.
+S jejím vyuitím postaèí hodnoty $F(k,l)$ poèítat pøiblinì v polovinì bodù.
+
+\vspace{4 mm}\noindent
+{\em e) Konvoluèní teorém:} Podobnì jako pro spojitou Fourierovu transformaci, platí i pro transformaci diskrétní,
+e Fourierova transformace konvoluce funkcí v prostorové doménì je souèinem Fourierovıch obrazù funkcí v doménì frekvenèní
+a naopak souèinu v prostorové doménì odpovídá konvoluce v doménì frekvenèní.
+Konvoluce se v tomto pøípadì uvauje cyklická. Je tedy
+\begin{equation} \label{eq:2_53a}
+    \mathscr{F}\{ f(m, n) * g(m, n) \} = \frac{1}{\sqrt{M\!N}} F(k, l) G(k, l) \, ,
+\end{equation}
+\begin{equation} \label{eq:2_53b}
+    \mathscr{F}\{ f(m, n) g(m, n) \} = \frac{1}{\sqrt{M\!N}} F(k, l) * G(k, l) \, .
+\end{equation}
+
+\vspace{4 mm}\noindent
+{\em f) Korelaèní teorém:} Definujme nejprve køíovou korelaci $R_{fg}$ a autokorelaci $R_{ff}$
+deterministickıch diskrétních funkcí $f(m,n)$, $g(m,n$) pomocí vztahù
+\begin{equation} \label{eq:2_54}
+    R_{fg}(m, n) = \frac{1}{M\!N} \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} f^*(r - m, s - n) g(r, s) \, ,
+\end{equation}
+\begin{eqnarray} \label{eq:2_55}
+    R_{ff}(m, n) &=& \frac{1}{M\!N} \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} f^*(r - m, s - n) f(r, s) \nonumber \\
+    &=& \frac{1}{M\!N} \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} f(r + m, s + n) f^*(r, s) \, .
+\end{eqnarray}
+Korelaèní teorém tvrdí následující
+\begin{equation} \label{eq:2_56}
+    \mathscr{F}\{ R_{fg}(m, n) \} = \frac{1}{\sqrt{M\!N}} F^*(k, l) G(k, l) \, ,
+\end{equation}
+\begin{equation} \label{eq:2_57}
+    \mathscr{F}\{ R_{ff}(m, n) \} = \frac{1}{\sqrt{M\!N}} F^*(k, l) F(k, l) = \frac{1}{\sqrt{M\!N}} |F(k, l)|^2 \, .
+\end{equation}
+Poznamenejme, e podobnì jako u konvoluce, tak se i korelace a autokorelace uvaují cyklické (nebo se pøedpokládá, e funkce $f(m,n)$, $g(m,n)$ jsou periodické).
+
+\vspace{4 mm}\noindent
+{\em g) Parsevalùv teorém:} Pøedpokládejme, e obecnì jsou signály $f(x,y)$, $g(x,y)$ komplexní a pouijme symbolu * pro oznaèení komplexnì sdruené funkce.
+Parsevalùv teorém tvrdí, e platí
+\begin{equation} \label{eq:2_58}
+    \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} f(m, n) g^*(m, n) = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} F(k, l)G^*(k, l) \, .
+\end{equation}
+Ve speciálním pøípadì, kdy $f(x,y) = g(x,y)$, pøechází uvedenı vıraz na tvar
+\begin{equation} \label{eq:2_59}
+    \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} |f(m, n)|^2 = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} |F(k, l)|^2 \, .
+\end{equation}
+
+
+
+%\subsection{Rychlá Fourierova transformace}
+
+%\noindent Ze vztahu \eqref{GrindEQ__2_39_} vidíme, e algoritmus vıpoètu dvojrozmìrné diskrétní Fourierovy transformace mùe ve své naivní podobì dosáhnout èasové sloitosti øádovì \textit{M}2\textit{N}2 operací. Pøi tak vysoké sloitosti by monosti praktického pouití Fourierovy transformace pøi èíslicovém zpracování dvojrozmìrnıch signálù byly velmi omezené. Naštìstí však byly nalezeny algoritmy, jejich èasová sloitost je podstatnì niší. Ukáeme zde podrobnìji jeden z nich. Efektivnost algoritmu je zaloena na vyuití techniky dìlení na podproblémy polovièní velikosti, s ní se pøi konstrukci efektivních algoritmù setkáváme v programování dosti èasto. Algoritmus, kterı zde popíšeme vyaduje, aby pole popisující signál bylo ètvercové (\textit{M}=\textit{N}) a aby jeho rozmìr byl celoèíselnou mocninou èísla 2. Pro úspornost zápisu zaveïme
+
+%    a polome   . \eqref{GrindEQ__2_60_}
+
+%\noindent Vztah \eqref{GrindEQ__2_39_} mùeme pak pøepsat takto
+
+% , \eqref{GrindEQ__2_61_}
+
+%\noindent kde ,   , \eqref{GrindEQ__2_62_}
+
+% ,   .
+
+%\noindent Z periodicity èlenù \textit{WN}2\textit{mk}+2\textit{nl} vyplıvá, e pole \textit{S}00, \textit{S}01, \textit{S}10, \textit{S}11 jsou periodická s periodou \textit{N}/2 v obou smìrech. S vyuitím tohoto faktu a s~vyuitím skuteènosti, e \textit{WNN}/2= $-$1, pak ze vztahu \eqref{GrindEQ__2_61_} plyne
+
+% , \eqref{GrindEQ__2_63_}
+
+% ,
+
+% ,
+
+% ,
+
+%\noindent kde $k,l=0,1,...,N/2-1$.
+
+%\noindent Uvedené vztahy ji podávají návod na aplikaci techniky dìlení na podproblémy polovièní velikosti. Hledané pole \textit{Q} rozmìru \textit{N}$\times$\textit{N} lze podle vztahù \eqref{GrindEQ__2_63_} urèit na základì znalosti ètyø dílèích polí \textit{S}00, \textit{S}01, \textit{S}10, \textit{S}11 rozmìru \textit{N}/2$\times$\textit{N}/2. Ze vztahù \eqref{GrindEQ__2_62_} vyplıvá, e pole \textit{S}00, \textit{S}01, \textit{S}10, \textit{S}11 jsou diskrétní Fourierovou transformací vybranıch prvkù vstupního pole \textit{f} (napø. pole \textit{S}00 je Fourierovou transformací tìch prvkù pole \textit{f}, které mají sudé indexy). K vıpoètu polí \textit{S}00, \textit{S}01, \textit{S}10, \textit{S}11 proto mùeme rekurzivnì pouít právì popisovaného algoritmu. Rekurzivní dìlení konèí tehdy, jakmile dìlením vzniknou pole obsahující právì jedinı prvek. Pole obsahující jedinı prvek je toti samo svım Fourierovım obrazem.
+
+%\noindent 
+
+%\noindent Proveïme ještì odhad èasové sloitosti popsaného algoritmu. Pøedpokládáme, e pro èinnost algoritmu máme k dispozici tabulku hodnot \textit{WNk}, které se vyskytují ve vztazích \eqref{GrindEQ__2_63_}. Sloitost algoritmu budeme hodnotit podle poètu násobení. Nech \textit{CN} je poèet komplexních násobení, které algoritmus vykoná pøi vıpoètu transformace pole rozmìru \textit{N}. Platí
+
+% . \eqref{GrindEQ__2_64_}
+
+%\noindent Èlen 3\textit{N}2/4 na pravé stranì rovnice \eqref{GrindEQ__2_64_} vyjadøuje poèet násobení, která je tøeba provést pøi vıpoètu pole \textit{Q} o rozmìru \textit{N}$\times$\textit{N} podle vztahù \eqref{GrindEQ__2_63_} (jedná se o poèet násobení \textit{S}01(\textit{k},\textit{l})\textit{WNl}, \textit{S}10(\textit{k},\textit{l})\textit{WNk}, \textit{S}11(\textit{k},\textit{l})\textit{WNk}+\textit{l}, pole \textit{S}00, \textit{S}01, \textit{S}10, \textit{S}11 mají rozmìr \textit{N}/2). Èlen 4\textit{CN}/2 pak vyjadøuje poèet násobení, kterého je zapotøebí k vıpoètu polí \textit{S}00, \textit{S}01, \textit{S}10, \textit{S}11. S ohledem na rekurzi mùeme vztah \eqref{GrindEQ__2_64_} dále rozepsat takto:
+
+%  \eqref{GrindEQ__2_65_}
+
+%\noindent 
+%\[\begin{array}{cccccccc} {(0,7)} & {(4,7)} & {(2,7)} & {(6,7)} & {(1,7)} & {(5,7)} & {(3,7)} & {(7,7)} \\ {(0,3)} & {(4,3)} & {(2,3)} & {(6,3)} & {(1,3)} & {(5,3)} & {(3,3)} & {(7,3)} \\ {(0,5)} & {(4,5)} & {(2,5)} & {(6,5)} & {(1,5)} & {(5,5)} & {(3,5)} & {(7,5)} \\ {(0,1)} & {(4,1)} & {(2,1)} & {(6,1)} & {(1,1)} & {(5,1)} & {(3,1)} & {(7,1)} \\ {(0,6)} & {(4,6)} & {(2,6)} & {(6,6)} & {(1,6)} & {(5,6)} & {(3,6)} & {(7,6)} \\ {(0,2)} & {(4,2)} & {(2,2)} & {(6,2)} & {(1,2)} & {(5,2)} & {(3,2)} & {(7,2)} \\ {(0,4)} & {(4,4)} & {(2,4)} & {(6,4)} & {(1,4)} & {(5,4)} & {(3,4)} & {(7,4)} \\ {(0,0)} & {(4,0)} & {(2,0)} & {(6,0)} & {(1,0)} & {(5,0)} & {(3,0)} & {(7,0)} \end{array}\] 
+%\textbf{Obr. 2.3.}  Pøeskládání pole \textit{N}=8 pro vıpoèet rychlé
+
+%\noindent  Fourierovy transformace.
+
+%\noindent Protoe hloubka rekurze je log2\textit{N}, vychází z vırazu \eqref{GrindEQ__2_65_} pro poèet násobení vztah
+
+% . \eqref{GrindEQ__2_66_}
+
+%\noindent Poèet komplexních sèítání je pøi promyšlené implementaci následující (všechny ètyøi vztahy (2.63) poèítáme najednou, stejné souèty jednoduše nepoèítáme dvakrát, take pro jednu dvojici \textit{k},\textit{l} je zapotøebí celkem 8 komplexních sèítání)
+
+% . \eqref{GrindEQ__2_67_}
+
+%\noindent K praktické realizaci algoritmu ještì poznamenejme, e mají-li prvky polí vznikajících pøi rekurzivním dìlení leet vedle sebe, pak je nutné vstupní pole pøed provedením transformace pøeskládat. Pravidlo pro pøeskládání je následující: Prvek vstupního pole na pozici \textit{m},\textit{n} pøemístíme na pozici \textit{m}',\textit{n}', kde hodnoty \textit{m}',\textit{n}' získáme reverzí binární reprezentace hodnot \textit{m},\textit{n} (tj. pøeèteme binární reprezentaci pozpátku). Ponecháme na ètenáøi, aby toto pravidlo za pomoci vztahù \eqref{GrindEQ__2_62_} promyslel a zdùvodnil. Zpùsob pøeskládání pole rozmìru 8$\times$8 ukazuje obr. 2.3.
+
+%\noindent Poznamenejme, e zde naznaèeného postupu zaloeného na vyuití techniky dìlení na podproblémy polovièní velikosti lze pouít také pro konstrukci algoritmù rychlé Fourierovy transformace libovolné dimenze. Èasová sloitost algoritmù tohoto typu v~\textit{d} dimenzionálním prostoru je dána vırazy
+
+% ,   . \eqref{GrindEQ__2_68_}
+
+%\noindent Napø. pro jednorozmìrnou Fourierovu transformaci uvedenım postupem snadno odvodíme vztahy
+
+% , \eqref{GrindEQ__2_69_}
+
+% , \eqref{GrindEQ__2_70_}
+
+% ,     , \eqref{GrindEQ__2_71_}
+
+% ,     , \eqref{GrindEQ__2_72_}
+
+% ,     . \eqref{GrindEQ__2_73_}
+
+%\noindent Na závìr tohoto odstavce o rychlé Fourierovì transformaci naznaèíme ještì jednu monost, která je zajímavá zejména svojí jednoduchostí. Vztah \eqref{GrindEQ__2_39_} lze pøepsat na tvar
+
+% . \eqref{GrindEQ__2_74_}
+
+%\noindent Tento vztah ukazuje, e dvojrozmìrnou Fourierovu transformaci pole \textit{f} lze vypoèítat tak, e provedeme nejprve jednorozmìrnou Fourierovu transformaci všech øádkù (vıraz ve sloené závorce) a pak jednorozmìrnou Fourierovu transformaci všech sloupcù. Poznamenejme, e se jedná o dùsledek separability Fourierovy transformace. Vyhodnome èasovou sloitost tohoto postupu, kterou budeme opìt mìøit poètem násobení. Pokud bychom pro jednorozmìrnou Fourierovu transformaci øádkù a sloupcù pouili naivního algoritmu s kvadratickou sloitostí, vyšla by pro pole o rozmìrech \textit{M}$\times$\textit{N} celková sloitost algoritmu \textit{MN}2+\textit{NM}2. Zvolíme-li však pro transformaci øádkù a sloupcù rychlou Fourierovu transformaci se sloitostí \textit{CN} = 0.5\textit{N}log2\textit{N} (vztah 2.73), pak je celková sloitost algoritmu 0.5(\textit{MN}log2\textit{N}+\textit{NM}log2\textit{M}). Je-li pole \textit{f} ètvercové o rozmìru \textit{N}$\times$\textit{N}, pak pro celkovou sloitost vyjádøenou poètem komplexních násobení vychází hodnota \textit{N}2log2\textit{N}. Vidíme tedy, e tento algoritmus je jen o málo horší ne algoritmus, kterı jsme popsali døíve.
+
+
+
+\section{Kosinová transformace}
+
+V kosinové transformaci se vyuívá skuteènosti, e Fourierova transformace funkce, která je symetrická podle obou souøadnıch os,
+má pouze reálnou sloku. Imaginární sloka vyjde všude nulová.
+Pøítomnost pouze reálné sloky je vıhodná z hlediska pamìové i èasové sloitosti vıpoètù.
+Symetrii funkce lze zajistit postupem, kterı dále popíšeme.
+Mìjme diskrétní funkci $f(m,n)$ definovanou nad oblastí $N \times N$ bodù, $m,n \in \{ 0, 1, \dots, N-1 \}$.
+Tuto funkci doplníme tak, abychom vytvoøili funkci symetrickou. To lze provést dvìma zpùsoby.
+První z nich vede na funkci definovanou nad oblastí $2N \times 2N$ bodù, $m,n \in \{-N, -N+1, \dots, N-1 \}$, a nazıvá se proto sudou kosinovou transformací.
+Druhı vede na funkci definovanou nad oblastí $(2N-1) \times (2N-1)$ bodù, $m,n \in \{ -N+1, -N+2, \dots, N-1 \}$, a nazıvá se proto kosinovou transformací lichou.
+Podrobnìji ukáeme nejprve druhı zpùsob - tj. lichou kosinovou transformaci.
+Zaveïme symetrickou funkci $\tilde{f}\left(m, n\right)$ podle pøedpisu
+\begin{equation} \label{eq:2_75} 
+    \tilde{f}\left(m{\rm ,}n\right)=\left\{\begin{array}{cc} {f\left(m,n\right),} & {m\ge 0{\rm ,}n\ge 0} \\ {f\left(-m,n\right),} & {m<0{\rm ,}n\ge 0} \\ {f\left(m,-n\right),} & {m\ge 0{\rm ,}n<0} \\ {f\left(-m,-n\right),} & {m<0{\rm ,}n<0} \end{array}\right. .  
+\end{equation} 
+Uplatníme-li na funkci $\tilde{f}\left(m{\rm ,}n\right)$ diskrétní Fourierovu transformaci, máme
+\begin{eqnarray} \label{eq:2_76} 
+    F(k, l) &=& \frac{1}{2N - 1} \sum\limits_{m=-N+1}^{N-1} \sum\limits_{n=-N+1}^{N-1} \tilde{f}(m, n) \exp \left( - \mathrm{j} 2 \pi \left( \frac{mk}{2N-1} + \frac{nl}{2N-1} \right) \right), \nonumber \\
+    k, l &=& -N+1, \dots, N-1 \, .
+\end{eqnarray} 
+Vezmeme-li v~úvahu, e funkce$\tilde{f}(m, n)$ je symetrická, pak po úpravì dostaneme
+\begin{equation} \label{eq:2_77} 
+    F(k, l) = \frac{1}{2N - 1} \sum\limits_{m=-N+1}^{N-1} \sum\limits_{n=-N+1}^{N-1} \tilde{f}(m, n) \cos \left( 2 \pi \frac{mk}{2N-1} \right) \cos \left( 2 \pi \frac{nl}{2N-1}\right).
+\end{equation} 
+S ohledem na symetrii dle \eqref{eq:2_75} lze tento vztah dále pøepsat do tvaru
+\begin{equation} \label{eq:2_78} 
+    F(k, l) = \frac{4}{2N - 1} \sum\limits_{m=0}^{N-1} \sum\limits_{n=0}^{N-1} c(m)c(n) f(m, n) \cos \left( 2 \pi \frac{mk}{2N-1} \right) \cos \left( 2 \pi \frac{nl}{2N-1}\right),
+\end{equation} 
+kde
+\begin{equation} \label{eq:2_79} 
+    c(p) = \left\{
+    \begin{array}{cc}
+    1/2, & p = 0 \\
+    1, & \mathrm{jinak}
+    \end{array}
+    \right. .  
+\end{equation} 
+Funkce \textit{c} zohledòuje skuteènost, e ve ètyøech symetrickıch kvadrantech funkce $\tilde{f}\left(m{\rm ,}n\right)$
+vytvoøenıch podle vztahu \eqref{eq:2_75} jsou hodnoty na osách symetrie sdíleny dvìma kvadranty a hodnota v~poèátku je sdílena ètyømi kvadranty.
+Protoe funkce $\cos(x)$ je sudá, zjišujeme na základì vztahu \eqref{eq:2_78}, e platí $F(k,-l)=F(k,l)$,
+$F(-k,l)=F(k,l)$, $F(-k,-l)=F(k,l)$ a e tedy i frekvenèní spektrum lze rozdìlit na ètyøi symetrické kvadranty.
+Hodnoty $F(k,l)$ proto postaèí poèítat a uchovávat pouze pro nezáporné indexy $k$, $l$.
+Symetrie lze vyuít i pøi provádìní zpìtné kosinové transformace.
+Z~pøedpisu pro zpìtnou Fourierovu transformaci obdríme pro zpìtnou transformaci kosinovou vztah
+\begin{equation} \label{eq:2_80}
+    f(m, n) = \frac{4}{2N - 1} \sum\limits_{k=0}^{N-1} \sum\limits_{l=0}^{N-1} c(k)c(l) F(k, l) \cos \left( 2 \pi \frac{mk}{2N-1} \right) \cos \left( 2 \pi \frac{nl}{2N-1}\right).
+\end{equation} 
+
+Vzorce pro sudou kosinovou transformaci lze odvodit analogicky.
+Symetrie je v~tomto pøípadì  dosaeno zrcadlením pùvodního obrazu kolem pøímek $x=-1/2$, $y=-1/2$.
+Aby ve Fourierovì transformaci vedla symetrie k~anulování èlenù obsahujících funkci sinus,
+je zapotøebí posunout poèátek souøadné soustavy do bodu o souøadnicích $(-1/2,-1/2)$.
+Pùvodní souøadnice $m$, $n$ se tak transformují na hodnoty $(m+1/2)$, $(n+1/2)$.
+V~dopøedné sudé kosinové transformaci neleí na osách symetrie ádné øady bodù obrazu.
+Také v~pøípadì sudé kosinové transformace platí $F(k,-l)=F(k,l)$, $F(-k,l)=F(k,l)$, $F(-k,-l)=F(k,l)$,
+a proto i zde postaèí poèítat a uchovávat pouze jeden kvadrant frekvenèního spektra.
+Hodnoty $F(k,l)$ leící na osách symetrie jsou sdíleny sousedními kvadranty spektra.
+Pøi vıpoètu zpìtné transformace lze tuto skuteènost vzít opìt v~úvahu pouitím funkce $c$.
+Zpravidla se polovina uvedené korekce realizuje u pøi dopøedné transformaci a polovina pøi transformaci zpìtné.
+Pro dopøednou a zpìtnou sudou kosinovou transformaci tak máme 
+\begin{equation} \label{eq:2_81} 
+    F(k, l) = \frac{4}{2N} c(k)c(l) \sum\limits_{m=0}^{N-1} \sum\limits_{n=0}^{N-1} f(m, n) \cos \left[ \pi \frac{(2m +1)k}{2N} \right] \cos \left[ \pi \frac{(2n + 1)l}{2N}\right],
+\end{equation} 
+\begin{equation} \label{eq:2_82}
+    f(m, n) = \frac{4}{2N} \sum\limits_{k=0}^{N-1} \sum\limits_{l=0}^{N-1} c(k) c(l) F(k, l) \cos \left[ \pi \frac{(2m +1)k}{2N} \right] \cos \left[ \pi \frac{(2n + 1)l}{2N}\right],
+\end{equation} 
+kde
+\begin{equation} \label{eq:2_83} 
+    c(p) = \left\{
+    \begin{array}{cc}
+    1/\sqrt{2}, & p = 0 \\
+    1, & \mathrm{jinak}
+    \end{array}
+    \right. .  
+\end{equation} 
+Na závìr tohoto odstavce poznamenejme, e kosinová transformace nachází vıznamné uplatnìní pøi kompresi obrazovıch signálù.
+Vyuívá se v kompresních metodách JPEG a MPEG, kde se pouívá kosinové transformace sudé.
+
+
+
+%\section{Waveletové transformace}
+
+%V~poslední dobì se díky nìkterım svım vıhodnım vlasnostem uplatòují ve zpracování obrazu také tzv. waveletové transformace. Stejnì jako ostatní transformace, je i transformace waveletová obecnì popsána matematickım aparátem zavedenım v~pøedchozí a dále rozvádìnım v této kapitole. Speciální je ovšem volba bázovıch (souøadnicovıch) funkcí. Podrobnìjší informace uvedeme pozdìji. Pro ilustraci však ji nyní poznamenejme, e vıznamnım rysem waveletové transformace je to, e jednotlivé bázové funkce jsou lokalizované, èím rozumíme e funkèní hodnoty nad jistou „relativnì malou`` oblastí dominují nad funkèními hodnotami ve zbytku definièního oboru (to je vıznamnı rozdíl ve srovnání napø. s transformací Fourierovou). Z této skuteènosti pak vyplıvá vìtšina vıhod waveletové transformace. Bázové funkce nejsou ve waveletové transformaci pevnì pøedepsány. Zmìnou prùbìhu bázovıch funkcí mùeme mìnit vlastnosti transformace podle poadavkù, které jsou v øešené aplikaci kladeny. Na obr. 2.4, 2.5 je uveden pøíklad znázoròující typickou volbu bázovıch funkcí. Waveletové transformace dnes ji pøedstavují rozvinutı a mocnı prostøedek se širokım uplatnìním. V tomto odstavci se proto z pochopitelnıch dùvodù musíme omezit jen na základní informace.
+
+%\subsection{Spojitá waveletová transformace}
+
+%\noindent Zaèneme jednorozmìrnım spojitım pøípadem. Nech $\psi$(\textit{x}) je reálná nebo komplexní funkce $\psi$(\textit{x})$\in$L2(\textbf{R}) a $\Psi$(\textit{u}) nech je její Fourierùv obraz (zápis L2(\textbf{R}) oznaèuje mnoinu funkcí integrovatelnıch se ètvercem, tj. funkcí, pro které platí $\int _{{\rm -}\infty }^{\infty }\left|\psi {\rm (}x{\rm )}\right|^{{\rm 2}} {\rm d}x <\infty $). Je-li splnìno tzv. kriterium pøípustnosti (uvedené kriterium je postaèující podmínkou pro invertibilitu waveletové transformace \cite{Chui92})
+%\begin{equation} \label{GrindEQ__2_84_} 
+%C_{\psi } =\int _{-\infty }^{\infty }\frac{\left|\Psi \left(u\right)\right|^{2} }{\left|u\right|} {\rm d}u <\infty ,  
+%\end{equation} 
+%pak lze funkci $\psi$(\textit{x}) vyuít ke konstrukci waveletové báze. Funkci $\psi$(\textit{x}) budeme v~tomto textu nazıvat základním waveletem nebo struènì pouze waveletem. Protoe se ve jmenovateli integrandu rovnice \eqref{GrindEQ__2_84_} nachází hodnota $\mid$u$\mid$, vyaduje kriterium pøípustnosti splnìní podmínky
+%\begin{equation} \label{GrindEQ__2_85_} 
+%\Psi \left(0\right)=0\Rightarrow \int _{-\infty }^{\infty }\psi \left(x\right){\rm d}x =0.  
+%\end{equation} 
+%Intuitivnì také dále oèekáváme $\Psi$($\infty$)=0. Vidíme tedy, e se prùbìh frekvenèního spektra pøípustného waveletu podobá frekvenèní charakteristice pásmové propusti. Opaènì také impulzová charekteristika nìjaké pásmové propusti, vyhovuje-li vztahùm \eqref{GrindEQ__2_84_}, \eqref{GrindEQ__2_85_}, mùe bıt pouita jako wavelet. Typickım pøíkladem základního waveletu je funkce ve tvaru „mexického klobouku`` popsaná následujícím pøedpisem (obr. 2.4)
+%\begin{equation} \label{GrindEQ__2_86_} 
+%\psi \left(x\right)=\left(1-2x^{2} \right)\exp \left(-x^{2} \right).  
+%\end{equation} 
+
+
+%\noindent Mnoina \{$\psi$\textit{a},\textit{b}(\textit{x})\} funkcí tvoøících bázi waveletové transformace mùe bıt generována translací a zmìnou mìøítka základního waveletu
+%\begin{equation} \label{GrindEQ__2_87_} 
+%\psi _{a,b} \left(x\right)=\frac{1}{\sqrt{a} } \psi \left(\frac{x-b}{a} \right),  
+%\end{equation} 
+%kde \textit{a}$>$0, \textit{b} jsou reálná èísla; \textit{a} vyjadøuje mìøítko, \textit{b} vyjadøuje posuv podél osy \textit{x}. Koeficient 1/$\surd$\textit{a} na pravé stranì rovnice \eqref{GrindEQ__2_87_} zajišuje, aby všechny funkce báze mìly stejnou normu. Je toti
+%\begin{equation} \label{GrindEQ__2_88_} 
+%\left\| \psi _{a,b} \left(x\right)\right\| =\frac{1}{\sqrt{a} } \sqrt{\int _{-\infty }^{\infty }\left|\psi \left(\frac{x-b}{a} \right)\right|^{2} {\rm d}x } =\left\| \psi \left(x\right)\right\| .  
+%\end{equation} 
+%Ve~vztahu \eqref{GrindEQ__2_87_} mohou \textit{a},\textit{b} obecnì nabıvat libovolné hodnoty. Speciální volba hodnot \textit{a},\textit{b} dává vzniknout speciálním variantám waveletové báze, které mohou bıt zajímavé z~praktického hlediska. Takovım pøípadùm se budeme vìnovat pozdìji. Pøi transformaci dvojrozmìrnıch signálù lze postupupovat analogicky jako v~pøípadì signálù jednorozmìrnıch. Postaèí pøedpokládat existenci pøípustného základního waveletu $\psi$(\textit{x},\textit{y}). Funkce waveletové báze pak opìt získáme translací a zmìnou mìøítka
+%\begin{equation} \label{GrindEQ__2_89_} 
+%\psi _{a,b_{x} ,b_{y} } \left(x,y\right)=\frac{1}{\left|a\right|} \psi \left(\frac{x-b_{x} }{a} ,\frac{y-b_{y} }{a} \right).  
+%\end{equation} 
+%Waveletovou transformaci funkce \textit{f} budeme v~tomto textu oznaèovat symbolem \textit{F}W. Ve shodì s \eqref{GrindEQ__1_33_}, \eqref{GrindEQ__1_35_} je waveletová transformace definována vztahy
+%\begin{equation} \label{GrindEQ__2_90_} 
+%F_{{\rm W}} \left(a,b\right)=\left\langle f,\psi _{a,b} \right\rangle =\int _{-\infty }^{\infty }f\left(x\right)\psi _{a,b}^{*} \left(x\right){\rm d}x ,  
+%\end{equation} 
+%\begin{equation} \label{GrindEQ__2_91_} 
+%F_{{\rm W}} \left(a,b_{x} ,b_{y} \right)=\left\langle f,\psi _{a,b_{x} ,b_{y} } \right\rangle =\int _{-\infty }^{\infty }\int _{-\infty }^{\infty }f\left(x,y\right)\psi _{a,b_{x} ,b_{y} }^{*} \left(x,y\right){\rm d}x  {\rm d}y.  
+%\end{equation} 
+%Je uiteèné si povšimnout, e transformací funkce jedné promìnné jsme dle vztahu \eqref{GrindEQ__2_90_} obdreli obraz, kterı je funkcí dvou promìnnıch. Podobnì i v~transformaci dle vzorce \eqref{GrindEQ__2_91_} vzrostl poèet promìnnıch z 2 na 3. Poznamenáváme rovnì, e za waveletovou transformaci funkcí \textit{f}(\textit{x}), \textit{f}(\textit{x,y}) je povaována hodnota skalárních souèinù \eqref{GrindEQ__2_90_}, \eqref{GrindEQ__2_91_} i v~pøípadì, e waveletové báze $\psi$\textit{a,b}(\textit{x}),  $\psi$\textit{a,bx,by}(\textit{x,y}) nejsou ortonormální (pøi odvození vztahù (1.33), \eqref{GrindEQ__1_35_} jsme ovšem pøedpoklad ortonormality pouili). Dùsledkem z toho vyplıvajícím je, e v takovém pøípadì pak \textit{F}W(\textit{a,b}), \textit{F}W(\textit{a,bx,by}) ji nemají vıznam koeficientù v~lineární kombinaci \eqref{GrindEQ__1_3_}, \eqref{GrindEQ__1_5_}. Lze však ukázat, e jestlie je splnìna podmínka pøípustnosti \eqref{GrindEQ__2_84_}, pak pro zpìtnou transformaci platí vztahy
+%\begin{equation} \label{GrindEQ__2_92_} 
+%f\left(x\right)=\frac{1}{C_{\psi } } \int _{0}^{\infty }\int _{-\infty }^{\infty }F_{{\rm W}} \left(a,b\right)\psi _{a,b} \left(x\right){\rm d}b \frac{{\rm d}a}{a^{2} }  ,  
+%\end{equation} 
+%\begin{equation} \label{GrindEQ__2_93_} 
+%f\left(x,y\right)=\frac{1}{C_{\psi } } \int _{0}^{\infty }\int _{-\infty }^{\infty }\int _{-\infty }^{\infty }F_{{\rm W}} \left(a,b_{x} ,b_{y} \right)\psi _{a,b_{x} ,b_{y} } \left(x,y\right){\rm d}b_{x}  {\rm d}b_{y} \frac{{\rm d}a}{a^{3} }   .  
+%\end{equation} 
+%Povaujeme za pouèné a praktické ukázat, e waveletová transformace souvisí s~konvolucí (a tedy s~filtrací signálu). Uvaujme transformaci jednorozmìrného signálu dle rovnice \eqref{GrindEQ__2_90_}. Pøedpokládejme nyní, e funkce $\psi$(\textit{x}) je reálná (tedy nikoli komplexní - splnìní uvedeného pøedpokladu lze v ~praxi èasto oèekávat). Z~rovnic \eqref{GrindEQ__2_87_}, \eqref{GrindEQ__2_90_} máme
+%\[F_{{\rm W}} \left(a,b\right)=\int _{-\infty }^{\infty }f\left(x\right)\frac{1}{\sqrt{a} } \psi \left(\frac{x-b}{a} \right){\rm d}x =\int _{-\infty }^{\infty }f\left(x\right)\frac{1}{\sqrt{a} } \psi \left[-\frac{1}{a} \left(b-x\right)\right]{\rm d}x \] 
+%\begin{equation} \label{GrindEQ__2_94_} 
+%=\int _{-\infty }^{\infty }f\left(x\right)\tilde{\psi }_{a} \left(b-x\right){\rm d}x =f*\tilde{\psi }_{a} ,  
+%\end{equation} 
+%kde $\tilde{\psi }_{a} =\frac{1}{\sqrt{a} } \psi \left(-\frac{x}{a} \right)$. \eqref{GrindEQ__2_95_}
+
+%\noindent Vztah \eqref{GrindEQ__2_94_} ukazuje, e waveletovou transformaci vstupního signálu \textit{f}(\textit{x}) lze vypoèítat jako konvoluci funkce \textit{f}(\textit{x}) s~funkcemi $\tilde{\psi }_{a} \left(x\right)$. Funkce $\tilde{\psi }_{a} \left(x\right)$ získáme ze základního waveletu $\psi$\textit{ }zrcadlovım pøevrácením a zmìnou mìøítka. Na základì uvedeného poznatku lze kostruovat efektivní algoritmy pro vıpoèet waveletové transformace. 
+
+%\subsection{Waveletová transformace s~dyadickou bází}
+
+%\noindent 
+
+%\noindent Waveletovıch bází, kde promìnné \textit{a}, \textit{b}, \textit{bx}, \textit{by} ve vzorcích \eqref{GrindEQ__2_87_}, \eqref{GrindEQ__2_89_} mohou nabıvat libovolnıch hodnot, se v~praxi nepouívá pøíliš èasto. Spíše se pouívají báze s~dalšími doplòujícími omezeními.  Dyadická waveletová báze pouívá zmìny mìøítka  \textit{a }= 2$-$\textit{j}  a translace \textit{b} =\textit{ }2$-$\textit{jk}. Bázové funkce jsou definovány pøedpisem
+%\begin{equation} \label{GrindEQ__2_96_} 
+%\psi _{j,k} \left(x\right)=2^{{j \mathord{\left/{\vphantom{j 2}}\right.\kern-\nulldelimiterspace} 2} } \psi \left(2^{j} x-k\right),  
+%\end{equation} 
+%kde $-$$\infty$$<$\textit{j},\textit{k}$<$$\infty$. Mnoina \{$\psi$\textit{j},\textit{k}\} tvoøí ortonormální bázi v L2(\textbf{R}) jestlie
+%\begin{equation} \label{GrindEQ__2_97_} 
+%\left\langle \psi _{j,k} ,\psi _{l,m} \right\rangle =\delta \left(j-l\right)\delta \left(k-m\right) 
+%\end{equation} 
+%a jestlie libovolnou funkci \textit{f}(\textit{x})$\in$L2(\textbf{R}) lze zapsat jako souèet
+%\begin{equation} \label{GrindEQ__2_98_} 
+%f\left(x\right)=\sum _{j=-\infty }^{\infty }\sum _{k=-\infty }^{\infty }c_{j,k} \psi _{j,k} \left(x\right)  .  
+%\end{equation} 
+%V pøípadì ortonormální báze poskytuje waveletová transformace také hodnotu koeficientù \textit{cj},\textit{k} ze vztahu \eqref{GrindEQ__2_98_}. Je tedy
+%\begin{equation} \label{GrindEQ__2_99_} 
+%F_{{\rm W}} \left(j,k\right)=c_{j,k} =\left\langle f\left(x\right),\psi _{j,k} \left(x\right)\right\rangle  
+%\end{equation} 
+%\[=\sqrt{2^{j} } \int _{-\infty }^{\infty }f\left(x\right)\psi ^{*} \left(2^{j} x-k\right){\rm d}x .\] 
+%Vztahy \eqref{GrindEQ__2_98_}, \eqref{GrindEQ__2_99_} popisují rozvoj funkce \textit{f}(\textit{x}) vzhledem k~waveletu $\psi$(\textit{x}). Stojí za povšimnutí, e aèkoli se jedná o rozvoj funkce jedné promìnné, je suma  ve vztahu \eqref{GrindEQ__2_98_} dvojnásobná. Pøi praktické implementaci na poèítaèi samozøejmì není moné pracovat s neomezenım poètem koeficientù. Vyuívá se proto skuteènosti, e pøi vhodné volbì waveletu $\psi$(\textit{x}) jsou hodnoty koeficientù s velkım \textbar \textit{j}\textbar ,\textbar \textit{k}\textbar  zanedbatelné.
+
+%\noindent 
+
+%\noindent Jestlie se omezíme na funkce \textit{f}(\textit{x}) a základní wavelety, jejich funkèní hodnota je vnì intervalu $\langle$0,1$\rangle$ vdy 0, pak mùeme systém bázovıch funkcí specifikovat jedinım indexem \textit{n}. Uvedená báze, oznaèovaná jako kompaktní dyadická báze, je popsána pøedpisem
+%\begin{equation} \label{GrindEQ__2_100_} 
+%\psi _{n} \left(x\right)=\sqrt{2^{j} } \psi \left(2^{j} x-k\right), 
+%\end{equation} 
+%kde  hodnoty \textit{j}, \textit{k} jsou funkcí \textit{n} (\textit{n}=0,1,...). Pro \textit{n }$\geq$ 1 se \textit{j} stanoví jako nejvìtší celé èíslo, které vyhovuje vztahu  2\textit{ j} $\leq$ \textit{n}, hodnota \textit{k} je \textit{k  }= \textit{n }$-$ 2\textit{ } \textit{j};  pro  \textit{n} = 0 je  \textit{j} = $-$1,  \textit{k} = 0.  Podmínka ortonormality a waveletovskı rozvoj pak mají tvar
+%\begin{equation} \label{GrindEQ__2_101_} 
+%\left(\psi _{m} ,\psi _{n} \right)=\delta \left(m-n\right),  
+%\end{equation} 
+%\begin{equation} \label{GrindEQ__2_102_} 
+%f\left(x\right)=\sum _{n=0}^{\infty }c_{n} \psi _{n} \left(x\right) ,  
+%\end{equation} 
+%\begin{equation} \label{GrindEQ__2_103_} 
+%F_{{\rm W}} \left(n\right)=c_{n} =\left\langle f\left(x\right),\psi _{n} \left(x\right)\right\rangle =\sqrt{2^{j} } \int _{-\infty }^{\infty }f\left(x\right)\psi ^{*} \left(2^{j} x-k\right){\rm d}x .  
+%\end{equation} 
+%Pøíkladem kompaktní dyadické báze je báze Haarovy transformace (není bez zajímavosti, e Haarova transformace byla popsána ji v~roce 1910, tedy daleko døíve, ne byla zpracována teorie waveletù). Bázové funkce Haarovy transformace jsou vyobrazeny na obr. 2.6.
+
+%\noindent 
+
+%\noindent Podmínka ortogonality pøedstavuje ve skuteènosti dosti silné omezení. Bylo ukázáno, e jedinım reálnım waveletem, kterı je symetrickı a souèasnì generuje ortogonální bázi (symetrií rozumíme, e pro nìkteré \textit{q} je funkce  $\psi$(\textit{x}$-$\textit{q})  je buï sudá nebo lichá), je Haarùv wavelet. Aby byla zajištìna vìtší volnost pøi volbì bázovıch funkcí, je moné zavést tzv. biortogonální wavelety \cite{Chui92}. Nech $\psi $, $\tilde{\psi }$ jsou dva rùzné vavelety a $\{ \psi _{j,k} \} $, $\{ \tilde{\psi }_{j,k} \} $ nech jsou báze jimi generované. Báze  nazveme biortogonálními, jestlie je splnìna následující podmínka
+
+% . \eqref{GrindEQ__2_104_}
+
+%\noindent Pro dekompozici a zpìtnou rekonstrukci pak platí \cite{Chui92}, \cite{Castleman96}
+
+% ,   , \eqref{GrindEQ__2_105_}
+
+% . \eqref{GrindEQ__2_106_}
+
+%\noindent Ve vztazích \eqref{GrindEQ__2_99_}, \eqref{GrindEQ__2_103_} jsme zatím pøedpokládali, e \textit{f}(\textit{x}) je spojitá funkce. Modifikace uvedenıch vztahù pro diskrétní pøípad je pøímoèará. Dostáváme
+
+% . \eqref{GrindEQ__2_107_}
+
+%\noindent V této souvislosti poznamenejme, e také transformace, v ní \textit{a},\textit{b} v rovnici \eqref{GrindEQ__2_87_} nabıvají pouze dyadickıch hodnot (tj. transformace, kde je báze popsána vztahem (2.96)), bıvá nìkdy oznaèována jako diskrétní waveletová transformace. Jak vidíme, dochází v tomto pøípadì ke dvojznaènosti, protoe také funkce, která má bıt transformována, mùe bıt diskrétní nebo spojitá.
+

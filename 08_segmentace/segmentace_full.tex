@@ -1,0 +1,1307 @@
+\chapter{Segmentace obrazu} \label{sec:segmentace_obrazu}
+%========================================================
+Pøedpokládejme, e máme obraz, kterı je popsán obrazovou funkcí, a e máme rozpoznat objekty v tomto obraze.
+Prvním krokem k tomuto cíli je extrakce objektù, které se v obraze nacházejí.
+Proces extrakce, v nìm jsou objekty separovány navzájem a od nezajímavého pozadí, nazıváme segmentací obrazu.
+Segmentace je nejèastìji zaloena na detekci kontur (hran) ohranièujících jednotlivé objekty nebo na detekci
+celıch oblastí, kterımi jsou jednotlivé objekty v obraze reprezentovány.
+Oba uvedené postupy jsou v praxi široce pouívány, a proto jsou jejich popisu vìnovány pomìrnì rozsáhlé
+podkapitoly \ref{sec:detekce_hran}, \ref{sec:detekce_oblasti}.
+Podkapitola \ref{sec:segmt_min_func} je vìnována pohledu, kdy se na segmentaci obrazu pohlíí jako na úlohu o minimalizaci funkcionálu.
+%V podkapitolách \ref{sec:zpracovani_binarnich_obrazu} je pak struènì nastínìna problematika detekce rohù objektù a problematika zpracování binárních obrazù.
+V podkapitole \ref{sec:zpracovani_binarnich_obrazu} je pak struènì nastínìna problematika zpracování binárních obrazù.
+To proto, e takové obrazy v procesu segmentace èasto vznikají.
+
+\section{Detekce hran} \label{sec:detekce_hran}
+
+Pøedstavujeme si, e kadı objekt je v obraze reprezentován souvislou oblastí (obr. \ref{img:8_1}a).
+Kadá oblast je obklopena hranicí. Hranice se skládá z hran (pøípadnì té z jediné zakøivené hrany).
+Hrana se skládá z jednotlivıch hranovıch bodù. Vıznamnım problémem v analıze obrazù je nalezení hran a celıch hranic.
+Pøi øešení se èasto ale postupuje tak, e se nejprve naleznou jednotlivé body hran. Uvaujme pro jednoduchost obrazy ve stupních šedi.
+(I v praxi se pøed analızou, a tedy i pøed hledáním hran, barevné obrazy velmi èasto pøevádí na obrazy ve stupních šedi.) 
+Na existenci bodu hrany mùeme usuzovat z prùbìhu obrazové funkce. Na obr. \ref{img:8_2} nahoøe je znázornìn typickı prùbìh jasu napøíè hranou.
+Za bod hrany se nejèastìji povauje místo, kde prùbìh jasu vykazuje náhlou zmìnu, pøípadnì inflexní bod.
+Po nalezení jsou jednotlivé nalezené body hran spojovány rùznımi technikami do hran a celıch hranic.
+
+Protoe kadá plocha by mìla bıt obklopena svojí hranicí (obr. \ref{img:8_1}a), zdá se,
+e detekce hran a detekce celıch ploch by teoreticky mìly vést ke vzájemnì ekvivalentním vısledkùm.
+V praxi se však mohou vyskytnout problémy. Jsou-li napø. rozpoznávané objekty v obraze špatnì zøetelné nebo je-li obraz poškozen šumem,
+pak nemusí nalezené hrany tvoøit kolem objektù uzavøené smyèky, jak si teoreticky pøedstavujeme (obr. \ref{img:8_1}b).
+Vlivem šumu mohou bıt na druhé stranì hrany detekovány i tam, kde ve skuteènosti nejsou.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_1.pdf}
+    \end{center}
+    \caption{\dvojt Detekce oblastí stanovením hranice}
+    \label{img:8_1}
+\end{figure}
+
+\subsection{Gradientní metody hledání hran}
+
+Obr. \ref{img:8_2} ukazuje typickı prùbìh jasu ve smìru napøíè hranou a první a druhou derivaci tohoto prùbìhu.
+Gradientní metody vyuívají skuteènosti, e v místì hrany má absolutní hodnota první derivace prùbìhu jasu vysokou hodnotu.
+Hodnota derivace popisuje intenzitu kontury v daném bodì - hovoøíme o velikosti hrany.
+Operátory, které velikost hrany stanovují (obvykle se aplikují v kadém bodì obrazu), bıvají nazıvány hranovımi operátory.
+Z uvedeného vyplıvá, e nejjednoduššími hranovımi operátory jsou zøejmì derivace $\partial f / \partial x$
+a $\partial f / \partial y$, které popisují zmìnu úrovnì jasu ve smìru os $x$ a $y$.
+Tìchto operátorù by bylo moné pouít k hledání hran rovnobìnıch se souøadnımi osami.
+Pøi hledání hran obecného smìru je zapotøebí vyšetøovat prùbìh jasu ve smìru kolmém na smìr potenciální hrany.
+Nech vektor $\mathbf{n} = (\cos \theta, \sin \theta)$ popisuje smìr kolmı ke smìru eventuální hrany a $\xi$ nech je souøadnice mìøená v tomto smìru.
+K ovìøení skuteènosti, zda v daném bodì existuje hrana známého smìru, lze pouít derivaci ve smìru.
+Pro derivaci ve smìru kolmo k hranì máme
+\begin{equation} \label{eq:8_1}
+    \frac{\partial f}{\partial \xi} = \mathrm{grad} (f) \cdot \mathbf{n} = \frac{\partial f}{\partial x} \cos \theta + \frac{\partial f}{\partial y} \sin \theta .
+\end{equation}
+Za velikost hrany v daném bodì mùeme povaovat hodnotu $| \partial f / \partial \xi |$.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_2.pdf}
+    \end{center}
+    \caption{\dvojt Prùbìh jasu a jeho první a druhé derivace ve smìru napøíè hranou}
+    \label{img:8_2}
+\end{figure}
+
+Pøi hledání hrany její smìr pøedem obvykle neznáme. Rovnice \eqref{eq:8_1} a úvahy, které k ní vedly, však podávají návod, jak situaci øešit.
+Pro rozhodnutí, zda ve vyšetøovaném bodì je èi není hrana, bude rozhodující smìr, v nìm je zmìna jasu nejvìtší.
+Tímto smìrem je gradient obrazové funkce. Smìr hrany je pak kolmı ke smìru gradientu. Za velikost hrany lze vzít velikost gradientu.
+Oznaème $e(x,y)$ velikost hrany, $\varphi(x,y)$ smìr gradientu a $\psi(x,y)$ smìr hrany v bodì $(x,y)$.
+Dále pro struènost zaveïme oznaèení $f_x(x,y) = \partial f(x,y) / \partial x$,  $f_y(x,y) = \partial f(x,y) / \partial y$.
+S vyuitím právì zavedeného pak máme
+\begin{equation} \label{eq:8_2}
+    e(x, y) = \sqrt{ f_x^2(x, y) + f_y^2(x, y)} \, ,
+\end{equation}
+\begin{equation} \label{eq:8_3}
+    \varphi(x, y) = \arctan \left[ \frac{f_y(x,y)}{f_x(x,y)} \right], \quad \psi(x, y) = \varphi(x,y) + \frac{\pi}{2} \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_3.pdf}
+    \end{center}
+    \caption{\dvojt Stanovení velikosti a smìru hrany na základì gradientu}
+    \label{img:8_3}
+\end{figure}
+
+Cílem praktického vıpoètu zpravidla bıvá rozhodnout, zda vyšetøovanı bod obrazu je èi není bodem leícím na hranici nìjakého objektu.
+V nejjednodušším pøípadì lze za body hranice povaovat ta místa, kde hodnota $e(x,y)$ je vìtší ne nìjaká pevná, pøedem zvolená prahová hodnota.
+Tento jednoduchı postup má ovšem své nedostatky:
+1) Hranice objektu obvykle vyjde širší ne jeden bod (intuitivnì si moná pøedstavujeme, e tlouška hranice je právì jeden bod).
+2) Uvedenı postup neøeší problém doplnìní chybìjících a odstranìní nadbyteènıch èástí hranice diskutovanı v úvodu podkapitoly \ref{sec:detekce_hran}.
+Dùmyslnìjší postupy popíšeme postupnì pozdìji (napø. v souvislosti s Cannyho detektorem hran).
+
+A dosud jsme pøedpokládali, e obrazová funkce je spojitá. Pøi praktické implementaci pracujeme ovšem nejèastìji s funkcí diskrétní.
+Jestlie nahradíme derivace diferencemi, mùeme vztahù \eqref{eq:8_2}, \eqref{eq:8_3} snadno pouít i pro diskrétní pøípad.
+Pro diference mùeme psát
+\begin{equation} \label{eq:8_4}
+    f_x(x, y) = f(x + 1, y) - f(x, y) \, ,
+\end{equation}
+\begin{equation} \label{eq:8_5}
+    f_y(x, y) = f(x, y + 1) - f(x, y) \, .
+\end{equation}
+
+Pøi praktické realizaci vıpoètu je hodnota $e(x,y)$ stanovována a porovnávána s hodnotou prahu ve všech bodech (pixelech) obrazu.
+Poznamenejme, e pøi stanovení délky gradientu lze pouít i jinıch metrik, ne je metrika uvedená ve vztahu \eqref{eq:8_2} (koøeny tìchto snah sahají ovšem ponìkud do minulosti, kdy byl vıpoèet odmocniny èasovì velmi nároènou, a proto obávanou operací).
+Mùeme pouít napø. následujících vztahù:
+\begin{equation} \label{eq:8_6}
+    e(x, y) = | f_x(x, y) | + | f_y(x, y) | \, , \quad e(x, y) = \max \left\{ | f_x(x, y) |, | f_y(x, y) | \right\} \,.
+\end{equation}
+Skuteènost, e pøi praktickém vıpoètu na pouité metrice pøíliš nezáleí, ukazuje následující pøíklad, kterı ponecháváme ètenáøi k samostatnému øešení: Dokate, e pro kadou dvojici nezápornıch èísel $a$, $b$ platí $(a+b)/ \surd 2 \leq \surd(a^2 + b^2) \leq \surd 2 \max \{ a,b \}$. 
+
+V minulosti bylo realizováno mnoho praktickıch metod pro detekci hran, jejich spoleènım teoretickım základem je vıpoèet velikosti gradientu.
+Nìkteré z nich popíšeme dále podrobnìji.
+
+\noindent
+{\em Robertsùv operátor:} Tento hranovı operátor je jedním z nejstarších, ale stále ještì obèas pouívanım operátorem pro stanovení velikosti hrany.
+Operátor stanovuje diference ve dvou na sebe kolmıch diagonálních smìrech. Velikost hrany v bodì $(x,y)$ obrazu se poèítá podle pøedpisu
+\begin{equation} \label{eq:8_7} 
+    e(x,y)=\sqrt{\left(f(x,y)-f(x+1,y+1)\right)^{2} +\left(f(x+1,y)-f(x,y+1)\right)^{2} } \, .   
+\end{equation}
+%To následující je uiteèné. Odpovídá to i mé zkušenosti. Pøesto ale vypouštíme, aby byl text kratší.
+%Nìkdy také bıvá uvádìn vztah, v nìm jsou místo funkèních hodnot pouity jejich odmocniny.
+%Tato varianta údajnì více odpovídá vnímání hran lidskım zrakem.
+%\begin{equation} \label{eq:8_8}
+    %e(x,y)=\sqrt{\left(\sqrt{f(x,y)} -\sqrt{f(x+1,y+1)} \right)^{2} +\left(\sqrt{f(x+1,y)} -\sqrt{f(x,y+1)} \right)^{2} } .   
+%\end{equation} 
+
+\noindent
+{\em Operátor Prewittové:} Tento operátor vyuívá k vıpoètu velikosti hrany v bodì o souøadnicích $x$, $y$ hodnot obrazové funkce ve všech sousedních pixelech.
+Tyto hodnoty pro struènost oznaèíme $A$, $B$, $C$, $D$, $F$, $G$, $H$, $I$ (obr. \ref{img:8_4}). Operátor poèítá derivace ve smìrech os $x$, $y$ prùmìrem
+\begin{equation}
+    f_{x} \left(x,y\right)=\frac{1}{3} \left[\left(C-A\right)+\left(F-D\right)+\left(I-G\right)\right] \, , \nonumber
+\end{equation} 
+\begin{equation} \label{eq:8_9}
+f_{y} \left(x,y\right)=\frac{1}{3} \left[\left(A-G\right)+\left(B-H\right)+\left(C-I\right)\right] \, .  
+\end{equation}
+Uvedenı postup stanovení derivací prùmìrem pøispívá k redukci šumu.
+V pøípadech, kdy nezáleí na absolutní velikosti hrany, lze koeficienty 1/3 vypustit.
+Jestlie po vıpoètu velikosti hrany následuje prahování, v~nìm se rozhoduje, zda v daném bodì hrana existuje èi nikoli, lze vypuštìní koeficientù kompenzovat volbou velikosti prahu.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_4.pdf}
+    \end{center}
+    \caption{\dvojt Znaèení hodnot obrazové funkce pro operátor Prewittové}
+    \label{img:8_4}
+\end{figure}
+
+\noindent
+{\em Sobelùv operátor:} Tento operátor je podobnı operátoru Prewittové.
+Rozdíl spoèívá v tom, e se pro vıpoèet derivací v jednotlivıch smìrech pouívá váenı prùmìr dle vztahù
+\begin{eqnarray} \label{eq:8_10}
+    f_{x} \left(x,y\right)=\frac{1}{4} \left[\left(C-A\right)+2\left(F-D\right)+\left(I-G\right)\right] \, , \\
+    f_{y} \left(x,y\right)=\frac{1}{4} \left[\left(A-G\right)+2\left(B-H\right)+\left(C-I\right)\right] \, .  
+\end{eqnarray} 
+I v tomto pøípadì lze za stejnıch okolností jako u operátoru Prewittové koeficienty 1/4 vypustit.
+
+\noindent
+{\em Kirschùv operátor:} Také tento operátor lze zaøadit mezi operátory zaloené na vıpoètu gradientu.
+Velièina mající povahu derivace je poèítána celkem v osmi smìrech a za velikost hrany je vzata její maximální hodnota.
+Pro struènost pøeznaèíme funkèní hodnoty obrazové funkce tak, jak je uvedeno na obr. \ref{img:8_5}.
+Velikost hrany v bodì ($x$, $y$) se vypoèítá dle vzorce
+\begin{equation} \label{eq:8_11}
+    e\left(x,y\right)=\max\limits_{i=0}^{7}(|5S_{i} - 3T_{i} |) \, ,  
+\end{equation}
+kde
+\begin{equation} \label{eq:8_12}
+    S_{i} = A_{i} + A_{i+1} + A_{i+2} \, ,
+\end{equation}
+\begin{equation} \label{eq:8_13}
+    T_{i} = A_{i+3} + A_{i+4} + A_{i+5} + A_{i+6} + A_{i+7} \, .
+\end{equation}
+Index $i$, pro kterı je ve vırazu \eqref{eq:8_11} dosaeno maxima, urèuje smìr hrany.
+Jestlie ve vırazech \eqref{eq:8_12}, \eqref{eq:8_13} vyjdou hodnoty indexù vìtší ne 7, upraví se operací modulo 8. 
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_5.pdf}
+    \end{center}
+    \caption{\dvojt Znaèení hodnot obrazové funkce pro Kirschùv operátor}
+    \label{img:8_5}
+\end{figure}
+
+
+\subsection{Detekce hran hledáním prùchodu \\ druhé derivace nulou}
+%==================================================================
+Z obr. \ref{img:8_2} je zøejmé, e druhá derivace prùbìhu jasu ve smìru napøíè hranou nabıvá dvou extrémù opaèného znaménka a v místì hrany znaménko mìní.
+Protoe smìr hrany není zpravidla pøedem znám, je nutné druhou derivaci poèítat pøinejmenším ve dvou smìrech, napø. ve smìru souøadnıch os $x$, $y$.
+K vıpoètu lze pouít Laplaceova operátoru. Zaveïme oznaèení $f_{xx}(x,y) = \partial^2 f(x,y) / \partial x^2$, $f_{yy}(x,y) = \partial^2 f(x,y)/ \partial y^2$.
+Laplaceùv operátor je definován vztahem
+\begin{equation} \label{eq:8_14}
+    \nabla^2 f(x,y)=f_{xx} (x,y) + f_{yy} (x,y) \, .
+\end{equation}
+Je-li obrazová funkce diskrétní, pouijeme místo derivací diference.
+Pro body uvnitø obrazu (nikoli v krajních øádcích a sloupcích) mùeme pouít symetrickıch diferenèních vzorcù
+(pro ètenáøe by mìlo bıt snadné si je odvodit)
+\begin{equation} \label{eq:8_15}
+    f_{xx} (x,y)=f(x-1,y)-2f(x,y)+f(x+1,y) \, ,
+\end{equation}
+\begin{equation} \label{eq:8_16}
+    f_{yy} (x,y)=f(x,y-1)-2f(x,y)+f(x,y+1) \, .
+\end{equation}
+Dosazením vztahù \eqref{eq:8_15}, \eqref{eq:8_16} do \eqref{eq:8_14} dostaneme pro realizaci Laplaceova operátoru pøedpis
+\begin{equation} \label{eq:8_17}
+    \nabla^2 f(x,y)=f(x+1,y)+f(x-1,y)+f(x,y+1)+f(x,y-1)-4f(x,y) \, .
+\end{equation}
+Vztah \eqref{eq:8_17} lze vypoèítat pomocí konvoluce obrazové funkce $f(x,y)$ s konvoluèní maskou uvedenou na obr. \ref{img:8_6}.
+V souvislosti s urèováním hran pomocí druhé derivace bıvá uvádìna také maska dle obr.8.6b, která realizuje vıpoèet souètu druhıch derivací
+ve ètyøech smìrech $0^{\circ}$, $45^{\circ}$, $90^{\circ}$, $135^{\circ}$.
+Je zøejmé, e v krajních øádcích a sloupcích obrazu nelze masek z obr. \ref{img:8_6} pouít.
+Pro uvedené pøípady lze v pøípadì potøeby snadno odvodit speciální masky vyadující pouze hodnoty uvnitø obrazu.
+Napø. pro vıpoèet hodnoty Laplaceova operátoru v dolním øádku obrazu snadno odvodíme masku dle obr. \ref{img:8_7}a,
+pro vıpoèet hodnoty v levém dolním rohu pak masku uvedenou na obr. \ref{img:8_7}b (ostatní potøebné masky získáme rotací masek zde uvedenıch).
+Hrany v obraze nalezneme analızou vısledku poskytnutého Laplaceovım operátorem.
+Za hranu povaujeme místo, kde mezi dvìma dostateènì velikımi a dostateènì blízko poloenımi extrémy opaèného znaménka vısledek poskytnutı operátorem mìní znaménko.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_6.pdf}
+    \end{center}
+    \caption{\dvojt Konvoluèní masky pro vıpoèet Laplaceova operátoru}
+    \label{img:8_6}
+\end{figure}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_7.pdf}
+    \end{center}
+    \caption{\dvojt Pøíklady masek pro body na krajích a v rozích obrazu}
+    \label{img:8_7}
+\end{figure}
+
+Právì popsaná metoda hledání hran zaloená na vıpoètu druhé derivace a na pouití Laplaceova operátoru je dosti citlivá na šum.
+I pøi malém zašumìní obrazu je detekováno znaèné mnoství falešnıch hran.
+Problém lze øešit filtrací šumu, která se provede ještì pøed tím, ne jsou hledány hrany.
+Marr a Hildreth \cite{Maar80} popsali metodu, v ní pro redukci šumu pouívají konvoluci s gaussiánem.
+Protoe se tato metoda pouívá dosti èasto, popíšeme ji podrobnìji.
+Dvourozmìrnı gaussián je definován vztahem (obr. \ref{img:8_7})
+\begin{equation} \label{eq:8_18}
+    G(x, y) = G(x)G(y) = \frac{1}{2\pi \sigma^2} \exp \left( - \frac{x^2 + y^2}{2\sigma^2} \right).
+\end{equation}
+Hodnotou $\sigma$ lze ,,regulovat šíøku`` gaussiánu a tudí i míru filtrace.
+Bìnì pouívané hodnoty $\sigma$ jsou napø. 0.5 a 3.
+Realizaci konvoluce obrazové funkce s gaussiánem a následnou aplikaci Laplaceova operátoru popisují vztahy
+\begin{eqnarray} \label{eq:8_19}
+    &\nabla^2& [G(x, y) \ast f(x, y) ] \\
+    &=& \left( \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} \right) \int \int\limits_{-\infty}^{\infty} G(x - \xi, y - \eta) f(\xi, \eta)\, \dif \xi\, \dif \eta \nonumber \\
+    &=& \left[ \left( \frac{\partial^2}{\partial x^2} + \frac{\partial^2}{\partial y^2} \right) G(x, y) \right] \ast f(x, y) \nonumber \\
+    &=& \left[ \nabla^2 G(x, y) \right] \ast f(x, y) \, .\nonumber
+\end{eqnarray}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_8.pdf}
+    \end{center}
+    \caption{\dvojt Prùbìh gaussiánu $G(x)$ pro $\sigma = 0.5$, $\sigma = 1$, $\sigma = 2$}
+    \label{img:8_8}
+\end{figure}
+
+\noindent
+Poslední z uvedenıch vztahù ukazuje, e popisovanou posloupnost akcí lze realizovat konvolucí obrazové funkce s funkcí $\nabla^2 G$.
+Poloíme-li $r = \surd(x^2 + y^2)$, mùeme funkci $\nabla^2 G$ zapsat ve tvaru
+\begin{equation} \label{eq:8_20}
+    \nabla^2 G(r) = \left( \frac{r^2 -2\sigma^2}{2\pi\sigma^6} \right) \exp \left( \frac{-r^2}{2\sigma^2} \right) \, .
+\end{equation}
+Funkce $\nabla^2 G$ je rotaènì symetrická. Její prùbìh (prùøez prùbìhu) je znázornìn na obr. \ref{img:8_9}.
+Oznaème $w$ polomìr krunice, kde funkce pøechází ze zápornıch do kladnıch hodnot (obr. \ref{img:8_9}).
+Z rovnice \eqref{eq:8_20} vychází $w=\sigma\surd 2$.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_9.pdf}
+    \end{center}
+    \caption{\dvojt Prùbìh funkce $\nabla^2 G(r)$, $\sigma = 0.5$}
+    \label{img:8_9}
+\end{figure}
+
+K dùkladnìjšímu osvìtlení principu èinnosti této metody vyšetøíme ještì frekvenèní charakteristiku operátoru $\nabla^2 G$.
+Provedením Fourierovy transformace a poloením $u^2 + v^2 = \omega^2$ dostaneme
+\begin{equation} \label{eq:8_21}
+    \mathscr{F} \left\{ \nabla^2 G(x, y) \right\} = \omega^2 \exp \left( - \sigma^2 \frac{\omega^2}{2} \right) \, .
+\end{equation}
+Prùbìh frekvenèní charakteristiky $\mathscr{F}\{\nabla^2 G\}$ je znázornìn na obr. \ref{img:8_10}.
+Je zøejmé, e se jedná o pásmovı filtr. Vrchol frekvenèní charakteristiky vychází v místì $\omega = \surd 2 / \sigma$.
+Po provedení konvoluce $[\nabla^2 G(x, y)] \ast f(x, y)$ pokraèuje metoda hledáním prùchodù nulou stejnì, jak ji bylo popsáno døíve.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_10.pdf}
+    \end{center}
+    \caption{\dvojt Frekvenèní charakteristika $\mathscr{F}\{\nabla^2 G\}$ pro $\sigma = 0.5$}
+    \label{img:8_10}
+\end{figure}
+
+
+
+\section{Spojování hran}
+%=======================
+Hranové operátory z~pøedchozí podkapitoly urèovaly velikost a pøípadnì i smìr hrany jednotlivì v kadém bodì obrazu, tedy lokálnì.
+To je ovšem ponìkud v rozporu s intuitivní pøedstavou hran jako delších souvislıch úseèek pøípadnì køivek v obrazech.
+Hrany chápané tímto druhım zpùsobem nazıváme v této podkapitole globálními hranami.
+K nalezení globálních hran lze vyuít vısledkù poskytovanıch lokálními operátory, které jsou však dále zpracovány v procesu tzv. spojování hran.
+Proces spojování je ilustrován na obr. \ref{img:8_16}. Ve vyobrazeném pøípadì umoòují lokálnì stanovené velikosti a smìry hran snadno proloit hranu globální.
+Lze k tomu pouít obvyklıch technik jako je napø. prokádání úseèek, obloukù èi jinıch útvarù metodou nejmenších ètvercù.
+Pøi praktické realizaci se ale zpravidla bohuel nevyhneme rùznım heuristickım postupùm.
+Je to hlavnì proto, e prokládanıch útvarù je obvykle více a je zapotøebí rozhodnout, které mají bıt proloeny kterımi hranovımi body, co je obtíná úloha.
+My se v této podkapitole omezíme pouze na jednu elegantní a velmi èasto citovanou i pouívanou metodu, kterou je Houghova transformace.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_16.pdf}
+    \end{center}
+    \caption{\dvojt Proloení globální hrany}
+    \label{img:8_16}
+\end{figure}
+
+%\noindent \textbf{8.2.1 Heuristické sledování hrany}
+
+%\noindent V heuristickıch metodách sledování hrany jsou globální hrany pøedpokládány ve tvaru úseèky nebo køivky (èasto se napø. jedná o kruhovı oblouk). Vstupní informací pro tyto metody je obraz, v nìm je pro kadı pixel stanovena velikost a pøípadnì i smìr hrany. Takovı obraz lze získat pomocí nìkterého z lokálních hranovıch operátorù. Nìkdy se také mùe jednat o naskenovanı obraz technického vıkresu, v nìm jsou èáry po naskenování upraveny ztenèováním. Heuristické sledování globální hrany zahrnuje zpravidla následující kroky: 1) nalezení poèáteèního bodu globální hrany,  2) predikce polohy následujícího bodu, 3) hledání bodu hrany v okolí predikované polohy, 4) urèení následujícího kroku algoritmu. Jednotlivé kroky popíšeme dále podrobnìji. 
+
+%\noindent Nalezení poèáteèního bodu globální hrany: V tomto kroku nalezneme postupnım prohledáváním vstupního obrazu nìkterı bod globální hrany. Je nutné, aby tento bod byl detekován spolehlivì, co lze zajistit volbou vysoké hodnoty prahu. Jestlie je k dispozici také smìr hrany, lze této informace pouít pro predikci polohy druhého bodu hrany. Není-li smìr k dispozici, hledáme druhı bod hrany mezi všemi sousedy bodu prvního.
+
+%\noindent Predikce polohy následujícího bodu: Jestlie ji bylo nalezeno nìkolik pøedchozích bodù hrany, pak lze na základì této znalosti a na základì oèekávaného tvaru hrany (úseèka, køivka) odhadnout polohu následujícího bodu. Podle oèekávaného tvaru globální hrany proloíme doposud nalezenımi body pøímku nebo køivku. K proloení se èasto pouívá metody nejmenších ètvercù. Proloením snadno získáme predikci polohy následujícího bodu. Pro stanovení okolí, ve kterém má bıt následující bod hledán, se pouívají rùzné heuristické vztahy, které se opírají o úvahu, e èím více bodù hrany bylo ji nalezeno a èím kvalitnìji lze pøedpokládanı tvar nalezenımi body proloit, tím je odhad polohy následujícího bodu jistìjší, a prohledávané okolí mùe bıt proto menší. Predikovat lze rovnì oèekávanou velikost lokální hrany, co umoòuje stanovit vhodnou velikost prahu, kterı bude v následujícím bodì pro rozhodnutí o existenci hrany pouit.
+
+%\noindent Hledání bodu v okolí predikované polohy: Bod hrany hledáme v oblasti, její poloha a velikost byly  stanoveny predikcí. Jestlie je ve stanoveném okolí nalezeno více vyhovujících bodù, lze vybrat nejlepší z nich (tj. bod, kterı je blízko predikované polohy a v nìm je vysoká velikost hrany). 
+
+%\noindent Urèení následujícího kroku: Je nutné rozhodnout, zda lze ve sledování globální hrany pokraèovat nebo zda má bıt sledování ukonèeno. Jestlie je ve stanoveném okolí nalezen bod, kterı dostateènì pøesnì odpovídá predikci a jestlie lze pøedpokládanı tvar hrany proloit dosud nalezenou mnoinou bodù dostateènì kvalitnì, lze ve sledování pokraèovat. Jinak je nutné sledování ukonèit. Kvalitu proloení lze hodnotit napø. pomocí maxima vzdálenosti nalezenıch bodù od prokládané køivky.
+
+%\noindent Po ukonèení sledování jedné hrany pøechází algoritmus na sledování hrany následující. Hrany, které ji byly nalezeny, jsou ze vstupního obrazu odstranìny, aby nebyly detekovány opakovanì. Metody heuristického sledování hrany jsou úèinné. Jejich implementace je však bohuel obtínìjší a vyaduje pracné øešení øady drobnıch detailù.
+
+%\noindent Na závìr tohoto odstavce poznamenejme, e jednou z moností, jak popsat extrahované køivky, je pouít tzv. Freemanova kódu. Ve Freemanovì kódu je køivka popsána od jednoho ze svıch koncù. Postupnì jsou zapisovány kódy smìrù tak, jak køivka postupuje od jednoho pixelu k pixelu následujícímu. Kódování smìrù ukazuje obr. 8.17. Pøíklad kódování køivky je uveden na obr. 8.18. Extrahované køivky lze ovšem také popsat pomocí úseèek a obloukù (kruhovıch nebo parabolickıch), které jimi lze proloit. Nìkdy je popis pomocí Freemanova kódu mezistupnìm k~získání uvedeného  popisu.
+
+%\noindent \textbf{8.2.2 Proloení pøímky a køivky}
+
+%\noindent V tomto odstavci ukáeme, jak lze metodou nejmenších ètvercù proloit danou mnoinou bodù pøímku, krunici nebo kruhovı oblouk. Zamìøíme se nejprve na pøímku. Rovnici pøímky uvaujeme ve tvaru $\alpha$\textit{x} + $\beta$\textit{y} + $\gamma$  = 0. Pøedpokládejme, e $\beta$ $\neq$ 0, a dìlme rovnici touto hodnotou. Dostane rovnici \textit{ax} + \textit{y} + \textit{c} = 0. Pøímka má bıt proloena \textit{n} body. Souøadnice \textit{i}-tého bodu oznaème \textit{xi},\textit{yi}. Hodnota $\epsilon$\textit{i} = \textit{axi} + \textit{yi} + \textit{c} je úmìrná vzdálenosti \textit{i}-tého bodu od pøímky. Hodnoty \textit{a},\textit{c} lze stanovit z podmínky, aby souèet ètvercù hodnot $\epsilon$\textit{i} byl minimální. Hledáme tedy minimum vırazu
+%\begin{equation} \label{GrindEQ__8_61_} 
+%\varepsilon =\sum _{i=1}^{n}\varepsilon _{i}^{2}  =\sum _{i=1}^{n}\left(ax_{i} +y_{i} +c\right)^{2}  .  
+%\end{equation} 
+%Obvyklım postupem, kdy poloíme $\partial$$\epsilon$/$\partial$\textit{a} = 0 a $\partial$$\epsilon$/$\partial$\textit{c} = 0, obdríme následující vısledek
+%\begin{equation} \label{GrindEQ__8_62_} 
+%a=\frac{\sum _{i=1}^{n}x_{i}  \sum _{i=1}^{n}y_{i}  -n\sum _{i=1}^{n}x_{i} y_{i}  }{n\sum _{i=1}^{n}x_{i}^{2}  -\left(\sum _{i=1}^{n}x_{i}  \right)^{2} } ,     c=\frac{\sum _{i=1}^{n}x_{i}  \sum _{i=1}^{n}x_{i} y_{i}  -\sum _{i=1}^{n}x_{i}^{2} \sum _{i=1}^{n}y_{i}   }{n\sum _{i=1}^{n}x_{i}^{2}  -\left(\sum _{i=1}^{n}x_{i}  \right)^{2} } .  
+%\end{equation} 
+%Dosaená hodnota $\epsilon$ urèuje kvalitu proloení. Pokud by pro prokládanou pøímku platilo $\beta$ = 0, pak nelze provést dìlení rovnice pøímky hodnotou $\beta$. V takovém pøípadì lze ovšem dìlit hodnotou $\alpha$, co dává rovnici \textit{x} + \textit{by} + \textit{c} = 0. Tento pøípad lze øešit analogicky jako pøípad pøedchozí. Vısledné vztahy pro \textit{b},\textit{c} vycházejí podobnì - postaèí zamìnit \textit{a} za \textit{b} a prohodit \textit{xi} a \textit{yi}. V praxi zpravidla dopøedu nevíme, kterı z obou pøípadù nastane. Mùeme proto vypoèítat hodnoty jmenovatele ve vzorcích pro obì varianty a pouít tu, pro ní je absolutní hodnota jmenovatele vìtší. 
+
+%\noindent Pøi proloení krunice vyjdeme z rovnice krunice (\textit{x} $-$ \textit{a})2 + (\textit{y} $-$ \textit{b})2 $-$ \textit{r}2 = 0, kde \textit{a},\textit{b} jsou hledané souøadnice støedu krunice a \textit{r} je její polomìr. Metodou nejmenších ètvercù lze snadno odvodit øešení, kdy minimalizujeme souèet ètvrtıch mocnin vzdáleností zadanıch bodù od prokládané krunice. Minimalizujeme tedy hodnotu
+%\begin{equation} \label{GrindEQ__8_63_} 
+%\varepsilon =\sum _{i=1}^{n}\left[\left(x_{i} -a\right)^{2} +\left(y_{i} -b\right)^{2} -r^{2} \right]^{2}  .  
+%\end{equation} 
+%Poloíme-li $\partial$$\epsilon$/$\partial$\textit{a} = 0, $\partial$$\epsilon$/$\partial$\textit{b} = 0,  $\partial$$\epsilon$/$\partial$\textit{r} = 0, pak po zdlouhavém vıpoètu obdríme vısledek
+
+% , \eqref{GrindEQ__8_64_}
+% , \eqref{GrindEQ__8_65_}
+% , \eqref{GrindEQ__8_66_}
+
+%\noindent kde ,
+
+% ,
+% ,
+% .
+
+%\noindent Proloení krunice nebo kruhového oblouku mùe bıt uiteèné i tehdy, jestlie køivky, které z obrazu extrahujeme, nemají tvar krunice. Proloením krunice nìkolika po sobì jdoucími body køivky mùeme získat aproximaci oskulaèní krunice. Pøevrácená hodnota polomìru oskulaèní krunice je rovna køivosti køivky. Prùbìh køivosti podél køivky je vıznamnou informací, která, jak ukáeme v kapitole 9, mùe bıt vyuita i pøi rozpoznání.
+
+%\noindent 
+
+\subsection{Houghova transformace}
+
+Pøedpokládejme, e jsme ji pomocí nìkteré z metod z podkapitoly \ref{sec:detekce_hran} rozhodli, které body obrazu povaujeme za body hran.
+Nyní chceme ovìøit, zda jsou body hran v obraze poloeny tak, e naznaèují existenci pøímek (úseèek) v obraze.
+Metoda, kterou zde popíšeme, byla navrena Houghem a pozdìji zdokonalena Dudou a Hartem \cite{Duda72}.
+Metoda je známa pod názvem Houghova transformace. Uvaujme rovnici pøímky ve tvaru (obr. \ref{img:8_19})
+\begin{equation} \label{eq:8_67}
+    \rho = x\cos \varphi + y\sin \varphi \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_19.pdf}
+    \end{center}
+    \caption{\dvojt Houghova transformace: Body leící na pøímce}
+    \label{img:8_19}
+\end{figure}
+
+\noindent
+Pro pøímku procházející bodem $Q$ reprezentovanım vektorem $(x_Q,y_Q)$ pak platí $\rho = x_Q \cos \varphi + y_Q \sin \varphi$.
+Uvaujme nyní prostor $\varphi$, $\rho$. V tomto prostoru odpovídá kadé pøímce procházející bodem $Q$ jedinı bod.
+Svazku pøímek procházejících bodem $Q$ pak v tomto prostoru odpovídá sinusoida $\rho = x_Q \cos \varphi + y_Q \sin \varphi$.
+Mìjme nyní v obraze napø. body $A$, $B$, $C$, $D$, $E$, které leí na pøímce (obr. \ref{img:8_19}).
+Svazkùm monıch pøímek v tìchto bodech odpovídají v prostoru $\varphi$, $\rho$ sinusoidy $A$, $B$, $C$, $D$, $E$ (obr. \ref{img:8_20}).
+Obrazem pøímky, na které leí body $A$, $B$, $C$, $D$, $E$ (tedy pøímky, která je spoleèná všem svazkùm),
+je v prostoru $\varphi$, $\rho$ bod, v nìm se sinusoidy $A$, $B$, $C$, $D$, $E$ protínají.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_20.pdf}
+    \end{center}
+    \caption{\dvojt Bodùm leícím na pøímce odpovídá v prostoru $\varphi$, $\rho$ prùseèík sinusoid}
+    \label{img:8_20}
+\end{figure}
+
+Dosud provedené úvahy vedou k následujícímu postupu vıpoètu. Rozdìlme prostor $\varphi$, $\rho$ na oblasti.
+Nech napø. dvojice $i$, $j$ oznaèuje v prostoru $\varphi$, $\rho$ obdélníkovou oblast,
+pro ni platí $\varphi_{i-1} \leq \varphi < \varphi_{i}$, $\rho_{j-1} \leq \rho < \rho_j$.
+Zaveïme nad takto diskretizovanım prostorem $\varphi$, $\rho$ dvourozmìrnı histogram $h(i,j)$.
+Poèáteèní hodnota $h(i,j)$ je pro všechna $(i,j)$ nula. Nyní probírejme všechny pixely obrazu.
+Pro kadı pixel $Q=(x_Q,y_Q)$, kde v obraze nalezneme hranu (pøedpokládáme, e neznáme její smìr),
+sestrojíme v prostoru $\varphi$, $\rho$ sinusoidu (obr. \ref{img:8_21}).
+Pøi tom v histogramu inkrementujeme hodnoty $h(i,j)$ pro ty oblasti $(i,j)$, kterımi sinusoida prochází.
+Po skonèení tohoto procesu $h(i,j)=n$ popisuje skuteènost, e na pøímce charakterizované hodnotami
+$\varphi \in \langle \varphi_{i-1}, \varphi_i)$, $\rho \in \langle \rho_{j-1}, \rho_j)$ leí v obraze $n$ bodù, které byly povaovány za hrany.
+Pomocí Houghovy transformace tak mùeme zjistit, e v obraze leí v jedné pøímce vysokı poèet bodù hran.
+V pøípadì potøeby je toto zjištìní moné dále doplnit analızou, jak jsou detekované body rozloeny podél nalezené pøímky.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_21.pdf}
+    \end{center}
+    \caption{\dvojt Bodùm leícím na pøímce odpovídá vysoká hodnota v histogramu}
+    \label{img:8_21}
+\end{figure}
+
+Jestlie v~jednotlivıch bodech obrazu dokáeme hranu nejen detekovat, ale také dostateènì spolehlivì urèit její smìr, pak lze popsanou metodu zjednodušit.
+Nech $x$, $y$ je bod hrany a $\psi$ smìr hrany v tomto bodì.
+Potom podle vztahu $\rho = x \cos(\psi-\pi/2) + y \sin(\psi-\pi/2)$ mùeme ihned vypoèítat odpovídající hodnotu $\rho$.
+V tomto pøípadì tedy místo generování sinusoidy generujeme pouze jednotlivé body a histogram inkrementujeme pouze v jediné oblasti.
+Na závìr poznamenejme, e Houghovu transformaci lze zobecnit také na køivky.
+Protoe poèet hledanıch parametrù køivky udává potøebnı rozmìr histogramu, jedná nejèastìji o køivky se dvìma, nejvıše tøemi parametry.
+
+
+\subsection{Cannyho detektor hran}
+%=================================
+Popisovanı detektor hran byl publikován Cannym \cite{Canny83}, \cite{Canny86} a pozdìji detailnì studován mnoha dalšími autory.
+Pøi návrhu detektoru vycházel Canny z~toho, e starší detektory hran byly konstruovány více èi ménì intuitivnì, a formuloval proto poadavky, které by mìl detektor splòovat.
+K~nalezení detektoru pak pøistoupil jako k~optimalizaèní úloze (tj. hledal detektor, kterı vytyèené poadavky splòuje co nejlépe).
+Cannym navrené poadavky byly následující:
+1) minimalizovat pravdìpodobnost chybné detekce,
+2) najít polohu hrany v obraze co nejpøesnìji,
+3) bod hrany identifikovat jednoznaènì.
+Postup, kterı vede k~návrhu odpovídajícího filtru, popíšeme podrobnìji.
+Budeme moná pøekvapeni, e naznaèenı dùmyslnı pøístup povede nakonec k detektoru gradientního typu.
+Poznamenejme ještì, e odvození Cannyho detektoru je moná pomìrnì zdlouhavé.
+Je však zajímavé a pouèné. Cannyho detektor bıvá dnes ji standardní souèástí kadé knihovny pro zpracování obrazu.
+K vyuití detektoru není zapotøebí znát postup odvození podrobnì.
+Znalost vıchozích principù ale umoní pouívat detektoru s vìtší jistotou.
+
+Pøedpokládejme nejprve, e vstupní signál je jednorozmìrnı (získané vısledky pozdìji zobecníme i na signály dvojrozmìrné).
+Matematickım modelem hrany ve vstupním signálu (ve shodì s pùvodním pramenem oznaèíme vstupní signál $I(x)$) je skok vıšky $A$ umístìnı do poèátku.
+Doplnìn je dále aditivní šum $n(x)$ (obr. \ref{img:8_13}).
+Pøedpokládáme, e šum je bílı s~nulovou støední hodnotou. Vstupní signál má tedy tvar
+\begin{equation} \label{eq:8_25}
+    I(x) = Au_{-1}(x) + n(x) \, , \quad \mathrm{kde} \quad u_{-1}(x) = \left\{ \begin{array}{ccc}
+    0 & \mathrm{pro} & x < 0 \\
+    1 & \mathrm{pro} & x \geq 0
+    \end{array}\right. .
+\end{equation}
+Pøedpokládáme, e hranovı operátor bude zaloen na vıpoètu konvoluce vstupního signálu s~funkcí $f$(x).
+Tuto funkci, kterou zatím neznáme, stanovíme tak, aby byla co nejlépe splnìna kriteria formulovaná v~úvodu této podkapitoly.
+Oznaème $O(x_0)$ signál, kterı je vısledkem konvoluce. Podle definice konvoluce máme
+\begin{equation} \label{eq:8_26}
+    O(x_0) = \int\limits_{-\infty}^{\infty} I(x_0 - x) f(x)\, \dif x .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_13.pdf}
+    \end{center}
+    \caption{\dvojt Prùbìh signálu ve smìru napøíè hranou}
+    \label{img:8_13}
+\end{figure}
+
+Nejprve vyhodnotíme, jakı vıstup v bodì $x_0 = 0$ odpovídá skoku velikosti $A$ (bez šumu).
+Dosazením rovnice \eqref{eq:8_25} do rovnice \eqref{eq:8_26} a poloením $n(x) = 0$, $x_0 = 0$ dostaneme
+\begin{equation} \label{eq:8_27}
+    \int\limits_{-\infty}^{\infty} Au_{-1}(-x)f(x)\, \dif x = A \int\limits_{-\infty}^{0} f(x)\, \dif x \, .
+\end{equation}
+Dále vypoèítáme støední hodnotu ètverce signálu, kterı na svém vıstupu poskytuje operátor v bodì $x_0 = 0$,
+jestlie je na vstup pøiloen pouze šum $n(x)$. Dostaneme 
+\begin{equation} \label{eq:8_28}
+    \mathrm{E} \left\{ \left[ \int\limits_{-\infty}^{\infty} n(-x)f(x)\, \dif x \right]^2 \right\}
+    = \int\limits_{-\infty}^{\infty} \mathrm{E} \left\{ n^2(-x) \right\} f^2(x)\, \dif x = n_0^2 \int\limits_{-\infty}^{\infty} f^2(x)\, \dif x \, .
+\end{equation}
+Pøi úpravì vıše uvedeného vztahu jsme se opírali o pøedpoklad, e $n(x)$ je bílı šum s~nulovou støední hodnotou a e tedy pro všechna $x_1 \neq x_2$ platí $\mathrm{E}\{n(x_1)n(x_2)\} = 0$.
+Dále jsme pøedpokládali, e hodnota $\mathrm{E}\{n^2(x)\}$ je pro všechna $x$ konstatní, a poloili jsme proto $\mathrm{E}\{n^2(x)\} = n_0^2$ (jedná se o disperzi šumové sloky vstupního signálu).
+Definujme pomìr signál/šum (\textit{SNR}) jako podíl odezvy na skok velikosti $A$ ku odmocninì støední hodnoty ètverce odezvy na šum.
+Pro hodnocení pravdìpodobnosti chybné detekce dále zaveïme míru $\Sigma = n_0 { SNR / A}$, která je závislá pouze na hledané funkci $f(x)$, nikoli na velikosti vstupního signálu. Máme tedy
+\begin{equation} \label{eq:8_29}
+    SNR = \frac{A \int\limits_{-\infty}^{0} f(x)\,\dif x}{n_0 \sqrt{\int\limits_{-\infty}^{\infty} f^2(x)\,\dif x}} \, , \quad
+    \Sigma = \frac{n_0}{A} SNR = \frac{\int\limits_{-\infty}^{0} f(x) \, \dif x}{\sqrt{\int\limits_{-\infty}^{\infty}f^2(x) \, \dif x}} \, .
+\end{equation}
+
+Pøi detekci hrany právì konstruovanım hranovım operátorem budeme za hranu povaovat místo, kde operátor (konvoluce s $f$) dává nejvìtší hodnotu.
+V pøípadì hrany umístìné do poèátku by to teoreticky mìlo bıt místo $x_0 = 0$. Šum však zpùsobí, e tomu tak nebude zcela pøesnì.
+Nalezneme proto místo, kde vıstup operátoru nabıvá extrému. K~tomu vypoèítáme první derivaci vıstupního signálu a poloíme ji rovnu nule
+\begin{equation} \label{eq:8_30}
+    \frac{\dif}{\dif x_0} O(x_0) = O'(x_0) = \frac{\dif}{\dif x_0} \int\limits_{-\infty}^{\infty} I(x_0 - x) f(x) \, \dif x = 0 \, .
+\end{equation}
+Pro derivování konvoluce máme
+\begin{eqnarray} \label{eq:8_31}
+    \frac{\dif}{\dif x_0} \int\limits_{-\infty}^{\infty} I(x_0 - x) f(x)\, \dif x &=& \frac{\dif}{\dif x_0} \int\limits_{-\infty}^{\infty} I(x)f(x_0 - x)\, \dif x \\
+    &=& \int\limits_{-\infty}^{\infty} I(x) f'(x_0 - x)\, \dif x = \int\limits_{-\infty}^{\infty} I(x_0 - x) f'(x) \, \dif x \, .\nonumber
+\end{eqnarray}
+Vıstup rozdìlíme na sloku odpovídající skoku umístìnému do poèátku a na sloku odpovídající šumu.
+Tyto sloky oznaèíme postupnì $O_s$, $O_n$. Derivace odezvy na skok má v bodì $x_0$ velikost
+\begin{equation} \label{eq:8_32}
+    O_s'(x_0) = \int\limits_{-\infty}^{\infty} Au_{-1}(x_0 - x) f'(x)\, \dif x = A \int\limits_{-\infty}^{x_0} f'(x)\, \dif x = A f(x_0) \, .
+\end{equation}
+Derivaci $O'_s(x_0)$ odezvy na skok rozvineme kolem poèátku v Taylorovu øadu.
+Pøedpokládáme pøi tom, e hledaná funkce $f(x)$ bude antisymetrická, a e proto bude platit $f(0) = 0$
+(pokud by to nebyla pravda, øešení bychom nenalezli). Dostaneme
+\begin{equation} \label{eq:8_33}
+    O_s'(x_0) = Af(x_0) = Af(0) + x_0 Af'(0) = x_0Af'(0) \, .
+\end{equation}
+Derivací odezvy hranového operátoru na šum bude náhodná promìnná s nulovou støední hodnotou a s variancí dle vztahu
+\begin{equation} \label{eq:8_34}
+    \mathrm{E} \left\{ O_n'^2(x_0) \right\}
+    = \mathrm{E} \left\{ \left[ \int\limits_{-\infty}^{\infty} n(x_0 - x) f'(x)\, \dif x \right]^2 \right\}
+    = n_0^2 \int\limits_{-\infty}^{\infty} f'^2(x)\, \dif x \, .
+\end{equation}
+Pro podmínku extrému pak máme
+\begin{equation} \label{eq:8_35}
+    O'(x_0) = O_s'(x_0) + O_n'(x_0) = 0 \quad \mathrm{a \, tedy} \quad O_s'(x_0) = -O_n'(x_0) \, .
+\end{equation}
+Z pøedchozí rovnice pak dále plyne
+\begin{equation} \label{eq:8_36}
+    \mathrm{E} \left\{ O_s'^2(x_0) \right\} = \mathrm{E} \left\{ O_n'^2(x_0) \right\} \,.
+    %\mathrm{E} \left\{ O_s'^2(x_0) \right\} = \mathrm{E} \left\{ O_n'^2(x_0) + O_s'(x_0) \right\}.
+\end{equation}
+Dosazením vztahù \eqref{eq:8_33} a \eqref{eq:8_34} do rovnice \eqref{eq:8_36} dostaneme:
+\begin{equation} \label{eq:8_37}
+    \mathrm{E} \left\{ x_0^2 \right\} = \frac{n_0^2 \int\limits_{-\infty}^{\infty} f'^2(x)\, \dif x}{A^2 f'^2(0)} = \sigma_{x_0}^2 \, .
+\end{equation}
+V pøedchozím vıraze jsme oznaèení $\sigma_{x_0}$ pouili pro aproximaci smìrodatné odchylky polohy
+maxima na vıstupu operátoru od skuteèné polohy skoku, kterı leí v poèátku.
+Schopnost operátoru správnì lokalizovat hranu hodnotíme podle pøevrácené hodnoty této odchylky.
+Zavedeme míru $\Lambda = n_0/(\sigma_{x_0} A)$, která závisí pouze na vlastnostech hranového operátoru a nikoli na signálu.
+S vyuitím vztahu \eqref{eq:8_37} dostaneme
+\begin{equation} \label{eq:8_38}
+    \Lambda = \frac{|f'(0)|}{\sqrt{\int\limits_{-\infty}^{\infty} f'^2(x)\, \dif x}} \, .
+\end{equation}
+Vıkonnost hranového operátoru pak hodnotíme souèinem $\Sigma\Lambda$.
+S vyuitím vztahù \eqref{eq:8_29}, \eqref{eq:8_38} máme
+\begin{equation} \label{eq:8_39}
+    \Sigma \Lambda = \frac{\int\limits_{-\infty}^{0} f(x)\, \dif x}{\sqrt{\int\limits_{-\infty}^{\infty} f^2(x)\, \dif x}} 
+    \frac{|f'(0)|}{\sqrt{\int\limits_{-\infty}^{\infty} f'^2(x)\, \dif x}} \, .
+\end{equation}
+Poslední podmínkou je, aby jedné hranì odpovídalo pokud mono jediné maximum na vıstupu operátoru.
+Tento poadavek vyjádøíme jako poadavek na funkci $f(x)$.
+Vyuijeme pomocného tvrzení, které uvedeme bez dùkazu a které øíká, e støední vzdálenost $x_{zc}$ mezi dvìma prùchody
+nulou odezvy funkce $g$ na gaussovskı šum je dána vırazem (odezvou se rozumí konvoluce funkce $g$ s šumem) 
+\begin{equation} \label{eq:8_40}
+    x_{zc} = \pi \left( \frac{-R(0)}{R''(0)} \right)^{\frac{1}{2}},
+\end{equation}
+kde $R(\tau)$ je autokorelaèní funkce funkce $g$. Snadno ovìøíme, e platí (pøedpokládáme $g(-\infty)= g(\infty) = 0$)
+\begin{equation} \label{eq:8_41}
+    R(0) = \int\limits_{-\infty}^{\infty} g^2(x)\, \dif x, \quad R''(0) = \int\limits_{-\infty}^{\infty} g(x) g''(x)\, \dif x = - \int\limits_{-\infty}^{\infty} g'^2(x)\, \dif x \, .
+\end{equation}
+V našem pøípadì hledáme støední vzdálenost $x_{zc}$ mezi dvìma prùchody nulou odezvy funkce $f'$.
+Ze vztahù \eqref{eq:8_40}, \eqref{eq:8_41} dostaneme
+\begin{equation} \label{eq:8_42}
+    x_{zc} = \pi \left( \frac{\int\limits_{-\infty}^{\infty} f'^2(x)\, \dif x}{\int\limits_{-\infty}^{\infty} f''^2(x)\, \dif x} \right)^{\frac{1}{2}}.
+\end{equation}
+Vzdálenost $x_{\max}$ mezi dvìma pøilehlımi maximy odezvy funkce na šum je dvojnásobkem $x_{zc}$.
+Tuto hodnotu vyjádøíme relativnì vzhledem k šíøce operátoru. Šíøkou operátoru rozumíme interval $\langle-W, W\rangle$.
+Na tomto intervalu pøedpokládáme funkèní hodnoty $f$ nenulové (mimo tento interval pøedpokládáme funkèní hodnoty nulové;
+dále pøipomeòme, e funkci $f$ pøedpokládáme antisymetrickou). Je tedy
+\begin{equation} \label{eq:8_43}
+    x_{\max} = 2 x_{zc} = kW \, .
+\end{equation}
+Schopnost detektoru identifikovat hranu jednoznaènì bude tím lepší, èím vyšší bude hodnota $k$.
+Dosud neznámá funkce $f$ by tedy mìla maximalizovat vıraz \eqref{eq:8_39} a pøi tom dávat pokud mono co nejvyšší hodnotu $k$.
+V \cite{Canny83} je popsáno øešení zaloené na maximalizaci funkcionálu \eqref{eq:8_39}.
+Jsou postupnì voleny rùzné hodnoty $k$ (0.075 a 0.7) a rovnice \eqref{eq:8_43} je pouita jako doplòující podmínka.
+Pro kadou hodnotu $k$ je numerickou optimalizací stanovena funkce $f$.
+Na základì takto získanıch vısledkù je ukázáno, e pro vyšší hodnoty $k$ (co je prakticky zajímavı pøípad)
+lze hledanou funkci $f$ dosti dobøe aproximovat pomocí první derivace gaussiánu.
+Na tuto monost se dále zamìøíme. Pøipomeòme, e gaussián je definován pøedpisem
+\begin{equation} \label{eq:8_44}
+    G(x) = \exp \left( - \frac{x^2}{2\sigma^2} \right) \, .
+\end{equation}
+Funkce $f$ má tedy tvar
+\begin{equation} \label{eq:8_45}
+    f(x) \approx G'(x) = -\frac{x}{\sigma^2} \exp \left( - \frac{x^2}{2\sigma^2} \right) \, .
+\end{equation}
+Pro vıše uvedenou aproximaci funkce $f$ vypoèteme následující hodnoty \cite{Canny83}
+\begin{equation} \label{eq:8_46}
+    |f'(0)| = \frac{1}{\sigma^2} \, , \; \int\limits_{-\infty}^{0} f(x)\,\dif x = 1 \, , \; \int\limits_{-\infty}^{\infty} f^2(x)\, \dif x = \frac{\sqrt{x}}{2\sigma} \, ,
+\end{equation}
+\begin{equation}
+    \int\limits_{-\infty}^{\infty} f'^2(x)\, \dif x = \frac{3\sqrt{\pi}}{4\sigma^3} \, , \; \int\limits_{-\infty}^{\infty} f''^2(x)\,\dif x = \frac{15\sqrt{\pi}}{8\sigma^5} \, .\nonumber
+\end{equation}
+Odtud pak index $\Sigma\Lambda$ vıkonnosti operátoru a hodnota $k$ pro operátor $f(x) = G'(x)$ vychází
+\begin{equation} \label{eq:8_47}
+    \Sigma\Lambda = \sqrt{\frac{8}{3\pi}} = 0.92 \quad \mathrm{a} \quad k = \sqrt{\frac{4}{15}} = 0.51 \, .
+\end{equation}
+Zjištìné hodnoty jsou jen o málo menší ne hodnoty pro operátor optimální. Podstatnou vıhodou pouití gaussiánu je ale snadnı vıpoèet.
+
+A doposud jsme se soustøedili na jednorozmìrnı pøípad. Zbıvá ukázat, jak pracuje Cannyho detektor v pøípadì dvojrozmìrném.
+Pøedpokládejme nejprve, e máme hledat hrany známého smìru. Ve smìru napøíè hranou pouijeme konvoluci s právì nalezenou funkcí $f$.
+Ve smìru podél hrany uplatníme projekci. Jestlie je $f$  aproximována derivací gaussiánu, pak je vıhodné,
+aby funkcí realizující projekci byl rovnì gaussián (projekce bude poèítána jako konvoluce s gaussiánem).
+Jako obvykle není zapotøebí vıpoèet provádìt pro všechny moné smìry hran, ale postaèí jej provést pro dva smìry (napø. $x$, $y$).
+Nech $I(x,y)$ je obrazová funkce. Pro hrany rovnobìné s osou $y$ a hrany rovnobìné s osou $x$ pak dává hranovı operátor následující hodnoty
+\begin{equation} \label{eq:8_48}
+    [ I(x, y) \ast G(y)] \ast G_x(x) = \frac{\partial}{\partial x} \left\{ I(x, y) \ast \left[ G(x)G(y) \right] \right\} = E_x(x, y) \, ,
+\end{equation}
+\begin{equation} \label{eq:8_49}
+    [ I(x, y) \ast G(x)] \ast G_y(y) = \frac{\partial}{\partial y} \left\{ I(x, y) \ast \left[ G(x)G(y) \right] \right\} = E_y(x, y) \, .
+\end{equation}
+V uvedenıch vırazech realizuje první èlen v hranatıch závorkách projekci.
+Vıstupem dvojrozmìrného detektoru hran je vektorové pole $\mathbf{E}(x,y) = (E_x(x,y), E_y(x,y))$.
+Pro velikost a smìr hrany máme
+\begin{equation} \label{eq:8_50}
+    |\mathbf{E}(x, y)| = \sqrt{E_x^2(x, y) + E_y^2(x, y)} \, , \;\; \varphi(x, y) = \arctan(E_y(x, y) / E_x(x, y)) + \pi / 2 \, .
+\end{equation}
+Øekneme, e v nìjakém bodì obrazu je hrana, jestlie $|\mathbf{E}(x,y)|$ v tom bodì nabıvá lokálního extrému (pøipomeòme, e jsme se snaili,
+aby jedné hranì pøíslušelo pouze jediné maximum) a jestlie je hodnota $|\mathbf{E}(x,y)|$ v tom bodì dostateènì veliká.
+Pøedpokládejme nyní, e je obraz popsán diskrétní obrazovou funkcí. Zamìøme se nejdøíve na první podmínku.
+Bod $(x,y)$ mùe bıt bodem hrany jen tehdy, jestlie platí (obr. \ref{img:8_14})
+\begin{equation} \label{eq:8_51}
+    |\mathbf{E}_{-\theta}| < |\mathbf{E}(x, y)| > |\mathbf{E}_{+\theta}| \, .
+\end{equation}
+Hodnoty $|\mathbf{E}_{+\theta}|$, $|\mathbf{E}_{-\theta}|$ stanovíme interpolací (obr. \ref{img:8_14}).
+Napø. leí-li smìr gradientu v prvním oktantu, pak máme
+\begin{equation} \label{eq:8_52}
+    |\mathbf{E}_{+\theta}| = \alpha |\mathbf{E}(x+1, y+1)| + (1 - \alpha) |\mathbf{E}(x+1, y)| \, ,
+\end{equation}
+\begin{equation} \label{eq:8_53}
+    |\mathbf{E}_{-\theta}| = \alpha |\mathbf{E}(x-1, y-1)| + (1 - \alpha) |\mathbf{E}(x-1, y)| \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_14.pdf}
+    \end{center}
+    \caption{\dvojt K rozhodnutí maxima}
+    \label{img:8_14}
+\end{figure}
+
+\noindent
+Vıznam hodnoty $\alpha$ je patrnı z obr. \ref{img:8_14}. Podobné vztahy lze snadno odvodit i pro zbıvající oktanty.
+Podmínku, e hodnota $|\mathbf{E}(x,y)|$  má bıt v bodì hrany dostateènì velká, lze realizovat prahováním.
+Úèinné je prahování s hysterezí, pøi nìm se pouívá dvou hodnot prahu $t_{\mathrm{low}}$, $t_{\mathrm{high}}$.
+Za body hrany jsou nejprve oznaèeny všechny pixely, kde je velikost hrany vìtší ne $t_{\mathrm{high}}$.
+Dále jsou pak za body hrany oznaèeny také ty pixely, kde je velikost hrany vìtší ne $t_{\mathrm{low}}$
+(ale menší ne $t_{\mathrm{high}}$) a které sousedí s pixelem, kterı byl ji døíve oznaèen za bod hrany.
+Tento krok lze opakovat nìkolikrát.
+
+
+\subsection{Parametrické modely hrany}
+%=====================================
+Øeknìme, e máme rozhodnout, zda je v~obraze v místì o souøadnicích $(x,y)$ hrana.
+V~pozitivním pøípadì máme stanovit také její velikost a smìr.
+Mùeme to provést tak, e jistım poètem funkèních hodnot obrazové funkce $f(x,y)$ z~okolí bodu $(x,y)$ proloíme vhodnou plochu, která prùbìh obrazové funkce aproximuje.
+O existenci hrany pak rozhodneme a její parametry stanovíme na základì vyšetøování prùbìhu aproximující funkce.
+Aby se potlaèil vliv šumu, prokládá se aproximaèní funkce zpravidla vìtším poètem funkèních hodnot obrazové funkce, ne je nejniší teoreticky nutnı poèet.
+Proloení lze realizovat minimalizací souètu ètvercù diferencí funkèních hodnot aproximaèní funkce od funkèních hodnot obrazové funkce ve zvolenıch bodech.
+
+Nejjednodušší plochou, kterou lze jako modelu hrany pouít, je rovina $z = ax + by + c$.
+Nalezneme-li rovinu aproximující prùbìh obrazové funkce v~daném místì, pak snadno získáme velikost hrany
+$e(x,y) = |\mathrm{grad}(ax + by + c )| = \surd(a^2 + b^2 )$ a také její smìr $\varphi(x,y) = \arctan(b/a) + \pi/2$.
+Rovinu mùeme nalézt napø. tak, aby co nejlépe aproximovala prùbìh obrazové funkce ve ètyøech bodech $f(x,y)$, $f(x+1,y)$, $f(x,y+1)$ a $f(x+1,y+1)$.
+Neznámé hodnoty $a$, $b$, $c$ nalezneme minimalizací chyby
+$\varepsilon = [ax+by+c - f(x,y)]^2 + [a(x+1)+by+c - f(x+1,y)]^2 + [ax+b(y+1)+c - f(x,y+1)]^2 + [a(x+1)+b(y+1)+c - f(x+1,y+1)]^2$
+uplatnìním podmínek $\partial \varepsilon / \partial a = 0$, $\partial \varepsilon / \partial b = 0$, $\partial \varepsilon / \partial c = 0$.
+
+Dále ukáeme pøípad, kdy je jako model hrany pouita dùmyslnìjší plocha.
+Pøedpokládejme napø., e v øezu napøíè hranou má jas prùbìh, kterı je dobøe vystien funkcí
+\begin{equation} \label{eq:8_22}
+    B + ( A - B ) \Phi(\xi, \sigma) \, .
+\end{equation}
+Vıznam parametrù $A$, $B$ objasòuje obr. \ref{img:8_11}. Funkce $\Phi(\xi, \sigma)$ je integrálem gaussiánu. Je tedy
+\begin{equation} \label{eq:8_23}
+    \Phi(\xi, \sigma) = \int\limits_{t=-\infty}^{\xi} G(t, \sigma)\, \dif t, \quad \mathrm{kde} \quad 
+    G(t, \sigma) = \frac{1}{\sigma \sqrt{2 \pi}}\exp \left( - \frac{t^2}{2\sigma^2} \right) \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_11.pdf}
+    \end{center}
+    \caption{\dvojt Parametrickı model hrany (prùbìh jasu napøíè hranou)}
+    \label{img:8_11}
+\end{figure}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_12.pdf}
+    \end{center}
+    \caption{\dvojt Parametrickı model hrany (pohled shora)}
+    \label{img:8_12}
+\end{figure}
+
+\noindent
+Abychom pøešli k dvojrozmìrnému pøípadu, uvame, e $\mathbf{nx} = \rho$, kde $\mathbf{n} = (-\sin \varphi, \cos \varphi)$,
+$\mathbf{x} = (x,y)$, je rovnice pøímky $l$ (obr. \ref{img:8_12}).
+Jestlie bod reprezentovanı vektorem $\mathbf{x}$ na pøímce $l$ neleí,
+pak vzdálenost bodu od pøímky je $\xi = \mathbf{nx} - \rho = -x \sin \varphi + y \cos \varphi - \rho$.
+Pøedpokládáme-li, e hrana leí na pøímce $l$, pak lze prùbìh jasu v okolí bodu hrany dobøe aproximovat funkcí
+\begin{equation} \label{eq:8_24}
+    B + (A - B) \Phi( - x \sin \varphi + y \cos \varphi - \rho, \sigma) \, .
+\end{equation}
+Celkem má tedy popsanı model pìt parametrù $A$, $B$, $\sigma$, $\varphi$, $\rho$.
+Hodnota $(A-B)$ urèuje velikost (vıšku) hrany, parametr $\sigma$ její strmost a parametr $\varphi$ smìr hrany v bodì \textbf{x}.
+Parametry lze urèit na základì podmínky, aby se v jistému poètu bodù (pixelù) leících v okolí bodu \textbf{x}
+hodnoty funkce \eqref{eq:8_24} co nejvíce pøimykaly skuteènım hodnotám obrazové funkce.
+Nejmenší poèet bodù umoòující úlohu øešit je pìt. S ohledem na redukci šumu je však vıhodnìjší volit poèet bodù vyšší.
+Pro hledané parametry lze pak sestavit pøedeterminovanı systém, kterı je moné øešit minimalizací chyby.
+Jistou komplikací ovšem je, e se jedná o problém nelineární. K jeho øešení je proto zapotøebí pouít numerickıch metod.
+
+
+
+%\noindent \textbf{8.1.5  Stanovení hran na základì textury}
+
+%\noindent V tomto odstavci se zamìøíme na detekci hran tvoøenıch náhlou zmìnou textury ve vyšetøovaném obraze. Jednoduché je øešení, které pøedpokládá, e v dùsledku rozdílnosti textur po obou stranách hrany je rozdílná také støední hodnota jasu v oblastech pøiléhajících k hranì. Nech \textit{f} (\textit{r})(\textit{x},\textit{y}) oznaèuje støední hodnotu jasu v kruhovém okolí bodu (\textit{x},\textit{y}). Polomìr okolí je \textit{r}. Pøedpokládejme, e v obraze máme hranu, její smìr je $\varphi$ + $\pi$/2. Umístìme dvì taková okolí \textit{f} (\textit{r})(\textit{xL},\textit{yL}), \textit{f} (\textit{r})(\textit{xR},\textit{yR}) nalevo a napravo od hrany (obr.8.15) a urèeme diferenci 
+
+% \textit{f}$\varphi$(\textit{r})(\textit{x},\textit{y}) = $\mid$ \textit{f} (\textit{r})(x\textit{R},y\textit{R}) $-$ \textit{f} (\textit{r})(\textit{xL},\textit{yL}) $\mid$ \eqref{GrindEQ__8_54_}
+
+%  = $\mid$ \textit{f} (\textit{r})(\textit{x} + \textit{r} cos$\varphi$, \textit{y} + \textit{r} sin$\varphi$) $-$ \textit{f} (\textit{r})(\textit{x} $-$ \textit{r} cos$\varphi$, \textit{y} $-$ \textit{r} sin$\varphi$) $\mid$.
+
+%\noindent Existence hrany v bodì (\textit{x},\textit{y}) se projeví vysokımi hodnotami \textit{f}$\varphi$(\textit{r})(\textit{x},\textit{y}). Vıraz \eqref{GrindEQ__8_54_} pøedpokládá znalost smìru hrany. Není-li smìr znám, lze vypoèítat diference ve smìru os \textit{x} a \textit{y}, kterıch pak pouijeme stejnì, jak bylo popsáno u metody gradientní. Pro diference a velikost hrany máme
+
+% ,   , \eqref{GrindEQ__8_55_}
+
+% . \eqref{GrindEQ__8_56_}
+
+%\noindent Pøi praktické realizaci je moné nahradit kruhové okolí bodu (\textit{x},\textit{y}) praktiètìjším okolím ètvercovım, pro které lze støední hodnotu obrazové funkce vyjádøit jednoduše vztahem
+
+% . \eqref{GrindEQ__8_57_}
+
+%\noindent 
+
+%\noindent Volba polomìru okolí \textit{r} zaslouí pozornosti. Jestlie je polomìr pøíliš malı, pak není v procesu prùmìrování dostateènì vyhlazen vzorek textury, co zpùsobuje detekci falešnıch hran. Pøíliš velkı polomìr naopak zpùsobí, e nejsou detekovány krátké hrany. Je proto vıhodné stanovit polomìr okolí na základì velikosti nejmenšího objektu, kterı má bıt detekován. Volbu je zpravidla nutné ovìøit experimentem. Naznaème na závìr ještì jeden ponìkud komplikovanìjší postup pro detekci hran z textury. Uvaujme bod (\textit{x},\textit{y}) a jeho dvì okolí tak, jak bylo naznaèeno na obr. 8.15. Pro obì okolí sestrojíme normalizované histogramy \textit{pL}(\textit{z}), \textit{pR}(\textit{z}) jasù. Usuzujeme, e rozdílné histogramy implikují existenci hrany v bodì (\textit{x},\textit{y}). Míru rozdílnosti obou histogramù lze urèit napø. ze vztahu .
+
+%\noindent 
+
+%\noindent \textbf{8.1.6 Hledání hran v barevnıch obrazech}
+
+%\noindent A doposud jsme pøedpokládali, e zpracovávanı obraz je v kadém místì charakterizován jedinou skalární hodnotou - úrovní jasu. Máme-li hledat hrany v barevnıch obrazech, mùeme je pøed zpracováním pøevést na èernobílé a dále je zpracovávat døíve popsanımi postupy. Nevıhodou tohoto pøístupu je ovšem ztráta jisté èásti informace. Proto mùe bıt nìkdy vıhodné zpracovávat barevné obrazy pøímo, bez jejich pøevodu na obrazy èernobílé. Pøedpokládejme, e barva kadého bodu obrazu je popsána trojicí \textit{r},\textit{g},\textit{b} intenzit èervené, zelené a modré barevné sloky. Barevnı obraz je tedy popsán vektorovou obrazovou funkcí
+%\begin{equation} \label{GrindEQ__8_58_} 
+%f(x,y)=\left(r(x,y),g(x,y),b(x,y)\right).  
+%\end{equation} 
+%Pro stanovení hran v barevnıch obrazech mùeme upravit napø. ji døíve popsanou gradientní metodu. Jako velikost hrany mùeme vzít napø. hodnotu
+%\begin{equation} \label{GrindEQ__8_59_} 
+%e\left(x,y\right)=\sqrt{\left|{\rm grad}\left(r(x,y)\right)\right|^{2} +\left|{\rm grad}\left(g(x,y)\right)\right|^{2} +\left|{\rm grad}\left(b(x,y)\right)\right|^{2} } .  
+%\end{equation} 
+%Za smìr hrany mùeme povaovat smìr kolmı k vektoru
+%\begin{equation} \label{GrindEQ__8_60_} 
+%g(x,y)={\rm grad}(r(x,y))+{\rm grad}(g(x,y))+{\rm grad}(b(x,y)).  
+%\end{equation} 
+%Pøi praktické realizaci uvedenıch vztahù opìt nahradíme derivace diferencemi. Na závìr poznamenejme, e podle našich zkušeností jsou vısledky získané analızou barevnıch obrazù sice jednoznaènì lepší ne v pøípadì pøevodu na obraz èernobílı, avšak toto zlepšení není vdy tak vıznamné, aby vyváilo komplikace pøi vıpoètu.
+
+%\noindent 
+
+
+\section{Detekce oblastí} \label{sec:detekce_oblasti}
+
+V podkapitole \ref{sec:detekce_hran} jsme popsali metody segmentace obrazu, které byly zaloeny na detekci hranice oblasti.
+Jiná skupina metod se zamìøuje pøímo na vyhledávání celıch oblastí v obraze.
+Oblasti jsou vyhledávány na základì jistım zpùsobem zvoleného kriteria homogenity oblasti.
+Takovım kriteriem mohou bıt napø. konstantní nebo dosti blízké hodnoty jasu, barvy, pokrytí stejnou texturou atd.
+Protoe ze znalosti hranice dokáeme urèit také vnitøek oblasti a naopak, zdá se, e by metody zaloené na detekci hranic
+i metody zaloené na detekci celıch oblastí mìly bıt vzájemnì rovnocenné.
+U na obr. \ref{img:8_1} jsme však naznaèili, e tomu tak v~praxi nemusí vdy bıt.
+Metody zaloené na detekci oblastí jsou èasto upøednostòovány u dosti zašumìlıch obrazù, kde by detekce hranic byla nespolehlivá.
+(Šumem zde ale myslíme nejen šum vzniklı napø. v kameøe; ten zpravidla není rozhodující.
+Rozhodující bıvá nadbyteèná a neuiteèná, nìkdy také neoèekávaná a obtínì odstranitelná informace v samotné scénì, kterou kamera snímá.
+Pìknım pøíkladem mùe bıt, kdy je objekt zájmu èásteènì pøekryt napø. listím stromu.)
+Metody detekce oblastí lze rozdìlit do tøí základních skupin: 1) detekce prahováním, 2) detekce narùstáním oblastí, 3) detekce dìlením oblastí.
+V následujícím textu se zamìøíme zejména na prahování, a to proto, e ostatní uvedené techniky
+jsou èasto konstuovány heuristicky, a pøesahují tedy rámec tohoto textu.
+%V následujících odstavcích tyto metody popíšeme podrobnìji.
+
+
+\subsection{Prahování}
+%=====================
+Prahování je nejjednodušší metodou detekce celıch oblastí v obraze.
+V nekomplikovanıch pøípadech se pøi tom ale souèasnì jedná o metodu rychlou a spolehlivou.
+Vısledkem prahování je binární obraz, v nìm je bodùm (pixelùm) nalezenıch oblastí obvykle pøiøazena hodnota 1,
+zatímco zbıvajícím bodùm (bodùm pozadí) je pøiøazena hodnota 0.
+Pøi prahování se vychází z pøedpokladu, e body hledanıch oblastí mají stejnı nebo dosti podobnı jas.
+Jedna z monıch realizací prahování spoèívá v tom, e pixel je oznaèen jako bod oblasti, jestlie jeho jas padne do intervalu $\langle a, b\rangle$.
+Velmi èasto je v rozhodovacím kriteriu pouita pouze jediná hodnota $t$ - tzv. práh.
+Body, jejich jas je vyšší ne hodnota prahu, jsou detekovány jako body hledanıch oblastí a body,
+jejich jas je niší, jsou detekovány jako body pozadí (pøípadnì naopak).
+Prahování se tedy dìje na základì pøedpisu
+\begin{equation} \label{eq:8_68}
+    g\left(x,y\right) = \left\{
+    \begin{array}{cc}
+    1, & f\left(x,y\right) \in \left\langle a,b \right\rangle \\
+    0, & \mathrm{jinak}
+    \end{array}\right.
+    \mathrm{nebo} \quad
+    g\left(x,y\right) = \left\{
+    \begin{array}{cc}
+    1, & f\left(x,y\right) \ge t \\
+    0, & \mathrm{jinak}
+    \end{array}\right. .
+\end{equation}
+Úspìšnost prahování závisí na znalosti správné hodnoty prahu. Jestlie tuto hodnotu neznáme,
+je moné pokusit se ji stanovit na základì informací získanıch z obrazu, kterı má bıt segmentován.
+Pro obrazy s bimodálním histogramem (histogramem se dvìma vrcholy) jasu se napø. èasto doporuèuje volit
+jako hodnotu $t$ prahu hodnotu, v ní histogram dosahuje mezi obìma vrcholy minima (obr. \ref{img:8_22}).
+Lze snadno domyslet, e tato heuristická metoda má racionální základ.
+Pøedpokládá toti, e v obraze existují dva druhy pixelù: pixely náleící hledanım oblastem a pixely náleící pozadí.
+Oba druhy pixelù jsou pøi tom relativnì èetné a mají dosti odlišnı jas, co v histogramu dává vzniknout zmínìnım dvìma vrcholùm.
+Nejsou-li na druhé stranì uvedené pøedpoklady splnìny, nemusí bıt vısledky metody uspokojivé. Ne vdy je také histogram bimodální.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_22.pdf}
+    \end{center}
+    \caption{\dvojt Bimodální histogram jasu}
+    \label{img:8_22}
+\end{figure}
+
+V pøípadech, kdy je obraz sice kontrastní, avšak v rùznıch svıch èástech má nerovnomìrnou úroveò jasu,
+nelze èasto najít jedinou hodnotu prahu tak, aby vyhovovala pro všechny èásti obrazu.
+V takovém pøípadì lze pouít prahování s promìnnou hodnotou prahu, kdy se pro rùzná místa obrazu pouívá rùznıch hodnot prahu.
+Metodu lze realizovat tak, e se obraz rozdìlí na nìkolik èástí a pro kadou se najde individuální hodnotu prahu.
+Je-li histogram úrovní jasù vyšetøované èásti obrazu bimodální, lze hodnotu prahu stanovit napø. postupem popsanım v pøedchozím odstavci.
+Jestlie ve vyšetøované èásti obrazu velmi pøevaují buï body oblasti nebo body pozadí,
+pak hodnotu prahu z histogramu uvaované èásti obrazu spolehlivì stanovit nelze.
+V takovém pøípadì lze hodnotu prahu stanovit napø. jako prùmìr hodnot prahù z pøilehlıch oblastí.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_23.pdf}
+    \end{center}
+    \caption{\dvojt Stanovení prahu minimalizací chyby}
+    \label{img:8_23}
+\end{figure}
+
+Ukáeme dále dùmyslnìjší metodu stanovení prahu, která je zaloena na minimalizaci chyby a na vyuití poètu pravdìpodobnosti. Metoda je pìkná.
+Poukazuje na skuteènost, e, pøesnì vzato, nìkdy ani nemusí bıt moné pro kadı pixel správnì rozlišit, zda se jedná o pixel objektu nebo o pixel pozadí.
+Metoda minimalizace chyby je typickım postupem, kterı lze v dané situaci uplatnit.
+Pøedpokládejme, e jasy pixelù oblastí, které mají bıt detekovány, mají normální rozloení hustoty pravdìpodobnosti $p(z)$
+se støední hodnotou $\mu$ a smìrodatnou odchylkou $\sigma$ (obr. \ref{img:8_23}).
+Podobnì pøedpokládáme, e také jasy pixelù pozadí mají normální rozloení hustoty pravdìpodobnosti $q(z)$
+se støední hodnotou $\nu$ a smìrodatnou odchylkou $\tau$ (pøísnì teoreticky vzato nemohou bıt ovšem rozloení normální,
+protoe prakticky jsou jasové úrovnì nenulové pouze v jistém intervalu; mùe se však jednat o dobré pøiblíení).
+Dále pøedpokládejme, e podíl pixelù hledanıch oblastí na celkovém poètu pixelù obrazu je $\theta$ a e platí $\mu > \nu$.
+Pøedpokládejme nyní, e zvolíme práh $t$. Oznaème $P(t)$ pravdìpodobnost jevu, e bod hledané oblasti bude nesprávnì vyhodnocen jako bod pozadí.
+Dále oznaème $Q(t)$ pravdìpodobnost jevu, e bod pozadí bude správnì vyhodnocen jako bod pozadí.
+Pak $1-Q(t)$ je pravdìpodobnost, e bod pozadí bude nesprávnì vyhodnocen jako bod oblasti.
+Pro pravdìpodobnosti $P(t)$ a $Q(t)$ máme (obr. \ref{img:8_23})
+\begin{equation} \label{eq:8_69}
+    P(t) = \int\limits_{-\infty}^{t} p(z)\, \dif z \, , \quad Q(t) = \int\limits_{-\infty}^{t} q(z)\, \dif z \, .
+\end{equation}
+Dále musíme uváit, e pomìrné zastoupení bodù objektu v obraze je $\theta$ a pomìrné zastoupení bodù pozadí v obraze je ($1-\theta$).
+Vısledná pravdìpodobnost chybné klasifikace je pak
+\begin{equation} \label{eq:8_70}
+    \varepsilon = \theta P(t) + (1 - \theta)[1 - Q(t)] \, .
+\end{equation}
+K nalezení minima vıraz \eqref{eq:8_70} derivujeme a derivaci poloíme rovnu nule. Dostaneme
+\begin{equation} \label{eq:8_71}
+    \frac{\partial\varepsilon}{\partial t} = \theta \frac{\partial P(t)}{\partial t} - (1 - \theta) \frac{\partial Q(t)}{\partial t} = \theta p(t) - (1 - \theta)q(t) = 0 \, .
+\end{equation}
+Odtud máme
+\begin{equation} \label{eq:8_72}
+    (1 - \theta) q(t) = \theta p(t) \, .
+\end{equation}
+Podle pøedpokladu mají hustoty pravdìpodobnosti $p(z)$ i $q(z)$ normální rozloení. Je tedy
+\begin{equation} \label{eq:8_73}
+    p(t) = \frac{1}{\sigma\sqrt{2\pi}} \exp \left[ \frac{-(t - \mu)^2}{2\sigma^2} \right] \, , \quad
+    q(t) = \frac{1}{\tau\sqrt{2\pi}} \exp \left[ \frac{-(t - \nu)^2}{2\tau^2} \right] \, .
+\end{equation}
+Dosazením vztahù \eqref{eq:8_73} do \eqref{eq:8_72} a logaritmováním máme
+\begin{equation} \label{eq:8_74}
+    \ln (1 - \theta) - \ln \tau - \frac{(t - \nu)^2}{2\tau^2} = \ln \theta - \ln \sigma - \frac{(t - \mu)^2}{2\sigma^2} \, .
+\end{equation}
+Po úpravì dostaneme
+\begin{equation} \label{eq:8_75}
+    \tau^2 (t - \mu)^2 - \sigma^2 (t - \nu)^2 = 2\sigma^2\tau^2\ln \frac{\tau\theta}{\sigma(1-\theta)} \, .
+\end{equation}
+Vıraz \eqref{eq:8_75} je kvadratickou rovnicí pro $t$. K øešení je zapotøebí znát hodnoty $\mu$, $\sigma$, $\nu$, $\tau$, $\theta$.
+Povšimnìme si blíe ještì pøípadu, kdy  $\theta$ = 1/2  a  $\sigma$ = $\tau$. V tomto pøípadì se rovnice \eqref{eq:8_75} zjednoduší na tvar
+\begin{equation} \label{eq:8_76}
+    (t - \mu)^2 = (t - \nu)^2 \, .
+\end{equation}
+Øešením rovnice \eqref{eq:8_76} je intuitivnì oèekávaná hodnota $t=(\mu+\nu)/2$.
+
+Tøebae jsme metodu v úvodu oznaèili za pìknou, pozornı ètenáø nyní ji pravdìpodobnì vidí urèité nedostatky.
+Metoda pøedpokládá, e hustoty $p(z)$ a $q(z)$ zùstávají nezmìnìné pro všechny zpracovávané obrazy, na ne je pak aplikována stanovená hodnota $t$ prahu.
+To je v praxi ne vdy splnitelné, protoe svìtelné podmínky pøi snímání jednotlivıch obrazù se mohou mìnit.
+Po pravdì je zapotøebí pøipustit, e v praxi bychom hodnotu prahu velmi èasto urèili zkusmo.
+
+
+
+%\noindent \textbf{8.3.2 Metoda spojování oblastí}
+%\noindent Metody zaloené na spojování zaèínají pracovat s malımi oblastmi (dokonce napø. i s jednotlivımi pixely), které postupnì spojují do vìtších oblastí. Proces se iterativnì opakuje tak dlouho, dokud v~obraze existují oblasti, které lze spojovat. Obvyklımi kriterii, která jsou uplatòována pøi rozhodování, zda lze dvì sousedící oblasti spojit do jediné vìtší oblasti, jsou následující: Obì oblasti by mìly mít stejnı nebo podobnı jas, barvu, texturu atd. Mezi obìma oblastmi by nemìla bıt zøetelná hrana (existence slabì zøetelné nebo pøerušované hrany mezi obìma oblastmi se nìkdy ale pøipouští). Spojení oblastí je tím více ádoucí, èím vìtší je délka, podél ní se oblasti vzájemnì dotıkají (délka se mìøí relativnì vzhledem k~rozmìrùm oblastí). Spojení mùe bıt naopak neádoucí v~pøípadì, e by spojením vznikla oblast nevhodného nebo neoèekávaného tvaru. Metodám zaloenım na spojování oblastí byla v~minulosti vìnována znaèná pozornost. Testování vıše uvedenıch kriterií bylo realizováno rùznımi heuristickımi postupy. Metodu spojování oblastí je moné povaovat za metodu úèinnou. Je však nároènìjší na implementaci a zpravidla i na vıpoèetní vıkon poèítaèe.
+
+%\noindent \textbf{8.3.3 Metoda dìlení oblastí}
+%\noindent Tato metoda zpravidla zaèíná s jedinou oblastí tvoøenou celım obrazem a dále opakovanì provádí její dìlení na dílèí oblasti. Proces dìlení pokraèuje tak dlouho, dokud není ve všech vzniklıch oblastech dosaeno splnìní kriteria homogenity. Dále uvedeme dva pøíklady kriteria homogenity.
+%\noindent Dìlení oblasti modální metodou: Èasto pouívanım prostøedkem k posouzení homogenity oblasti je histogram nìkteré její vlastnosti (napø. histogram úrovnì jasù). Vychází se z pøedstavy, e jestlie histogram obsahuje dva nebo více vrcholù (je bimodální nebo multimodální), pak je vyšetøovaná oblast nehomogenní a je nutné ji rozdìlit. K rozdìlení lze opìt vyuít znalosti histogramu. Napø. u bimodálního histogramu lze za dìlící prahovou hodnotu zvolit hodnotu, která odpovídá „údolí`` mezi obìma vrcholy (obr. 8.22). Provedeme-li prahování oblasti s~touto hodnotou prahu, je oblast rozdìlena na dvì nebo více novıch oblastí. U multimodálních histogramù lze provést dìlení buï na základì vìtšího poètu prahù nebo lze vybrat jedinı práh odpovídající nejvıznamnìjšímu „údolí`` v histogramu a dìlení provádìt nìkolikrát. Druhı postup bıvá povaován za spolehlivìjší. Proces dìlení konèí, kdy histogram kadé oblasti obsahuje nejvıše jeden vrchol.
+
+%\noindent Dìlení oblasti metodou diskriminantu: Existence nehomogenit v oblasti se ne vdy projeví tím, e je histogram (napø. jasovıch úrovní) bimodální. V takovém pøípadì je nutné hledat jiná kriteria. V (Otsu 78) byla napø. prezentována metoda, která pouívá diskriminaèního kriteria. Pøedpokládejme, e pracujeme s úrovnìmi jasu 1,2,..., \textit{L}. Uvaujme oblast, která má \textit{n} pixelù. Oznaème \textit{ni} poèet pixelù oblasti, které mají jas \textit{i}. Dále zaveïme \textit{pi} = \textit{ni}/\textit{n}. Støední hodnota a rozptyl jasù v~uvaované oblasti jsou popsány vırazy
+
+%\eqref{GrindEQ__8_77_}
+
+%\noindent Vysoká hodnota $\sigma$ naznaèuje, e je nutné oblast rozdìlit. Dìlení oblasti provedeme prahováním s~prahem \textit{t}. Stanovení prahu je cílem následující úvahy. Poèet pixelù s jasem menším nebo rovnım \textit{t} oznaème \textit{m}1, poèet pixelù s~jasem vìtším ne \textit{t} oznaème \textit{m}2 (\textit{m}1+\textit{ m}2 = \textit{n}). Zaveïme \textit{w}1 = \textit{m}1/\textit{n}, \textit{w}2 = \textit{m}2/\textit{n}. Støední hodnota a rozptyl jasu pro oblasti s~jasem niším (vyšším) ne \textit{t} je
+
+%\eqref{GrindEQ__8_78_}
+
+%\noindent Pro rozptyl \textit{$\sigma$}2\textit{w} uvnitø tøíd a rozptyl \textit{$\sigma$}2\textit{b} mezi tøídami platí (Otsu 78)
+
+%\eqref{GrindEQ__8_79_}
+
+%\noindent Neznámou hodnotu prahu urèíme tak, aby minimalizovala $\sigma$2\textit{w} nebo maximalizovala $\sigma$2\textit{b}. Protoe platí  $\sigma$2\textit{w} + $\sigma$2\textit{b} = $\sigma$2, jsou obì kriteria ekvivalentní. Nevıhodou této jinak pìkné metody je, e se pøi stanovení hodnoty prahu nelze vyhnout iteraènímu procesu.
+
+%\noindent \textbf{8.4 Detekce rohù}
+%\noindent Nìkdy se další zpracování obrazu mùe opírat o nalezení rohù (vrcholù) oblastí, co mùe bıt vıhodné zejména z~následujících dùvodù: 1) Rohy bıvají bohatì zastoupeny v~obrazech scén vytvoøenıch èlovìkem i v~obrazech scén „pøírodních``. 2) Polohu rohù lze v~obrazech zpravidla jednoznaènì urèit. 3) Rohy v~obrazech èasto korespondují s~rohy (vrcholy) skuteènıch trojdimenzionálních objektù, èeho lze vyuít napø. pøi rekonstrukci scény. Uvaujme obraz ve stupních šedi a vyšetøujme prùbìh køivosti plochy popsané obrazovou funkcí. Je zøejmé, e v~místì rohu není køivost v~ádném smìru nulová (to je rozdíl ve srovnání s~hranou). Detektory rohù jsou èasto zaloeny na uvedeném pozorování. Dále uvedeme dva pøíklady detektorù.
+
+%\noindent \textbf{8.4.1  Kitchen-Rosenfeldùv detektor rohù}
+%\noindent Tento detektor byl publikován v (Kitchen 82). Nech \textit{I}(\textit{x},\textit{y}) oznaèuje jas obrazu v bodì \textit{x},\textit{y} a nech \textit{Ix}, \textit{Iy}, \textit{Ixx}, \textit{Iyy}, \textit{Ixy} jsou derivace funkce \textit{I}. Autoøi navrhují v~kadém bodì obrazu poèítat hodnotu 
+%\begin{equation} \label{GrindEQ__8_80_} 
+%k=\frac{I_{xx} I_{y}^{2} +I_{yy} I_{x}^{2} -2I_{xy} I_{x} I_{y} }{I_{x}^{2} +I_{y}^{2} }  
+%\end{equation} 
+%a ukazují, e uvedená hodnota je úmìrná velikosti køivosti a velikosti gradientu obrazové funkce v~uvaovaném bodì. Bod (\textit{x},\textit{y}) lze povaovat za roh, jestlie je v~nìm hodnota \textit{k}~dostateènì vysoká.
+
+%\noindent \textbf{8.4.2 Harrisùv detektor rohù}
+%\noindent K novìjším detektorùm rohù patøí detektor navrenı Harrisem a Stephensem (Harris 88). V~pøípadì tohoto detektoru konstruujeme v kadém bodì obrazu matici
+%\begin{equation} \label{GrindEQ__8_81_} 
+%M\left(x,y\right)=\left[\begin{array}{cc} {\left\langle \left(I_{x} \right)^{2} \right\rangle } & {\left\langle I_{x} I_{y} \right\rangle } \\ {\left\langle I_{x} I_{y} \right\rangle } & {\left\langle \left(I_{y} \right)^{2} \right\rangle } \end{array}\right].  
+%\end{equation} 
+%Lomené závorky oznaèují konvoluci s Gaussovou funkcí:
+%\begin{equation} \label{GrindEQ__8_82_} 
+%\left\langle {\rm y}\left(x,y\right)\right\rangle ={\rm y}\left(x,y\right)*\left[G\left(x\right)G\left(y\right)\right],  
+%\end{equation} 
+%kde znak * oznaèuje konvoluci a \textit{G}(\textit{u}) je Gaussova funkce
+%\begin{equation} \label{GrindEQ__8_83_} 
+%G\left(u\right)=\frac{1}{\sqrt{2\pi } \sigma } \exp \left(-\frac{u^{2} }{2\sigma ^{2} } \right). 
+%\end{equation} 
+%Volba hodnoty $\sigma$ ovlivòuje citlivost detektoru. Derivace ve vztahu \eqref{GrindEQ__8_81_} jsou v praxi aproximovány diferencemi. K rozhodnutí, zda danı bod (\textit{x},\textit{y}) lze povaovat za roh, lze vyuít funkce (Harris 88)
+%\begin{equation} \label{GrindEQ__8_84_} 
+%{\rm cor}\left(x,y\right)={\rm det}\left(M\left(x,y\right)\right)-0.04\cdot {\rm trace}^{2} \left(M\left(x,y\right)\right).  
+%\end{equation} 
+%Bod (\textit{x},\textit{y}) povaujeme za roh, jestlie jsou splnìny následující dvì podmínky: 1) cor(\textit{x},\textit{y}) je vìtší ne nìjaká pøedem stanovená hodnota; 2) hodnota cor(\textit{x},\textit{y}) je nejvìtší v oknì o pøedem definovanıch rozmìrech (okno je svım prostøedním pixelem umístìno do bodu (\textit{x},\textit{y})).
+
+
+
+
+\section{Segmentace jako úloha o minimalizaci funkcionálu} \label{sec:segmt_min_func}
+
+V této podkapitole se budeme zabıvat dùmyslnımi a nároènìjšími matematickımi metodami segmentace.
+%Nejprve vysvìtlíme pojmy a znaèení.
+Nech $\Omega$ je oblast, nad ní je definován obraz.
+%(Obecnì je $\Omega$ omezená otevøená podmnoina $\mathbb{R}^N$).
+%Typická je ale situace, kdy $N=2$ a $\Omega$ má tvar obdélníka.)
+Dále nech $u_0(x)$ je obraz, kterı má bıt podroben segmentaci. Bez újmy na obecnosti mùeme pøedpokládat
+$0 \leq u_0(x) \leq 1$, $x\in\Omega$ (pøedpokládáme obrazy ve stupních šedi).
+Hledáme obraz $u(x)$, kterı je opìt definován nad $\Omega$.
+V hledaném obraze je $K\subset\Omega$ uzavøená mnoina bodù, v ní mùe bıt hledanı obraz nespojitı.
+Je-li $N$ topologická dimenze mnoiny $\Omega$, pak topologická dimenze mnoiny $K$ je $N-1$.
+Pøesnì vzato, spoèívá øešení úlohy o segmentaci obrazu v nalezení dvojice $(u,K)$ tak,
+aby byly splnìny jisté vlastnosti, které uvedeme v dalším textu.
+
+Mumford a Shah
+%(1989)
+navrhli øešit úlohu o segmentaci obrazu minimalizací funkcionálu
+\begin{equation}\label{eq:seg_min_fun_1}
+  F\left(u,K\right)=\int\limits_{\Omega \setminus K}\left(u-u_0\right)^2\, \dif x
+  + \alpha\int\limits_{\Omega \setminus K}\left|\bigtriangledown u \right|^2\, \dif x
+  + \beta\int\limits_{K}\, \dif \sigma \, .
+\end{equation}
+Ve funkcionálu (\ref{eq:seg_min_fun_1}) mají jednotlivé èleny následující vıznam: $\alpha$ a $\beta$ jsou pøedem zvolené
+konstanty - váhy, které bıvají stanoveny experimentálnì.
+První èlen funkcionálu zajišuje, aby se nalezenı obraz $u$ co nejvíce pøimykal obrazu zadanému $u_0$.
+Druhı èlen vyjadøuje oèekávání, e mimo body patøící do $K$ (v nich se pøipouští nespojitost)
+by mìl bıt nalezenı obraz $u$ co nejhladší.
+Tøetí èlen vyjadøuje poadavek, aby délka (míra) oblasti, v ní nalezenı obraz nespojitı, byla co nejmenší.
+
+Nìkteøí autoøi pozdìji kritizovali, e tøetí èlen ve funkcionálu (\ref{eq:seg_min_fun_1}) není definován
+dostateènì pøesnì a navrhli funkcionál ve tvaru
+\begin{equation}\label{eq:seg_min_fun_2}
+  F\left(u,K\right)=\int\limits_{\Omega \setminus K}\left(u-u_0\right)^2\, \dif x
+  + \alpha\int\limits_{\Omega \setminus K}\left|\bigtriangledown u \right|^2\, \dif x
+  + \beta\mathcal{H}^{N-1}\left( K \right),
+\end{equation}
+kde $\mathcal{H}^{N-1}(K)$ je Hausdorffova míra mnoiny $K$.
+Zjednodušením funkcionálu (\ref{eq:seg_min_fun_2}) pak dále mùeme získat funkcionál
+\begin{equation}\label{eq:seg_min_fun_3}
+  E\left(u,K\right)=\int\limits_{\Omega \setminus K}\left(u-u_0\right)^2\, \dif x
+  + \beta\mathcal{H}^{N-1}\left(K\right).
+\end{equation}
+Ve srovnání s funkcionálem (\ref{eq:seg_min_fun_2}) chybí ve funkcionálu (\ref{eq:seg_min_fun_3}) èlen poadující hladkost
+hledaného obrazu. To má své opodstatnìní. Funkcionálu lze dobøe vyuít tehdy, jestlie pøedpokládáme,
+e je jas hledaného obrazu nad jednotlivımi oblastmi vymezenımi mnoinou $K$ konstatní.
+Druhı èlen ve funkcionálu (\ref{eq:seg_min_fun_2}) pak vymizí.
+
+Minimalizace funkcionálù (\ref{eq:seg_min_fun_1}) a (\ref{eq:seg_min_fun_3}) je otíná. Obtínost spoèívá v tom, e se
+minimalizuje vzhledem ke dvìma neznámım, které mají rozdílnou povahu: $u$ je funkce nad $N$-dimenzionálním
+prostorem; $K$ je $(N-1)$ dimenzionální mnoina bodù. Urèitého zjednodušení lze dosáhnout, jestlie
+se pøedpoklá, e neznámou je jen obraz $u$ a e $K$ lze odvodit z $u$ jako mnoinu bodù, kde $u$ vykazuje skok.
+Oznaème tuto mnoinu $S_u$. Funkcionál (\ref{eq:seg_min_fun_1}) lze pak zapsat ve tvaru
+\begin{equation}\label{eq:seg_min_fun_4}
+  G\left(u\right)=\int\limits_{\Omega}\left(u-u_0\right)^2\, \dif x
+  + \alpha\int\limits_{\Omega}\left|\bigtriangledown u \right|^2\, \dif x
+  + \beta\mathcal{H}^{N-1}\left(S_u\right).
+\end{equation}
+
+
+\subsection{Aktivní kontury - klasickı pøístup}
+%==============================================
+Zaèneme modelem podle autorù Kass, Witkin, Terzopulos.
+Ten je dnes ji nejspíš pøekonanı, ale poprvé ukázal, jak lze úlohu o nalezení obrysù oblasti formulovat jako úlohu optimalizaèní.
+Zavedeme následující znaèení: $\Gamma$ je mnoina hranic objektù, $\Gamma = \bigcup \nolimits_{j} C_{j}$,
+kde $C_{j}$ je po èástech uzavøená $C^{1}$ køivka v $\mathbb R^{2}$.
+Dále je dán je obraz $I: \Omega \subset \mathbb R^{2} \rightarrow \mathbb R$.
+Pøedpokládáme, e funkce $(x_{1}, x_{2}) \rightarrow |\nabla I(x_{1}, x_{2})|$ náleí do $W^{1, \infty} (\Omega)$ (Sobolevùv prostor).
+Dále pøedpokládáme funkci $g$, $g:\left< 0, +\infty \right) \rightarrow \left( 0, +\infty \right)$ splòující následující vlastnosti:
+1) $g$ je monotonnì klesající
+2) $g(0) = 1$, $\lim \nolimits_{\rho \rightarrow +\infty} g(\rho) = 0$.
+Typickou funkcí je $g(\rho) = 1 / (1 + \rho^{2})$.
+Prakticky je funkce $g \left( |\nabla I(x)| \right)$ detektorem hran (prosíme ètenáøe, aby toto tvrzení promyslel).
+Nech $C$ je mnoina køivek $C=\{ c \, | \, [a,b] \rightarrow \Omega, \, c \text{ po èástech } C^{1}, \, c(a) = c(b)\}$.
+Pro $c \in C$ nech $J(c)$ je následující funkcionál, na kterı lze pohlíet jako na funkcionál vyjadøující energii
+\begin{equation} \label{eq:act_cont_1}
+J(c) = \int \limits_{a}^{b} |c'(q)|^{2} \dif q + \beta \int \limits_{a}^{b} |c''(q)|^{2} \dif q
+     + \lambda \int \limits_{a}^{b} g^{2} \left( |\nabla I \left( c \left( q \right) \right) | \right) \dif q \, .
+\end{equation}
+První dva èleny pøedstavují interní deformaèní energii køivky, poslední èlen má vıznam vnìjší energie.
+Euler-Lagrangery rovnice, které lze odvodit jako podmínku pro minimalizaci funkcionálu $J(c)$, jsou tvaru
+\begin{equation} \label{eq:act_cont_2}
+\left\{
+ \begin{array}{l}
+  -c'' + \beta c^{(IV)} + \lambda \nabla g^{2}(|\nabla I(c)|) = 0 \, ,\\
+  c(a) = c(b) \, .
+ \end{array} \right.
+\end{equation}
+\noindent
+Jejich numerické øešení je moné zavedením umìlého parametru (èasu) $t \geq 0$ podle vztahù
+\begin{equation} \label{eq:act_cont_3}
+\left\{
+ \begin{array}{l}
+  \frac{\partial c}{\partial t} (t, q) = -c''(t, q) + \beta c^{(IV)} (t, q) + \lambda \nabla g^{2}(|\nabla I (c(t, q))) \, , \\
+  c(0, q) = c_{0}(q) \, , \\
+  c(t, q) = c(t, b) \, , \\
+ \end{array} \right .
+\end{equation}
+kde $c_{0}(q)$ je poèáteèní køivka obklopující objekt, kterı má bıt detekován.
+Za nevıhody právì uvedného klasického postupu lze povaovat zejména:
+1) Funkcionál $J(c)$ závisí na parametrizaci.
+2) Model neumoòuje zmìnu topologie. Je moné detekovat pouze jeden objekt, kterı navíc musí bıt konvexní.
+
+
+\subsection{Geodetické aktivní kontury}
+Ve funkcionálu (\ref{eq:1_1}) je èlen s druhımi derivacemi redundantní, protoe poadavek na co nejmenší úhnnou køivost je zabudován u v prvním èlenu.
+Èlen lze proto vypustit a pøejít tak k funkcionálu $J_1$, kterı je definován vztahem
+\begin{equation} \label{eq:act_cont_4}
+J_{1}(c) = \int \limits_{a}^{b} |c'(q)|^{2} \dif q + \lambda \int \limits_{a}^{b} g^{2}(|\nabla I(c(q))|)\dif q \, .
+\end{equation}
+I tento funkcionál má ovšem nevıhodu spoèívající v tom, e je závislı na parametrizaci.
+Proto byl zaveden následující funkcionál %[Caselles 1995, 97]:
+\begin{equation} \label{eq:act_cont_5}
+J_{2}(c) = 2 \sqrt{\lambda} \int \limits_{a}^{b} g(|\nabla I(c(q))|) |c'(q)| \dif q \, .
+\end{equation}
+Tento funkcionál ji na parametrizaci závislı není, jak se lze pøesvìdèit poloením $q = \phi(r)$.
+Na vıše uvedenı funkcionál mùeme nahlíet jako na vıpoèet vzdálenosti (èlen $|c'(q)|$), která je váena hodnotou $g(|\nabla I(c(q))|)$, co je míra hrany.
+Lze ukázat, e minimalizace funkcionálu $J_{1}$ a $J_{2}$ jsou ekvivalentní.
+Uvaujme køivku ve tvaru $c(t, q)$, $c(0, q) = c(q)$.
+Vıpoètem hodnoty $J_{2}'(t)$ (derivace $J_{2}$ podle $q$) po delších úpravách dostaneme
+\begin{equation} \label{eq:act_cont_6}
+J_{2}'(t) = 2 \int \limits_{a}^{b} \left| \frac{\partial c}{\partial q} \right| \left< \frac{\partial c}{\partial t}, \left< \nabla g, N \right> N - \kappa gN \right> \dif q \, ,
+\end{equation}
+\noindent
+kde $\kappa$ je køivost a $N$ je normálovı vektor jednotkové délky ($\frac{\partial^{2} c}{\partial s^{2}} = \kappa N$, kde $s$ je parametrizace mìøící délku).
+Z pøedchozího vztahu vyplıvá, e hodnota $J_{2}$ klesá nejrychleji, jestlie platí
+\begin{equation} \label{eq:act_cont_7}
+\frac{\partial c}{\partial t} = \left( \kappa g - \left< \nabla g, N \right> \right) N.
+\end{equation}
+Tento vztah bıvá pak èasto pouíván v tzv. level set metodách.
+Nìkdy se do uvedeného vztahu pøidávají ještì další èleny. Napø.:
+\begin{equation} \label{eq:act_cont_8}
+    \frac{\partial c}{\partial t} = \left( \kappa g - \left< \nabla g, N \right> +\alpha g \right) N.
+\end{equation}
+Zde byl pøidán èlen $\alpha g$, jeho smyslem je zlepšit rychlost konvergence a zlepšit detekci objektù, které nejsou konvexní.
+Podrobnìjší vysvìtlení vlivu tohoto èlenu je ovšem mimo monosti tohoto textu.
+
+
+\subsection{Level-Set metody}
+%============================
+Cílem je øešení rovnice (\ref{eq:act_cont_7}), pøípadnì (\ref{eq:act_cont_8}) z pøedchozího odstavce.
+Obì tyto rovnice mùeme zapsat obecnì ve tvaru:
+\begin{equation} \label{eq:act_cont_9}
+\left\{
+ \begin{array}{l}
+  \frac{\partial c}{\partial t} = FN \, , \\
+  c(0, q) = c_{0}(q) \, .
+\end{array} \right.
+\end{equation}
+Rovnice øíká, e se køivka pohybuje ve smìru své normály $N$ rychlostí $F$. Rychlost obecnì závisí na $t$, $c$, $c'$, $c''$.
+Level set formulace souvisí s tím, e se z rovnice (\ref{eq:act_cont_9}) snaíme odstranit køivku $c$.
+K tomu zavedeme funkci $u: \mathbb R^{+} \times \mathbb R^{2} \rightarrow \mathbb R$ tak, e platí
+\begin{equation} \label{eq:act_cont_10}
+u \left( t, c \left( t, q \right) \right) = 0 \quad \forall q, \forall t \geq 0 \, .
+\end{equation}
+Derivováním rovnice (\ref{eq:act_cont_10}) vzhledem k $t$, dostaneme
+\begin{equation} \label{eq:act_cont_11}
+\frac{\partial u}{\partial t} + \left< \nabla u, \frac{\partial c}{\partial t} \right> = 0 \, ,
+\end{equation}
+co s vyuitím (\ref{eq:act_cont_9}) dává
+\begin{equation} \label{eq:act_cont_12}
+\frac{\partial u}{\partial t} + \left< \nabla u, FN \right> = 0 \, .
+\end{equation}
+S uváením, e normála smìøující dovnitø je popsána vztahem $N = - \frac{\nabla u}{|\nabla u|}$ 
+(pøedpokládáme zde, e $u$ je záporné uvnitø oblasti ohranièené køivkou a kladné vnì), mùe bıt rovnice (\ref{eq:act_cont_12}) pøepsána do tvaru:
+\begin{equation} \label{eq:act_cont_13}
+\frac{\partial u}{\partial t} \left( t, c \left( t, q \right) \right) = F \left| \nabla u \left( t, c \left( t, q \right) \right) \right| \, .
+\end{equation}
+S ohledem na zpùsob odvození je zøejmé, e rovnice (\ref{eq:act_cont_13}), pøesnì vzato, platí pouze v bodech køivky, tedy v bodech,
+kde $u(t, x) = 0$. Pøiblinì ale mùe bıt povaována za definovanou nad celou doménou $\mathbb R^{+} \times \Omega$, co vede k následující rovnici
+\begin{equation} \label{eq:act_cont_14}
+\frac{\partial u}{\partial t} (t, x) = F | \nabla u(t, x)| \, ,
+\end{equation}
+k tomuto rozšíøení se dále doplòují okrajové a poèáteèní podmínky:
+\begin{enumerate}
+\item $\frac{\partial u}{\partial N} = 0 \text{ na } \partial \Omega$ (na hranici $\Omega$ je normálová derivace $u$ rovna 0)
+\item $u(0, x) = \bar{d}(x, c_{0}) = \left\{ \begin{array}{l} + d(x, c_{0}), \text{ jestlie } x \text{ je vnì } c_{0}, \\ - d(x, c_{0}), \text{ jestlie } x \text{ je uvnitø } c_{0}, \end{array} \right.$ \\ kde $d(x, c_{0})$ znaèí Euklidovskou vzdálenost $x$ od $c_{0}$.
+\end{enumerate}
+Závìrem lze tedy shrnout, e øešit je tøeba následující Hamilton - Jacobiho PDE
+\begin{equation} \label{eq:act_cont_15}
+\left\{
+ \begin{array}{l}
+  \frac{\partial u}{\partial t} (t, x) = F|\nabla u(t, x)| \text{ pro } (t, x) \in ( 0, +\infty ) \times \Omega, \\
+  u(0, x) = \bar{d}(x, c_{0}), \\
+  \frac{\partial u}{\partial N} = 0 \text{ pro } (t, x) \in ( 0, +\infty ) \times \partial \Omega .
+ \end{array}
+\right.
+\end{equation}
+S vyuitím rovnice (\ref{eq:act_cont_8}), která ukazuje, pøi jaké normálové rychlosti se hodnota funkcionálu $J_{2}$ zmenšuje nejrychleji, pak máme
+\begin{equation}
+\frac{\partial u}{\partial t} = \left( \left( \kappa + \alpha \right) g + \left< \nabla g, \frac{\nabla u}{\left| \nabla u \right|} \right> \right) \left| \nabla u \right|.
+\end{equation}
+Pokud dále uváíme, e je $\kappa = div \left( \frac{\nabla u}{|\nabla u|} \right)$, dostaneme
+\begin{equation}
+\frac{\partial u}{\partial t} = g \left( \left| \nabla I \right| \right) \left( div \left( \frac{\nabla u}{\left| \nabla u \right|} \right) + \alpha \right) \left| \nabla u \right| + \left< \nabla g, \nabla u \right>.
+\end{equation}
+
+
+\subsection{Aktivní kontury bez hran}
+%====================================
+Tato metoda spadá do oblasti aktivních kontur øešenıch pomocí level setù. % [Chan, Vese 1999, 2001].
+Zajímavá je myšlenka nevyuít pøímo hranovıch bodù v obraze (proto se v názvu metody objevuje termín {\em bez hran}) a také to,
+e autoøi sice pouívají level sety, ale nikoli postupù uvedenıch v pøedchozích podkapitolách. Sami si vše odvodili pøímo z funkcionálu.
+V pùvodní variantì metody se uvaují objekty, o nich se pøedpokládá, e mají všechny stejnı a konstatní jas,
+a dále pozadí, u nìho se také pøedpokládá konstantní jas.
+Funkcionál, kterı se má minimalizovat (Chan-Vese funkcionál, CV funkcionál), je tvaru
+\begin{eqnarray} \label{chen_vese:1}
+F(C, c_{1}, c_{2}) = \mu \cdot \mathrm{length}\left(C\right) + \nu \cdot \mathrm{area}\left(\mathrm{inside} \left(C\right)\right) +
+\nonumber \\
++ \lambda_{1} \int \limits_{\mathrm{inside}\left(C\right)} |u_{0} - c_{1}|^{2} dx dy +
+\nonumber \\
++ \lambda_{2} \int \limits_{\mathrm{outside}\left(C\right)} |u_{0} - c_{2}|^{2} dx dy,
+\end{eqnarray}
+kde $C$, $c_{1}$, $c_{2}$ jsou neznámé (hranice objetù, jas objektù, jas pozadí);
+$\mu \ge 0$, $\nu \geq 0$, $\lambda_{1}, \lambda_{2} \ge 0$ jsou pøedem zvolené parametry
+(obvykle se ale volí $\gamma = 0$, $\lambda_{1} = \lambda_{2}$).
+Lze si povšimnout podobnosti CV funkcionálu s MS funkcionálem, kterı je tvaru
+\begin{equation} \label{chen_vese:2}
+F^{MS}(u, C) = \int \limits_{\Omega \setminus C} \left(\alpha |\nabla u|^{2} + \beta |u - u_{0}|^{2}\right) dxdy + \mathrm{length}\left(C\right).
+\end{equation}
+Funkcionál CV je skuteènì speciálním pøípadem funkcionálu MS, kdy funkci jasu nad objekty (pozadím) pøedpokládáme konstantní (hodnoty $c_{1}, c_{2}$).
+Zavedeme takovou funkci $\phi$, e na hranici objektù je $\phi = 0$, uvnitø objektù je $\phi > 0$ a vnì objektù (v místech pozadí) je $\phi < 0$.
+K dalšímu odvození vyuijeme Heavisidovu funkci
+\begin{equation} \label{chen_vese:3}
+H(x) = \left\{
+ \begin{array}{ll}
+  1, \quad \text{kdy} \quad x \geq 0, & \\ 
+  0, \quad \text{kdy} \quad x < 0.
+ \end{array} \right.
+\end{equation}
+Poznamenejme dále, e platí $\frac{d}{dx}H(x)=\delta(x)$. S vyuitím doposud uvedeného lze funkcionál (\ref{chen_vese:1}) pøepsat ve tvaru
+\begin{eqnarray} \label{chen_vese:4}
+F(\phi, c_{1}, c_{2}) = \mu \int \limits_{\Omega} \delta \left( \phi \right) |\nabla \phi| dxdy + \nu \int \limits_{\Omega} H \left( \phi \right) dxdy +
+\nonumber \\
++ \lambda_{1} \int \limits_{\Omega} |u_{0} - c_{1}|^{2} H \left( \phi \right) dxdy +
+\nonumber \\
++ \lambda_{2} \int \limits_{\Omega} \left( u_{0} - c_{2} \right) \left( 1 - H \left( \phi \right) \right) dxdy.
+\end{eqnarray}
+Jestlie $\phi$ ponecháme konstantní a minimalizujeme $F(\phi, c_{1}, c_{2})$ s ohledem na $c_{1}, c_{2}$, dostaneme
+\begin{equation} \label{chen_vese:5}
+c_{1}(\phi) = \frac{\int \nolimits_{\Omega} u_{0} H(\phi)dxdy}{\int \nolimits_{\Omega} H(\phi)dxdy} \, ,
+\end{equation}
+\begin{equation} \label{chen_vese:6}
+c_{2}(\phi) = \frac{\int \nolimits_{\Omega} u_{0} \left(1 - H \left( \phi \right) \right) dxdy}{\int \nolimits_{\Omega} \left( 1 - H \left( \phi \right) \right) dxdy} \, .
+\end{equation}
+Je zøejmé, e hodnoty $c_{1}(\phi)$, $c_{2}(\phi)$ mají vıznam støední hodnoty jasu nad objekty, pøípadnì nad pozadím.
+Nyní naopak minimalizujme $F(\phi, c_{1}, c_{2})$ podle $\phi$. Obdríme následující Euler-Lagrangeovu rovnici
+\begin{equation} \label{chen_vese:7}
+\left\{
+\begin{array}{l}
+  \frac{\partial \phi}{\partial t} = \delta \left( \phi \right) \left[ \mu \mathrm{div} \left( \frac{\nabla \phi}{|\nabla \phi|} \right) - \nu - \lambda_{1} (u_{0} - c_{1})^{2} + \lambda_2 (u_{0} - c_{2})^{2} \right] \text{in } \Omega,\\
+\frac{ \delta( \phi ) }{ \nabla \phi } \frac{ \partial \phi }{ \partial \omega } = 0 \text{ na } \partial \Omega.
+\end{array}
+\right.
+\end{equation}
+Aby bylo moné rovnici numericky øešit, zavádí se regularizace odstraòující nespojitost funkce $H(x)$.
+Funkci $H(x)$ lze nahradit pøiblinou hodnotou $H_{\varepsilon}(x)$ dle vztahu
+\begin{equation} \label{chen_vese:8}
+H_{ \varepsilon } (x) = \frac{1}{2} \left( 1 + \frac{2}{\pi} \arctan \left( \frac{x}{\varepsilon} \right) \right),
+\quad
+\delta_{ \rho }(x) = H_{\varepsilon}^{'}(x) = \frac{1}{\pi} \cdot \frac{\varepsilon}{\varepsilon^{2} + x^{2}} \, .
+\end{equation}
+Nyní ji lze rovnici (\ref{chen_vese:7}) øešit postupy, které jsou v daném kontextu obvyklé. Jedná se vlastnì o obyèejnou integraci.
+Jako poèáteèní hodnoty funkce $\phi(x)$ se berou znaménkem opatøené vzdálenosti jednotlivıch bodù obrazu od poèáteèní pøedem zvolené (odhadnuté) køivky.
+Funkce $\phi$, která je øešením nalezena, ukazuje svımi kladnımi, zápornımi a nulovımi hodnotami, kde se nachází objekty, pozadí a hranice mezi nimi.
+K dosaení dobrıch vısledkù (numerické stability) je zapotøebí dbát urèitıch pravidel (vhodná integraèní schémata).
+Èas od èasu mùe bıt také zapotøebí hodnoty funkce $\phi(x)$ pøepoèítat pomocí tzv. reinicialaizace.
+Rozbor podrobností ovšem pøesahuje monosti tohoto struèného úvodního textu.
+
+
+\section{Zpracování binárních obrazù} \label{sec:zpracovani_binarnich_obrazu}
+
+Binárním obrazem nazıváme takovı obraz, v nìm obrazová funkce v kadém bodì (v kadém pixelu) nabıvá jedné ze dvou monıch hodnot.
+Binární obrazy jsou zpravidla vısledkem metod provádìjících segmentaci obrazu
+(v pixelech náleících objektùm napø. obrazová funkce nabıvá hodnoty 1, v pixelech pozadí nabıvá hodnoty 0).
+Pøed tím, ne jsou binární obrazy analyzovány, lze je zpracovat nìkterım ze speciálních postupù, které dále ve struèném pøehledu popíšeme. 
+
+\subsection{Matematická morfologie}
+%==================================
+Tvùrcem matematické morfologie je Serra \cite{Serra82}.
+Jako pøíklad o nìco mladší publikace zabıvající se touto problematikou uveïme alespoò práci \cite{Dougherty92}.
+Teorie matematické morfologie je dosti obsáhlá, a proto mùeme v tomto textu uvést pouze základní informace. Omezíme se pouze na binární obrazy.
+Oznaème $\mathbf{B}$ vstupní binární obraz. Dále budeme pracovat s pomocnım binárním obrazem $\mathbf{S}$.
+Vıznam tohoto pomocného obrazu bude obdobnı jako vıznam masky u konvoluce - budeme jej postupnì pøikládat na rùzná místa obrazu $\mathbf{B}$.
+Oznaèení $\mathbf{S}_{xy}$ budeme pouívat pro obraz, kterı vznikne translací pomocného obrazu $\mathbf{S}$ tak,
+aby poèátek obrazu $\mathbf{S}$ padl do bodu o souøadnicích $(x,y)$ (obr. \ref{img:8_24}).
+Základními operacemi matematické morfologie jsou {\em eroze} a {\em dilatace}.
+Tyto operace jsou definovány následujícími vztahy (obr. \ref{img:8_25})
+\begin{equation} \label{eq:8_85}
+    \mathbf{E} = \mathbf{B} \otimes \mathbf{S} = \left\{(x,y)| \mathbf{S}_{x,y} \subseteq \mathbf{B} \right\},
+\end{equation}
+\begin{equation} \label{eq:8_86}
+    \mathbf{D} = \mathbf{B} \oplus  \mathbf{S} = \left\{(x,y)| \mathbf{S}_{x,y} \cap \mathbf{B} \neq \oslash \right\}.
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_24.pdf}
+    \end{center}
+    \caption{\dvojt K vıznamu masky u morfologickıch operací}
+    \label{img:8_24}
+\end{figure}
+
+\noindent
+Vysvìtleme podrobnìji vıznam vztahu \eqref{eq:8_85}.
+Erozí binárního obrazu $\mathbf{B}$ za pouití masky $\mathbf{S}$ vznikne obraz $\mathbf{E}$, kterı je opìt binární.
+Pøedpokládejme, e jednotlivé body binárního obrazu nesou hodnotu 0 nebo 1.
+V bodì o souøadnicích $(x,y)$ je v obraze $\mathbf{E}$ hodnota 1, jestlie je v obraze $\mathbf{B}$
+hodnota 1 alespoò na tìch místech, kde je hodnota 1 v masce  $\mathbf{S}_{xy}$.
+Jinak je v obraze $\mathbf{E}$ v bodì o souøadnicích $(x,y)$ hodnota 0.
+Ve vztahu \eqref{eq:8_85} jsou obrazy formálnì reprezentovány jako mnoiny - jedná se o mnoiny pixelù nesoucích hodnotu 1.
+Analogicky by bylo moné interpretovat také vztah \eqref{eq:8_86}. 
+
+Dalšími èasto pouívanımi operacemi matematické morfologie jsou otevøení a uzávìr.
+Otevøení je definováno jako eroze následovaná dilatací (vztah \eqref{eq:8_87}).
+Uzavøení je naopak dilatace následovaná erozí (vztah \eqref{eq:8_88}). Máme tedy
+\begin{equation} \label{eq:8_87}
+    \mathbf{B} \circ \mathbf{S} = \left( \mathbf{B} \otimes \mathbf{S} \right) \oplus \mathbf{S} \, ,
+\end{equation}
+\begin{equation} \label{eq:8_88}
+    \mathbf{B} \bullet \mathbf{S} = \left( \mathbf{B} \oplus \mathbf{S} \right) \times \mathbf{S} \, .
+\end{equation}
+Z definice je zøejmé, e otevøení eliminuje malé a tenké objekty a rozdìluje objekty v místech, kde jsou tenké.
+Uzavøení naopak vyplòuje malé a tenké díry v objektech a spojuje objekty, které leí blízko sebe.
+Poznamenejme, e nìkdy mùe bıt vıhodné pouít vìtšího poètu otevøení nebo uzavøení po sobì.
+Alternativnì mùe také bıt otevøení a uzavøení realizováno také tak, e je pouito vìtšího poètu operací eroze a stejného poètu operací dilatace.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_25.pdf}
+    \end{center}
+    \caption{\dvojt Dilatace a eroze}
+    \label{img:8_25}
+\end{figure}
+
+%\subsection{Ztenèování}
+Uiteènou úpravou binárního obrazu, pøi ní mùe bıt pouito morfologickıch operací, je ztenèování. 
+Cílem ztenèování je reprezentovat objekty v~obraze jako lineární útvary (obr. \ref{img:8_26}).
+Ztenèování mùe bıt realizováno pomocí opakovanì provádìné eroze (tj. opakovanım odstraòováním krajních pixelù z~objektu).
+Postup provádìní kadého erozního kroku je pøi tom modifikován tak, aby nedošlo k~porušení souvislosti objektu.
+Pøi praktickém vıpoètu jsou dle vztahu \eqref{eq:8_85} nejprve detekovány pixely objektu kandidující na to,
+e do nich bude zapsána hodnota 0 (tj. budou z objektu odstranìny).
+Tato hodnota je pak ale skuteènì zapsána jen do nìkterıch z~kandidujícíh pixelù.
+Pixely jsou vybrány tak, aby zápisem hodnoty 0 nedošlo k~rozdìlení zbıvající èásti objektu na více èástí.
+Proces opakovaného provádìní eroze pokraèuje tak dlouho, dokud zbylá èást objektu nemá všude tloušku jeden pixel.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{08_segmentace/images/img_8_26.pdf}
+    \end{center}
+    \caption{\dvojt Objekt pøed a po ztenèení}
+    \label{img:8_26}
+\end{figure}
+
+%\subsection{Kostra}
+%Také v~pøípadì kostry je cílem popsat tvar plošného objektu pomocí lineárních útvarù. Èasto se uvádí (Fu 86, \cite{Castleman96}) následující neformální definice kostry: Pøedstavme si oblast, její kostru hledáme, jako trávník. Jestlie trávník po celém jeho okraji zapálíme a bude-li se oheò šíøit všemi smìry stejnou rychlostí, pak mnoinu bodù, kde se setkají „rùzné ohnì`` nazveme kostrou. Kostrou oblasti ve tvaru kruhu je jeho støed. Pøíklad na obr. \ref{img:8_27}a ukazuje kostru obdélníka. Na obr. \ref{img:8_27}b je uveden pøíklad naznaèující obtíe, které vzniknou pøi doslovné aplikaci døíve uvedené definice kostry. Aèkoli malı vıstupek na pravé stranì obdélníka mùe bıt pouhou nepøesností zpùsobenou digitalizací, vısledná kostra se dosti liší od kostry ideálního obdélníka. Pøi praktické implementaci algoritmù pro stanovení kostry je zpravidla zapotøebí  tyto jevy potlaèit.
+%\begin{figure}[th]
+%    \begin{center}
+%        \includegraphics[scale=0.9]{08_segmentace/images/img_8_27.pdf}
+%    \end{center}
+%    \caption{a) Kostra obdélníka. b) Vliv chyby zpùsobené digitalizací.}
+%    \label{img:8_27}
+%\end{figure}
+
+%\subsection{Indexování}
+
+%\noindent Pro další zpracování binárního obrazu mùe bıt nìkdy vıhodné provést tzv. indexování oblastí. Indexováním rozumíme, e kadé oblasti (kadému rozpoznávanému objektu) je pøiøazeno pøirozené èíslo, které je pak zapsáno do kadého pixelu oblasti (obr.8.28). Za jednu oblast pøi tom povaujeme mnoinu vzájemnì sousedících pixelù, v nich byla v pùvodním binárním obraze zapsána hodnota 1. Pøi rozhodování, zda pixely sousedí, rozlišujeme tzv. \textit{ètyøsousednost} a \textit{osmisousednost}. Pøedstavme si  pixely jako ètvereèky podobnì, jak je vyobrazeno na obr. 8.28. Pøi ètyøsousednosti povaujeme dva pixely za sousedící, jestlie mají spoleènou stranu. Kadı pixel tak má ètyøi sousedy. V pøípadì osmisousednosti povaujeme za sousedy pixelu všech osm pixelù, které s danım pixelem sousedí hranou nebo pouze rohem. Indexovaného obrazu lze vyuít napø. pøi praktické implementaci vıpoètu atributù objektù pøi pøíznakovém rozpoznávání.

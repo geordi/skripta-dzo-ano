@@ -1,0 +1,182 @@
+% dvips: *-Ppdf -Pljh -O5mm,5mm*
+
+\documentclass[11pt,b5paper,twoside,dvips]{report}
+\usepackage{czech} 
+\usepackage[metapost,truebbox,mplabels]{mfpic}
+
+\evensidemargin0pt\oddsidemargin0pt\topmargin0pt\headheight0pt\headsep0pt 
+\textwidth=150mm\textheight=237mm
+
+
+\mfpverbtex{\documentclass{report}
+                  \usepackage{czech}
+                  \usepackage{amsmath,amsfonts,bm}
+                  \usepackage{mathrsfs}
+                  \begin{document}}
+\mfpicunit=1mm
+
+\opengraphsfile{ikona}
+
+\parskip=15mm
+
+\begin{document}
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin}{\bfseries\Huge ?}
+\endmfpic
+\hspace{2cm}Kontrolní otázky
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin}{\bfseries\Huge !}
+\endmfpic
+\hspace{2cm}Cvièení (neøešené pøíklady)
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin}{$\displaystyle\sum $}
+\endmfpic
+\hspace{2cm}Shrnutí
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc90]{origin+.07right}{\fontencoding{U}\fontfamily{pzd}\selectfont\Huge \char'53}
+\endmfpic
+\hspace{2cm}Pojmy k zapamatování
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin+.055down}{\fontencoding{U}\fontfamily{pzd}\selectfont\Huge \char'363}
+\endmfpic
+\hspace{2cm}Cíle
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\circle{origin,xpos-.05}
+\pen {.4pt}
+\store{troj}{\lclosed\shiftpath{.025up}\lines {(-.05,0),(.05,0),(0,.38)}}
+\gfill\rotatepath{origin,-30}\mfobj{troj}
+\rotatepath{origin,150}\mfobj{troj}
+\tlabels {[cc]{(0,ypos-.15)}{\bfseries\tiny S} [cc]{(0,yneg+.15)}{\bfseries\tiny J}
+            [cc]{(xpos-.17,0)}{\bfseries\tiny V} [cc]{(xneg+.15,0)}{\bfseries\tiny Z}}
+\endmfpic
+\hspace{2cm}Prùvodce studiem
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\rotate{-45}
+\shift{.25up}
+\pen {.7}
+\circle{origin,.2}
+\pen {.6pt}
+\arc[p]{origin,5,85,.16}
+\arc[p]{origin,185,265,.16}
+\pen {.8pt}
+\lines {.2down,.5down}
+\pen {1.5pt}
+\lines {.5down,.75down}
+\endmfpic
+\hspace{2cm}Èást pro zájemce
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\shift{.025down}
+\mfsrc{z1=(-.4,-.3); z2=(-.06,y1+.02); z3=(-x2,y2); z4=(-x1,y1);
+          z5=(x4,y4+.6); z6=(-x5,y5);
+x.s=.9;
+}
+\store{oblouk}{\arc[s]{z2,z3,60}}
+\store{dolni}{\lclosed\connect\mfobj{oblouk}\lines {z3,z4,z5,z6,z1}\endconnect}
+\mfsrc{z7=point .5*length(oblouk) of oblouk scaled x.s;
+z8=z4 scaled x.s; z9=z5 scaled x.s; z10=z8+(-.05,.065); z11-z10=z9-z8; z12-z7=z9-z8;
+path p;
+p=z7{dir 90}..{dir -8}z10--z11{dir 172}..{dir 260}z12--cycle;
+}
+\store{kosoc}{\lclosed\lines {z8,z9,z11,z10}}
+\pen {.5pt}
+\mfobj{dolni}
+\mfobj{kosoc}
+\scalepath{origin,x.s}\mfobj{dolni}
+\draw\gclear\mfobj{p}
+\draw\gclear\mfobj{kosoc}
+\reflectabout{origin}{up}
+\draw\gclear\mfobj{p}
+\draw\gclear\mfobj{kosoc}
+\endmfpic
+\hspace{2cm}Literatura
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\scale {.5}
+\rotate{-45}
+\shift{(.0up+.1left)}
+\pen {.4pt}
+\store{tvar}{\turtle{origin,.8up,.2right,.1down,.3right,.08down,.1left,.06down,.08left,.06down,0.25right,
+         .08down,.2left,.09down,.17left,.33down}}
+\mfsrc{z1=point 0 of tvar; z2=point infinity of tvar; z3=.5[z1,z2]+.4*dir(angle(z1-z2)+90);
+          x.u=360-(angle(z1-z3)-angle(z2-z3));}
+\mfobj{tvar}
+\arc[c]{z3,z1,x.u}
+\circle{z3,.25}
+\endmfpic
+\hspace{2cm}Øešení
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin}{\fontencoding{U}\fontfamily{pzd}\selectfont\Huge \char'55}
+\endmfpic
+\hspace{2cm}Autotest
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\mfsrc{x.u=-72; x.r=.23; x.d=.1; z1=x.r*dir(x.u); z2=x.r*dir(180-x.u);
+x.v=(-x.u+90)/6; z3=z1+x.d*down; z4=z2+x.d*down; x.z=.033;}
+
+\shift{.07up}
+\arc[p]{origin,x.u,180-x.u,x.r}
+\lines {z1,z3}
+\lines {z2,z4}
+
+\mfsrc{for i=-5 upto 5:}
+\lines {x.r*dir(90+i*x.v),(x.r+.08)*dir(90+i*x.v)}
+\mfsrc{endfor}
+
+\mfsrc{for i=0 upto 3: if i<3:}
+\lines {z3+i*x.z*down,z4+i*x.z*down}
+\mfsrc{else:}
+\lclosed\lines {z3+i*x.z*down,z4+i*x.z*down,.5[z3,z4]+(i+1)*x.z*down}
+\mfsrc{fi endfor}
+
+\endmfpic
+\hspace{2cm}Rejstøík
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin}{\Huge $\mathscr{A}$}
+\endmfpic
+\hspace{2cm}Animace
+
+\mfpic[10]{-.5}{.5}{-.5}{.5}
+\pen {.6pt}
+\rect{(xneg,yneg),(xpos,ypos)}
+\tlabel[cc]{origin}{\Huge $\mathscr{T}$}
+\endmfpic
+\hspace{2cm}Test
+
+\closegraphsfile
+
+\end{document}
+

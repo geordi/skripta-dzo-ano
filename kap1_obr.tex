@@ -1,0 +1,764 @@
+
+% Master: test_obr.tex
+
+\chapter{Úvodní}
+
+\section{Pøehled doporuèení a upozornìní na nìkteré monosti formátu}
+
+\begin{aokt}{10.}
+\item Uvozovky u "`slova"' by se mìly psát v babelu s novım èeskım/slovenskım definièním souborem takto: \verb+"`slova"'+.
+Je to lepší ne pøíkaz \verb+\uv+.
+
+\item Jednoduché uvozovky u \clq slova\crq{} lze napsat takto: \verb+\clq slova\crq+.
+
+\item Francouzské uvozovky u "<slova"> lze napsat takto: \verb+"<slova">+.
+
+\item Mìl by se rozlišovat spojovník -, krátká pomlèka --, dlouhá pomlèka --- a matematické mínus $-$.
+Napø. by se mìlo psát Cauchyova-Bolzanova vìta, strana 7--12. V textu~--- tøeba tady --- se pouívá dlouhá
+nebo støední pomlèka, ale mìlo by to bıt jednotné. Pøi zlomu øádku by tato pomlèka mìla zùstat na konci øádku~---
+to lze docílit pøivázáním \verb+textu~---+.
+
+\item Je nadefinován pøíkaz \verb+\az+, kterı se pouívá pro èíselné rozsahy. Napøíklad zde je 1980\az2000.
+Pøi zlomu øádku se nahradí pomlèka "`--"' slovem "`a"', co je správnì podle typografickıch pravidel.
+Jinak (nedojde-li ke zlomu) dostanete 1980\az2000.
+
+\item Podobnı pøíkaz \verb+\azz+ je nadefinován pro seznamy v matematice. Tøeba zde je $x_1,x_2\azz x_n$,
+zatímco bez zlomení dostanete $x_1,x_2\azz x_n$.
+
+\item Pro standardní èíselné mnoiny slouí pøíkazy \verb+\R+ apod. Tedy $\R,\N,\Q,\Z,\C$.
+
+\item V matematickém reimu je písmeno e vysázeno stojatì a má vıznam Eulerovy konstanty
+(individuální konstanty tak mají bıt sázeny).
+Pokud chceme sklonìné~e (co aspoò v analıze vìtšinou není), pouijeme pøíkaz \verb+\ecko+.
+Tedy \verb+$e,\ecko$+ dá $e,\ecko$.
+
+Pokud vám toto pøedefinování nevyhovuje, tj. pokud vìtšinou potøebujete kurzivní~e a jen vıjimeènì stojaté~e
+mající vıznam Eulerova èísla (napø. v algebøe pro znaèení vektorù apod.), zrušte si pøíslušné definice.
+V souboru \verb+obraz.tex+ zaprocentujte øádky
+\begin{verbatim}
+\mathcode`\e="0065
+\mathchardef\ecko="7165
+\end{verbatim}
+a naopak si nadefinujte \verb+\newcommand\ecko{\mathrm{e}}+; pøíkazem \verb+\ecko+ pak mùete sázet
+Eulerovu konstantu.
+
+(Podobnì by tomu mìlo bıt s Ludolfovım èíslem~$\pi$, ale fonty Computer Modern bohuel nemají
+stojatı øez øez malé øecké abecedy. Buï se musí pouít kombinace s jinım fontem, nebo pouít pro
+sazbu matematiky napø. Math Timesy, které takovı øez mají.)
+
+\item V textovém reimu by se mìly pouívat pro zmìnu tuènosti, sklonu apod. pøíkazy
+\verb+\textbf+, \verb+\textit+, \verb+\textsf+, \verb+\texttt+, \verb+\textsl+, \verb+\textsc+, \verb+\textup+,
+\verb+\textmd+, \verb+\emph+.
+Text, kterı chceme zmìnit, se dá do sloenıch závorek.
+
+Napø. \verb+\textsc{Slovo}, \textbf{slovo}+ dá: \textsc{Slovo}, \textbf{slovo}.
+
+Druhou variantou jsou pøíkazy napøíklad \verb+\bfseries+, \verb+\itshape+, \verb+\upshape+, \verb+\scshape+,
+\verb+\slshape+, které musí bıt uvnitø sloenıch závorek, je omezují mìnìnı text.
+
+Napø. \verb+{\bfseries tuènı text}+ dá {\bfseries tuènı text}.
+
+Pøíkazy \verb+\bf+, \verb+\it+, \verb+\sf+, \verb+\tt+, \verb+\em+, které pochází ze starého \LaTeX u 2.09,
+není vhodné pouívat, mohou mít neèekané postranní efekty.
+
+\item Pro zmìnu typu písma v matematickém reimu jsou urèeny zcela jiné pøíkazy, konstrukce typu
+\verb+$a-\mbox{\textbf{b}}$+ jsou naprosto nevhodné.
+
+Správné pøíkazy jsou: \verb+\mathbf+, \verb+\mathrm+, \verb+\mathscr+, \verb+\mathsf+, \verb+\mathit+,
+\verb+\mathtt+.
+
+Napø. \verb-$a+\mathbf{a}+\mathsf{a}+\mathtt{a}$- dá $a+\mathbf{a}+\mathsf{a}+\mathtt{a}$.
+
+\item Dále jsou v matematice k dispozici pøíkazy \verb+\mathcal+ a \verb+\mathscr+ (jen pro velká písmena).
+
+Napø. \verb-$\mathcal{A}+\mathscr{A}$- dá $\mathcal{A}+\mathscr{A}$. Asi by se nemìlo pouívat obojí.
+
+\item Pøíkaz \verb+$\mathbb{A}$+ dá $\mathbb{A}$.
+
+\item Pøíkaz \verb+$\mathfrak{A}$+ dá $\mathfrak{A}$.
+
+\item Univerzální pøíkaz pro "`tuènost"' v matematice je \verb+\bm+.
+
+Napø. \verb+$\alpha,\bm{\alpha },\Omega,\bm{\Omega }$+ dá $\alpha,\bm{\alpha },\Omega,\bm{\Omega }$.
+
+Všimnìte si rozdílu \verb-$a+\mathbf{a}+\bm{a}$-: $a+\mathbf{a}+\bm{a}$!
+
+Také lze \verb+$\mathsf{A}-\bm{\mathsf{A}}$+: $\mathsf{A}-\bm{\mathsf{A}}$.
+
+Nebo: \verb+$\bm{f\colon A\to B}$+: $\bm{f\colon A\to B}$ (tuèná je i šipka, srovnejte $\to$).
+
+Také lze \verb+\bm{\mathcal{A}}+: $\bm{\mathcal{A}}$ (tuènı font \verb+\mathscr+ není).
+
+\item V matematice v \emph{odstavcovém} reimu je nadefinováno automatické opakování binárních
+operací a relací (jak by to podle èeskıch typografickıch pravidel mìlo bıt). Konkrétnì je to pro:
+
+\verb!+,-,=,\neq,<,>,\leq,\geq,\cup,\cap,\times,\subset,\supset,\subseteq,!
+
+\verb!\supseteq!.
+
+Take kdy napíšete napøíklad takovıhle souèet: $A+A+A+A+A+A+A+A+A+A+A+A+A+A$, nemusíte se starat o zalomení.
+
+V display reimu (uvnitø \verb+\[\]+, okolí equation apod.) se samozøejmì opakování symbolù musí udìlat ruènì
+podle zalomení.
+
+\item Vše, co je v matematice uvnitø "`zbyteènıch"' sloenıch závorek první úrovnì (ne tedy vnoøenıch
+uvnitø jinıch sloenıch závorek), se nazlomí! Je to mnohem lepší ne konstrukce
+s \verb+\mbox{}+. Tedy napø. \verb-${a+b}$-, nebo taky \verb-${+\infty }$-, kdy dojde k neádoucímu
+zopakování~$+$ u symbolu~$\infty$ pøi zalomení konce øádku. Nepouívejte tudí \verb-\mbox{$a+b$}- apod.
+
+\item Pøíkazy \verb+\leq,\le+ resp. \verb+\geq,\ge+ dávají stejnı vısledek $\leq,\le$ resp. $\geq,\ge$.
+Všimnìte si, e rovnítka jsou dvojitá --- taková se v èeské typografii pouívají. Standardnì je v \LaTeX u
+pouíváno $\leORI,\geORI$.
+
+\item Nìkterá malá øecká písmena mají dvì varianty:
+
+\verb+$\varepsilon,\epsilon$+: $\varepsilon,\epsilon$
+
+\verb+$\varphi,\phi$+: $\varphi,\phi$
+
+\verb+$\vartheta,\theta$+: $\vartheta,\theta$
+
+\verb+$\varrho,\rho$+: $\varrho,\rho$
+
+U všech velkıch øeckıch písmen existuje sklonìná verze:
+
+\verb+$\Gamma, \varGamma$+: $\Gamma, \varGamma$.
+
+\item Jsou pøeddefinovány správné èeské verze goniometrickıch a cyklometrickıch funkcí:
+
+\verb+$\tg,\cotg,\arctg,\arccotg$+: $\tg,\cotg,\arctg,\arccotg$.
+
+Podobnì lze doplnit èeské názvy napø. hyperbolickıch a hyperbolometrickıch funkcí.
+
+\item Symbol diferenciálu by mìl bıt stojatı. Je pøeddefinované samostatné~$\mathrm{d}$ pøíkazem
+\verb+\dif+ a dále napø. \verb+\dx,\dy,\dz,\dt+ a jiné. Další se snadno doplní. Vyjde:
+$\dif,\dx,\dy,\dz,\dt$.
+
+Obdobnì se snadno dá nadefinovat \verb+\dxy+ apod. pro vícenásobné integrály.
+
+Integrál by se mìl sázet s malou mezerou pøed diferenciálem:
+
+\verb+$\int_a^b f(x)\,\dx$+ dá $\int_a^b f(x)\,\dx$ nebo
+
+\verb+$\iint_M f(x,y)\,\dx\dy$+ dá $\iint_M f(x,y)\,\dx\dy$.
+
+\item Pøíkazy \verb+\lim,\min,\max,\inf,\sup,\liminf,\limsup,\sum,\iint,\iiint+ jsou pøedefinovány tak,
+aby se psalo poøád pod nì (jak v odstavcovém tak display reimu).
+
+Tedy: \verb+$\lim_{x\to1} f(x)=A$+ dá vdy $\lim_{x\to1} f(x)=A$.
+
+Komu se to nelíbí, mùe si pøedefinování zrušit (standardnì je v display reimu pouito $\lim_{x\to1}$, ale
+v odstavcovém reimu je $\lim\nolimits_{x\to1}$; to sice ménì rozháe øádkovı rejstøík, ale mnì se to nelíbí).
+
+V jednotlivém pøípadì se chování dá zmìnit pøíkazy \verb+\limits+ a \verb+\nolimits+,
+napøíklad \verb+$\iint\nolimits_M f(x,y)\,\dx\dy$+ dá $\iint\nolimits_M f(x,y)\,\dx\dy$.
+
+\item Naètenı balíèek \texttt{vlna.sty} zpùsobí, e všechny jednopísmenné pøedloky a spojky jsou automaticky
+pøivázány. Nemusíte tedy pouívat tildu a psát napø. \verb+a~další+.
+Pøedpokládá to ovšem, e váš \TeX ovı motor (kterım pøekládáte) umí rozšíøení \texttt{enctex} a má ho zapnuté.
+Pokud máte novou instalaci s úpravami, které jsem pøipravil, funguje to. Jinak musíte pøíkaz
+\verb+\usapackage{vlna}+ vyøadit.
+
+Doporuèuji si zvyknout psát napø. \verb+mnoina~$A$+, \verb+funkce~$f$+ apod. Není hezké, kdy je to jedno písmeno
+zalomeno na další øádek a je otravné dopisovat dodateènì tildu tam, kde došlo ke zlomení. Navíc pøi jakékoli
+úpravì mùe dojít k jinému nevhodnému zlomení.
+
+\item Znak mínus, tj. \verb+-+, je v novém èeském babelu (balík, kterı byl podstatnì vylepšen a mìl by se pouívat
+se standardním \LaTeX em{} pro psaní èeského textu místo cs\LaTeX u) tzv. aktivní a mùe dìlat problémy.
+Všude, kde je pouíván s nìjakımi rozmìry, se musí pouít místo nìho pøíkaz \verb+\minus+.
+
+Tedy napø. \verb+\hspace{\minus2mm}+, \verb+\\[\minus5mm]+ apod.
+
+Není samozøejmì problém se symbolem odèítání v matematice.
+
+Funkci tohoto znaku lze vypnout, ale ochudíte se o nìkteré vìci.
+
+\item Pro mnoinovı rozdíl lze kromì standardního symbolu \verb+\setminus+ pouít rovnì menší symbol \verb+\smallsetminus+
+(nebo jeho alias \verb+\ssm+).
+
+Srovnejte: \verb+$A\setminus B, A\ssm B$+ dá $A\setminus B, A\ssm B$.
+
+\end{aokt}
+
+\section{Ukázky matematického textu}
+
+\begin{dfn}
+Nech $A\subset\R^2$. Pak zobrazení $f\colon A\to \R$, které dvojici reálnıch èísel ${(x,y)\in A}$
+pøiøazuje reálné èíslo $z=f(x,y)$, se nazıvá
+\emph{reálná funkce dvou reálnıch promìnnıch.\index{funkce reálná!dvou reálnıch promìnnıch}}
+Mnoinu~$A$ nazıváme \emph{definièním oborem\index{definièní obor}} a znaèíme $D(f)$.
+\end{dfn}
+
+\begin{pozn}  \label{p1.1}
+Nìkdy je vhodné pro lepší pøedstavu o grafu urèit nejen vrstevnice, tj. prùmìty øezù rovinami
+$z=c$, ale také øezy grafu rovinami $x=c$ resp. $y=c$. Jejich rovnice jsou
+$z=f(c,y)$ resp. $y=f(x,c)$, $c\in\R$.\rule[-4.5mm]{0mm}{1mm}
+\end{pozn}
+
+\begin{prik}
+Urèete vrstevnice funkce $f\colon z=x^2+y^2$ a nakreslete podle nich graf funkce~$f$.
+\end{prik}
+
+\begin{reseni}
+Protoe není zadán definièní obor, budeme uvaovat maximální monı, tj. $D(f)=\R^2$.
+Rovnice vrstevnic jsou $v_c\colon x^2+y^2=c$.
+\begin{aokz}[alph]{a)}
+\item Pro $c<0$ je $v_c=\emptyset$, protoe $x^2+y^2\ge0$.
+\item Pro $c=0$ je $v_0=\{(0,0)\}$, protoe pokud $x\neq0$ nebo $y\neq0$, je $x^2+y^2>0$.
+\item Pro $c>0$ je $v_c$ krunicí se støedem v poèátku a polomìrem $\sqrt c$.
+Èím je $c$ vìtší, tím vìtší je polomìr a rovina $z=c$ leí vıše.
+\end{aokz}
+
+Graf je znázornìn atd.
+\end{reseni}
+
+\begin{lema} \label{l1.27}
+Pøedpokládejme, e funkci $f(x,y)$ lze v polárních souøadnicích se støedem v bodì~$(x_0,y_0)$
+vyjádøit ve tvaru $f(x,y)=L+g(\rho)h(\rho,\varphi)$, $L\in\R$, kde
+\begin{rokz}{\quad ii)}
+\item $\lim_{\rho\to0}g(\rho)=0$,
+\item $h(\rho,\varphi)$ je ohranièená na obdélníku $(0,\rho_0\rangle\times\langle0,2\pi\rangle$,
+kde $\rho_0>0$.
+\end{rokz}
+Pak platí:\quad $\lim_{(x,y)\to(x_0,y_0)}f(x,y)=L$.
+\end{lema}
+
+\begin{proof}
+Nech je $h$ ohranièena na zmínìném obdélníku konstantou~$K\in\R^+$, tj.
+$|h(\rho,\varphi)|\le K$. Zvolme libovolné $\varepsilon>0$.
+Z definice limity vyplıvá, e existuje $0<\delta<\rho_0$ takové, e pro
+$0<\rho<\delta$ je $|g(\rho)|<\varepsilon/K$. Tedy pro $(x,y)\in\Ok((x_0,y_0),\delta)$,
+$(x_0,y_0)\neq(0,0)$, je
+\[
+|f(x,y)-L|=|g(\rho)|\cdot|h(\rho,\varphi)|<\frac\varepsilon K\cdot K=\varepsilon,
+\]
+z èeho plyne tvrzení.
+\end{proof}
+
+\begin{veta}[Lagrange] \label{v2_L}\index{vìta!Lagrangeova}
+Pøedpokládejme, e funkce $f\colon z=f(x,y)$ má parciální derivace $f_x$ a $f_y$ v libovolném bodì
+mnoiny~$M$, kde $M\subset\R^2$ je obdélník, jeho strany jsou rovnobìné se souøadnicovımi osami.
+Nech $(x_0,y_0), (x_1,y_1)\in M$. Pak existují èísla $\xi,\eta\in\R$, $\xi$~leící mezi $x_0$ a $x_1$ a
+$\eta$~leící mezi $y_0$ a $y_1$, taková, e
+\[
+f(x_1,y_1)-f(x_0,y_0)=f_x(\xi,y_0)(x_1-x_0)+f_y(x_1,\eta)(y_1-y_0).
+\]
+\end{veta}
+
+\begin{proof}
+Platí:
+\begin{align*}
+f(x_1,y_1)-f(x_0,y_0)&=f(x_1,y_0)-f(x_0,y_0)+f(x_1,y_1)-f(x_1,y_0)=\\
+&=f_x(\xi,y_0)(x_1-x_0)+f_y(x_1,\eta)(y_1-y_0).
+\end{align*}
+Pøitom v posledním kroku jsme pouili dvakrát Lagrangeovu vìtu pro funkci jedné promìnné~---
+nejprve na funkci jedné promìnné $\varphi(x)=f(x,y_0)$ na intervalu s koncovımi body $x_0$ a $x_1$ a pak
+na funkci jedné promìnné $\psi(y)=f(x_1,y)$ na intervalu s koncovımi body $y_0$ a $y_1$.
+\end{proof}
+
+\begin{ramecek}
+Nech $A$, $B$ jsou mnoiny.  Øíkáme, e \textit{mnoiny $A$, $B$
+jsou si rovny} a píšeme ${A=B}$,  jestlie kadı prvek mnoiny $A$
+je zároveò prvkem mnoiny $B$ a kadı prvek mnoiny $B$ je zároveò
+prvkem mnoiny $A$.
+\end{ramecek}
+
+\section{Ukázky okolí pro texty urèené pro kombinované studium}
+
+%PRUVODCE
+\begin{pruvodce}
+V prvním semestru jsme se seznámili s reálnımi funkcemi jedné reálné promìnné,
+napø. $y=\sin x$, $u=t\ln t$ apod. Jde o \emph{zobrazení},
+které jednomu reálnému èíslu (hodnotì nezávisle promìnné $x$, $t$ apod.) pøiøazuje jedno reálné
+èíslo (hodnotu závisle promìnné $y$, $u$ apod.). Tedy jedna velièina (hodnota závisle
+promìnné) závisí na jedné velièinì (hodnotì nezávisle promìnné). V matematice se ovšem setkáváme
+i se sloitìjšími pøípady, kdy jedna velièina závisí na více velièinách. Napø. vzorec pro vıpoèet obsahu
+obdélníku je $S=ab$, tedy velièina $S$ závisí na dvou velièinách $a$ a $b$. Podobnì vzorec
+pro vıpoèet objemu kvádru je $V=abc$, tudí objem  $V$ závisí na tøech velièinách $a$, $b$ a $c$.
+Z fyziky známe vzorec pro vıpoèet dráhy rovnomìrnì zrychleného pøímoèarého pohybu
+$s=1/2\,at^2$ ($s$~závisí  na dvou velièinách), vzorec pro vıpoèet hmotnosti homogenního kvádru
+$m=\rho abc$ ($m$ závisí na ètyøech velièinách) atd. To nás vede k zavedení funkcí
+více promìnnıch.
+\end{pruvodce}
+
+%CILE
+\begin{cile}
+{Po prostudování této kapitoly budete schopni:}
+\item definovat funkce dvou a více promìnnıch a urèit jejich definièní obory,
+\item urèit, zda mnoina bodù v $\R^3$ je èi není grafem funkce dvou promìnnıch,
+\item nakreslit vrstevnice funkce dvou promìnnıch,
+\item urèit, zda je bod vzhledem k dané mnoinì v $\R^2$  jejím vnitøním, vnìjším, hranièním, hromadnım resp. izolovanım bodem,
+\item rozhodnout, zda je daná mnoina v $\R^2$ uzavøená nebo otevøená,
+\item definovat limitu funkcí dvou promìnnıch,
+\item vypoèítat limity nìkterıch funkcí dvou promìnnıch resp. rozhodnout o její neexistenci,
+\item vysvìtlit vztah mezi spojitostí funkce a limitou funkce dvou promìnnıch v daném bodì.
+\end{cile}
+\strana{6}
+
+%PRO ZAJEMCE
+\begin{detaily}
+Zcela analogicky zavedeme \emph{reálnou funkci tøí reálnıch
+promìnnıch\index{funkce reálná!tøí reálnıch promìnnıch}}.
+Prvku mnoiny $A\subset\R^3$
+pøiøadíme èíslo. Tudí trojici èísel $(x,y,z)$, kterou lze geometricky chápat jako kartézské souøadnice bodu
+v prostoru, je pøiøazeno èíslo~$u$. Tedy $f\colon u=f(x,y,z)$.
+
+Podobnì postupujeme pro \emph{reálné funkce
+$n$~reálnıch promìnnıch\index{funkce reálná!n reálnıch promìnnıch@$n$ reálnıch promìnnıch}}, kde
+$n=4,5,6,\dotsc.$ Formálnì je taková funkce zobrazení $f\colon A\to\R$, kde $A\subset\R^n$, $n\in\N$.
+Oznaèení je $f\colon z=f(x_1,\dots,x_n)$ resp. struènì $f\colon z=f(\x)$, kde $\x=(x_1,\dots,x_n)$.
+
+Zde u máme problémy s geometrickou pøedstavou. Pokud bychom chtìli
+postupovat jako u $n=2$ a $n=3$, museli bychom pracovat ve ètyø a vícerozmìrnıch prostorech,
+co není v elementárním kurzu bìné. Pøíklady takovıch funkcí jsou
+\[
+u=\sqrt[\leftroot 4 3]{\frac{x-2y+3z}{\ln(x^2-y^3+|z|)}}\,,\qquad
+h=x^2yu+(2z+u-x)\sin xy,\qquad z=x_1^2+x_2^2+\dots+x_n^2\quad\text{apod.}
+\]
+\end{detaily}
+
+%POJMY K ZAPAMATOVANI
+\begin{shrnuti}
+\item funkce dvou (resp. více) promìnnıch
+\item graf funkce dvou promìnnıch
+\item definièní obor funkce dvou promìnnıch
+\item vrstevnice (hladina) funkce dvou promìnnıch
+\item okolí bodu
+\item vnitøní, vnìjší, hranièní bod
+\item hromadnı a izolovanı bod
+\item uzavøená a otevøená mnoina
+\item limita funkce dvou promìnnıch
+\item spojitost funkce dvou promìnnıch
+\end{shrnuti}
+
+%KONTROLNI OTAZKY
+\begin{konot}[10.]
+\item Co rozumíme pojmem funkce dvou promìnnıch?
+\item Jak poznáme, e je mnoina bodù v $\R^2$ grafem funkce dvou promìnnıch?
+\item K èemu slouí vrstevnice?
+\item Definujte epsilonové okolí bodu v $\R^2$.
+\item Porovnejte definici okolí bodu v pøípadì funkce jedné promìnné a funkce dvou promìnnıch.
+\item Proveïte klasifikaci bodù v rovinì.
+\item Definujte otevøenou resp. uzavøenou mnoinu v $\R^2$.
+\item Existuje mnoina, která není ani uzavøená ani otevøená?
+\item Jak poèítáme limitu funkce dvou promìnnıch?
+\item Dá se pøi vıpoètu limit funkcí dvou promìnnıch tvaru podílu
+$\frac 0 0$ resp. $\frac{\infty }{\infty }$ pouít l'Hospitalovo pravidlo?
+\item Co musí bıt splnìno, aby funkce dvou promìnnıch byla spojitá v nìjakém bodì?
+\item Mùe bıt  funkce nespojitá v nìjakém izolovaném bodì definièního oboru?
+\end{konot}
+\newpage
+
+\begin{priklady}[11.]
+
+%Z O1
+\item Urèete a nakreslete definièní obor funkce dvou promìnnıch:
+\smallskip
+
+\noindent
+{\extrarowheight=6pt
+\begin{tabular*}{\linewidth }{sS@{}}
+a) & f \colon z = \frac{1}{x} + \frac{1}{y-1}\,, &
+b) & f \colon z = \frac{1}{y^2-x^2}\,, \\
+c) & f \colon z = \frac{1}{25-x^2-y^2}\,, &
+d) & f \colon z = \sqrt{3x} - \frac{2}{\sqrt{y}}\,, \\
+e) & f \colon z = \frac{1}{\sqrt{x + |y|}}  - \frac{1}{\sqrt{x - |y|}}\,, &
+f) & f \colon z = \sqrt{(1-x^2)(1-y^2)}\,, \\
+g) & f \colon z = \frac{1}{\sin \pi(x+y)} &
+h) & f \colon z = \arcsin (x+y)\,, \\
+i) & f \colon z = \ln (|x|+y) + \frac{1}{\sqrt{y-x}}\,, &
+j) & f \colon z = \sqrt{x^2+y^2-1} + \ln (2-x^2-y^2)\,, \\
+k) & f \colon z = \frac{2}{ \sqrt{xy}}\,, &
+l) & f \colon z = \arcsin \frac{x}{y^2} + \arcsin (1-y)\,, \\
+m) & f \colon z = \sqrt{\ln x + \ln y}\,, &
+n) & f \colon z = \ln (\sin x + \sin y - 3) +(xy)^2\,, \\
+o) & f \colon z = \pi x \sqrt{x^2-y^2}\,, &
+p) & f \colon z = xy \sqrt{9-x^2-y^2}\,, \\
+q) & f \colon z = \frac{x+y}{2x - 3y}\,, &
+r) & f \colon z = \frac{x^2 - 2y}{y^2 - 2x}\,, \\
+s) & f \colon z = \sqrt{3x - y}\,, &
+t) & f \colon z = x + \sqrt{1 -y}\,, \\
+u) & f \colon z = \ln (y^2 - 4x + 8)\,, &
+v) & f \colon z = \arcsin (x-y)\,, \\
+w) & f \colon z =  \sqrt{4-x^2} + \sqrt{y^2 - 1}\,, &
+x) & f \colon z =  \sqrt{(9-x^2-y^2)(x^2+y^2-4)}\,.
+\end{tabular*}}%
+\newpage
+
+%Z O2
+\item Urèete a nakreslete definièní obor funkce dvou promìnnıch:
+\smallskip
+
+\noindent
+{\extrarowheight=6pt
+\begin{tabularx}{\linewidth }{@{}lxlx@{}}
+a) & f \colon z = \ln(x+y)\,, &
+b) & f \colon z = \sqrt{1-x^2}+\sqrt{1-y^2}\,, \\
+c) & f \colon z = \ln[x\ln(y-x)]\,, &
+d) & f \colon z = \sqrt{x\sin y\rule{0mm}{3mm}}\,, \\
+e) & f \colon z = \sqrt{1-\frac{x^2}{a^2}-\frac{y^2}{b^2}}\,,\quad a,b>0, &
+f) & f \colon z = \frac{\sqrt{4x-y^2}}{\ln(1-x^2-y^2)}\,, \\
+g) & f \colon z = \tg\pi(x-y)\,, &
+h) & f \colon z = \sqrt{xy}\,, \\
+i) & f \colon z = \sqrt{\frac{9-x^2-y^2}{x^2+y^2-4}}\,, &
+j) & f \colon z = \sqrt{\frac xy}\,.
+\end{tabularx}}%
+
+\end{priklady}
+\newpage
+
+\begin{vysledky}[11.]{}
+%1
+\item
+\begin{tabular*}{\linewidth }[t]{sS@{}}
+a) & D(f) = \{ x \neq 0  \wedge y \neq 1\}, &
+b) & D(f) = \{ y \neq \pm x \}, \\
+c) & D(f) = \{ x^2 + y^2 \neq 25 \}, &
+d) & D(f) = \{ x \geq 0 \wedge y > 0 \}, \\
+e) & D(f) = \{ x > 0  \wedge - x < y < x  \}, \\
+f) & D(f) = \{ ( |x| \leq 1 \wedge |y| \leq 1 ) \vee ( |x| \geq 1 \wedge |y| \geq 1 ) \},\hidewidth\mbox{} \\
+g) & D(f) = \{ y \neq - x + k, k\in\Z\}, &
+h) & D(f) = \{ -x -1 \leq y \leq - x + 1 \}, \\
+i) & D(f) = \{  y > x \}, &
+j) & D(f) = \{ 1 \leq x^2 + y^2 < 2 \}, \\
+k) & D(f) = \{ (x > 0 \wedge y > 0 )  \vee (x < 0 \wedge y < 0 ) \}, &
+l) & D(f) = \{ -y^2 \le x \le  y^2 \wedge 0 < y \le 2 \}, \\
+m) & D(f) = \{ x > 0 \wedge y > 0 \wedge xy \geq 1 \}, &
+n) & D(f) = \emptyset, \\
+o) & D(f) = \{ |x| \ge |y|  \}, &
+p) & D(f) = \{ x^2 + y^2 \leq 9 \}, \\
+q) & D(f) = \{ y \neq  \frac{2}{3}\,x \}, &
+r) & D(f) = \{  y^2 \neq 2x \}, \\
+s) & D(f) = \{ y \leq 3x \}, &
+t) & D(f) = \{  y \leq 1 \}, \\
+u) & D(f) = \{  y^2 > 4(x-2) \}, &
+v) & D(f) = \{ -1 \leq x-y \leq 1 \}, \\
+w) & D(f) = \{  |x| \leq 2 \wedge |y| \geq 1 \}, &
+x) & D(f) = \{ 4 \le  x^2 + y^2 \leq 9 \}.
+\end{tabular*}
+
+%2
+\item
+\begin{tabular*}{\linewidth }[t]{sS@{}}
+a) & D(f) = \{x+y>0 \}, &
+b) & D(f) = \{|x|\le1 \wedge |y|\le1 \}, \\
+c) & D(f) = \{(x>0 \wedge y>x+1) \vee (x<0 \wedge x<y<x+1) \},\hidewidth\mbox{} \\
+d) & D(f) = \bigl\{\bigl(x\ge0 \wedge 2k\pi\le y \le(2k+1)\pi \bigr) \vee
+    \bigl(x\le0 \wedge (2k+1)\pi\le y \le(2k+2)\pi \bigr), k\in\Z\bigr\},\hidewidth\mbox{} \\
+e) & D(f) = \bigl\{\frac{x^2}{a^2}+\frac{y^2}{b^2}\le1 \bigr\}, &
+f) & D(f) = \{y^2\le4x \wedge x^2+y^2<1 \wedge x^2+y^2\neq0 \}, \\
+g) & D(f) = \{y\neq x-k-1/2, k\in\Z \}, &
+h) & D(f) = \{(x\ge0 \wedge y\ge0) \vee (x\le0 \wedge y\le0) \}, \\
+i) & D(f) = \{4<x^2+y^2\le9 \}, &
+j) & D(f) = \{(x\ge0 \wedge y>0) \vee (x\le0 \wedge y<0) \}.
+\end{tabular*}
+
+\end{vysledky}
+\newpage
+
+\section{Okolí pro vıèty}
+
+\LaTeX{} standardnì obsahuje okolí \verb+enumerate+, \verb+itemize+ a \verb+description+
+pro psaní èíslovanıch resp. neèíslovanıch vıètù. Jejich pouití ale nìkdy není v dané situaci ideální
+(mezery, odsazení). Pøedkládaná šablona obsahuje definici velmi obecného nástroje pro tvorbu takovıch
+okolí, která mohou bıt vnoøena a do ètyø úrovní, mohou bıt rùznì "`èíslována"', na toto èíslování se dá
+odkazovat pomocí dvojic \verb+\label+, \verb+\ref+ atd. Pomocí tohoto nástroje je nadefinováno nìkolik okolí,
+která nyní pøedvedeme. Další (s jinım mezerováním, èíslováním apod.) lze snadno definovat.
+
+\begin{center}
+\begin{tabular}{lll}
+\verb+aokz+ &èíslování arabskımi èíslicemi, vpravo závorka &Napø. 3)\\
+\verb+aokzz+ &èíslování arabskımi èíslicemi, kolem závorky &Napø. (3)\\
+\verb+aokt+ &èíslování arabskımi èíslicemi, vpravo teèka &Napø. 3.\\
+\verb+rokz+ &èíslování øímskımi èíslicemi, vpravo závorka &Napø. iii)
+\end{tabular}
+\end{center}
+
+Kadé toto okolí má jeden povinnı parametr (ve sloenıch závorkách), kterı udává nejširší vıraz pouitı na èíslování
+(vèetnì teèky, závorek apod.; zadáte-li ho širší, docílíte odsazení zleva), a jeden nepovinnı parametr (v kulatıch
+závorkách), kterı umoòuje zmìnit arabské resp. øímské èíslice na malá resp. velká písmena.
+Nepovinnı parametr mùe bıt: \verb+arabic+, \verb+roman+, \verb+Roman+, \verb+alph+ a \verb+Alph+.
+
+A nyní ukázky (ve zdrojovém kódu zjistíte podrobnosti, jak se zadává):
+\bigskip
+
+\verb+\begin{aokz}{1)}+\medskip
+
+\begin{aokz}{1)}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{aokz}
+
+\verb+\begin{aokzz}{(1)}+\medskip
+
+\begin{aokzz}{(1)}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{aokzz}
+
+\verb+\begin{aokt}{1.}+\medskip
+
+\begin{aokt}{1.}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{aokt}
+
+\verb+\begin{rokz}{iii)}+\medskip
+
+\begin{rokz}{iii)}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{rokz}
+
+\verb+\begin{rokz}{\qquad iii)}+\medskip
+
+\begin{rokz}{\qquad iii)}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{rokz}
+
+\verb+\begin{aokzz}[alph]{(d)}+\medskip
+
+\begin{aokzz}[alph]{(d)}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{aokzz}
+\bigskip
+
+Okolí mohou bıt vnoøená:
+\bigskip
+
+\begin{aokzz}[Alph]{(A)}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\begin{aokt}[Roman]{III.}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{aokt}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{aokzz}
+
+Je rozumné si nadefinovat podle svıch potøeb nìkolik málo vlastních okolí (zejména mezery mezi polokami
+a nad a pod okolím a typ èíslování) a ty pak systematicky pouívat, aby byl text jednotnı.
+A nezapomenout, e všeho moc škodí.
+
+Je nadefinováno také jedno neèíslované okolí: \verb+punt+. Má jeden nepovinnı parametr, kterım lze
+docílit odsazení od okraje.
+\bigskip
+
+\verb+\begin{punt}+\medskip
+
+\begin{punt}
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{punt}
+
+\verb+\begin{punt}[\qquad]+\medskip
+
+\begin{punt}[\qquad]
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\item Nìjakı ukázkovı text, kterı se poøád dokola a dokola a dokola opakuje, aby byl dost dlouhı.
+\end{punt}
+
+Pøípadnım zájemcùm poradím, jak definice modifikovat nebo jak udìlat nové.
+
+\section{Rejstøík a další informace, závìreèné úpravy}
+
+\LaTeX{} umoòuje snadno vytvoøit a tøíúrovòovı rejstøík. K tomu slouí pøíkaz \verb+\index{}+.
+
+\begin{verbatim}
+Napø. funkce\index{funkce}, spojitá funkce\index{funkce!spojitá}
+a rostoucí spojitá funkce\index{funkce!spojitá!rostoucí}.
+\end{verbatim}
+
+Napø. funkce\index{funkce}, spojitá funkce\index{funkce!spojitá} a rostoucí spojitá
+funkce\index{funkce!spojitá!rostoucí}.
+\bigskip
+
+Pozor na nadbyteèné mezery uvnitø argumentu pøíkazu \verb+\index+.
+Napøíklad pøíkazy \verb*+\index{funkce}+, \verb*+\index{ funkce}+ a \verb*+\index{funkce }+ zadané na rùznıch
+místech textu nejsou stejné, øetìzce jsou rùzné a heslo se vám v rejstøíku objeví tøikrát (obecnì s rùznımi
+stranami --- pokud náhodou nepadnou na stejnou stranu). Správnì by mìlo bıt heslo jen jednou, ale se tøemi
+rùznımi stranami (pokud náhodou nepadnou na stejnou stranu).
+
+Hesla se ukládají do souboru s pøíponou \texttt{idx}. Rejstøík se vytvoøí pomocí programu \texttt{csindex}
+(máte-li novou instalaci, je dostupnı z wineditu). Další triky lze nalézt v dokumentaci (rùzné druhy
+èíslování, zmìna øazení aj.).
+
+\subsection{Kódování èeštiny}
+
+Ve zdrojovém kódu hlavního souboru (toho, kterı pøekládáte) \emph{musí zùstat} první øádek, kterı vypadá takto:
+
+\verb+%& -translate-file=cp227.tcx +
+
+Nesmíte ho tedy smazat a musí to bıt opravdu první øádek a na zaèátku nesmí bıt ádná mezera!
+Tento øádek spolu s dalším pøíkazem pro naèítání, kterı má ve Windows tvar \verb+\input csenc-wt.tex+,
+je zodpovìdnı za správné pøekódování èeštiny. Naètení souboru \verb+csenc-wt.tex+ musí probìhnout
+ještì \emph{pøed} naètením souboru \verb+obraz.tex+,
+kterı obsahuje pøíkaz \verb+\documentclass+, naèítání stylovıch balíèkù a další definice.
+\bigskip
+
+Vıše popsané pøekódování pouívá rozšíøení \TeX u zvané \texttt{enctex} (ji bylo zmínìno v souvislosti
+se stylem \texttt{vlna.sty}). Pokud váš pøekladaè toto rozšíøení neumí nebo ho nemá aktivované
+(pøeklad zhavaruje), musíte pouít tzv. \texttt{tcx} tabulky. Do \emph{prvního øádku} dáte (ve Windows)
+tìsnì od levého okraje
+
+\verb+%& -translate-file=cp1250t1.tcx +
+
+\noindent
+a zrušíte naètení souboru pro \texttt{enctex}, tj. zaprocentujete nebo smaete zmínìnı pøíkaz
+\verb+\input csenc-wt.tex+.
+
+\subsection{Rùzné}
+
+Místo pøíkazu \verb+\ref+ mùete pouít nadefinovanı pøíkaz \verb+\upref+, kterı zpùsobí, e odkaz bude vdy
+stojatım písmem (hlavnì èíslice, je to obvykle hezèí). Pro odkaz na èíslované rovnice, které jsou v kulatıch závorkách,
+se pouívá pøíkaz \verb+\eqref+.
+\bigskip
+
+Šablona obsahuje pøíkazy pro odkazy na obrázky, obrázky, ktré jsou zaèlenìné pomocí stylu \texttt{subfigure},
+a obtékané obrázky.
+\bigskip
+
+Pro obtékání lze pouít styl \texttt{wrapfig}, kterı šablona volá.
+\bigskip
+
+Navigaèní záloky, které vidíte v Acrobatu, musejí bıt kódovány v unicodu, aby mìly správnou èeštinu.
+Jsou generovány automaticky a uloeny v souboru s pøíponou \texttt{out}. Finální verze musí bıt obvykle ruènì
+editována.
+\bigskip
+
+Detaily kolem tìchto vìcí bych pøípadnım zájemcùm pøíleitostnì vysvìtlil.
+
+\subsection{Úpravy finální verze}
+
+Øádek \verb+\overfullrule=6pt+, kterı je na zaèátku, zpùsobí, e po pravé stranì máte èernımi obdélníèky
+vyznaèeno pøeteèení (\TeX{} nenašel vhodné zlomení). Úpravou textu je nutné problémy vyøešit.
+Nepatrné pøeteèení mùete nechat. Pøed finální verzí se øádek zaprocentuje, aby èerné obdélníèky zmizely.
+V tomto textu byly pøesahy neošetøeny a úmyslnì ponechány.
+\bigskip
+
+Vıslednı PDF soubor není urèenı pro tisk, take není nutné øešit barevné
+odkazy a otázku, jak se vytisknou barevné obrázky.
+
+Soubor \verb+obraz.tex+ obsahuje témìø na konci následujcící øádky:
+
+\begin{verbatim}
+\hypersetup{colorlinks,hyperindex,plainpages=false,urlcolor=cyan,
+pdfstartview={FitH 714 },pdftitle={Název skript},pdfsubject={Skripta},
+pdfauthor={Autor skript}
+%,linkcolor=black,citecolor=black,urlcolor=black,pagecolor=black
+}
+\end{verbatim}
+
+Zde byste mìli uvést v poloce \texttt{pdftitle} skuteènı název vašich skript a v poloce
+\texttt{pdfauthor} jména autorù. Tyto údaje se vám pak pøi prohlíení PDF souboru v Acrobat Readeru
+ukáou pøi zobrazení vlastností dokumentu (obvykle v roletovém menu Soubor).
+
+\subsection{Ukázka zaøazení 3D grafiky}
+
+Pro zaøazení takové grafiky slouí balíèek \texttt{movie15}.
+Na obrázku~\ref{musil} vidíte ukázku interaktivní 3D grafiky. K~manipulaci
+s~grafikou je nutné zobrazit 3D Toolbar (je souèástí Adobe Readeru).
+Toolbar se zobrazí po kliknutí pravého tlaèítka
+myši na obrázek a volbì\penalty0 Nástroje/Zobrazit pruh nástrojù. Základní monosti Toolbaru jsou dynamickı zoom,
+posunutí, natoèení, zmìna osvìtlení, zmìna barvy pozadí èi skrytí, zobrazení
+nebo izolování pouze urèitıch prvkù modelu apod. Moné je rovnì vyuití
+rùznıch zobrazovacích módù (Solid, Transparent, Shaded Illustration atd.).
+Pro korektní zobrazení interaktivní 3D grafiky musíte pouít
+Adobe Reader verze 8.1.1 (a vyšší).
+
+\begin{figure}[htb]
+\centering
+\includemovie[%
+poster, 3Dlights=Day, 3Dcoo=\minus0.7874943614006042
+\minus0.3271363377571106
+0.9042536616325378,
+3Dc2c=0.9308217763900757 0.26678651571273804
+0.24979151785373688, 3Droo=6.4, 3Dbg=\moviebackgroundcolor]{0.55\linewidth}{0.55\linewidth}{u3d/srni3.u3d}
+\caption{\dvojt Grafickı objekt ve formátu U3D}\label{musil}
+\end{figure}
+%\newpage
+
+\subsection{Ukázka interaktivních testù}
+
+Následující test byl vytvoøen pomocí balíèku \texttt{acrotex}.
+Test zahájíte kliknutím na tlaèítko "`Zacátek testu"'.
+U otázek, kde lze volit jen jednu odpovìï (test nedovolí
+zaškrtnout více odpovìdí),
+je správná odpovìï bodována poètem bodù uvedenıch v závorce u zadání a
+špatná odpovìï  je bodována 0~body.
+U otázek, kde lze volit více správnıch odpovìdí, je souèet bodù správnıch
+odpovìdí uveden v závorce u zadání
+a za kadou špatnou odpovìï bude odeèten jeden bod.
+
+\showCreditMarkup  %Po stisknutí tlaèítka Vısledky se zobrazí body za jednotlivé úlohy (pøed èísly úloh).
+\symbolchoice{cross}
+
+\begin{quiz}{exampletest}%{qzdiscrl}
+   \begin{questions}
+\everymath{\displaystyle}
+\useForms
+
+\item\PTs{4} Vyberte dvojnásobnı integrál, kterı vznikne zámìnou poøadí integrace u integrálu
+$ \int_{0}^2 \biggl( \int_{0}^{\sqrt{2x-x^{2}}} f(x,y)\,\dy \biggr)  \dx  $,\\
+%\newline
+\begin{answers}{2}
+\rowsep{10pt}   %mezery mezi øádky
+\bChoices
+\Ans[0]{0}  $ \int _{0}^1 \left( \int_{\sqrt{1-y^{2}}+1}^{-\sqrt{1-y^{2}}+1} f \left( x,y \right) \dx \right)  \dy $\eAns
+\Ans[0]{0}  $ \int _{0}^1 \left( \int_{-\sqrt{1-y^{2}}-1}^{\sqrt{1-y^{2}}+1} f \left( x,y \right) \dx \right)  \dy $\eAns
+\Ans[4]{1}  $ \int _{0}^1 \left( \int_{-\sqrt{1-y^{2}}+1}^{\sqrt{1-y^{2}}+1} f \left( x,y \right) \dx \right)  \dy $ \eAns
+\Ans[0]{0}  $ \int _{0}^1 \left( \int_{-\sqrt{1-y^{2}}+1}^{\sqrt{1-y^{2}}-1} f \left( x,y \right) \dx \right)  \dy $ \eAns
+\eChoices
+\end{answers}
+\medskip
+
+\item\PTs{2} Platí $\iint_{A}f(x,y)\,\dx\dy= \int_{0}^{2\pi} \biggl( \int _{0}^{2+\sin{x}} \frac{y}{3} \, \dy \,\biggr) \dx =
+ \frac{3\pi}{2} $.
+%%%%\newline
+Rozhodnìte, které z následujících tvrzení je pravdivé.
+\begin{manswers}{1}
+\rowsep{10pt}
+\bChoices
+\Ans[\minus1]{0} Èíslo $3\pi/2$ pøedstavuje obsah rovinné oblasti, která je ohranièena funkcemi $z=y/3$ a $z=2+\sin{x}$. \eAns
+\Ans[2]{1} Èíslo $3\pi/2$ pøedstavuje objem tìlesa, které je shora ohranièeno grafem funkce $z=y/3$ a jeho podstava je $A$. \eAns
+\Ans[\minus1]{0} Èíslo $3\pi/2$ pøedstavuje objem tìlesa, které je ohranièeno grafem funkce \hbox{$z=2+\sin{x}$} a jeho podstava je $A$.\eAns
+\eChoices
+\end{manswers}
+
+\item\PTs{2} Vypoètìte dvojnásobnı integrál\medskip\newline
+ $ \int _{1}^4 \left(  \int_{-2}^{3}  x^{2}y \, \dy \,\right)  \dx $ =
+$ \RespBoxMath{105/2}{3}{.0001}{[0,1]}$\CorrAnsButton[\CA{Odpoved}]{105/2}
+   \end{questions}
+ \end{quiz}
+
+\vyhodnoceni{exampletest}
+
+%\AnswerField\currQuiz
+%\mbox{\def\RBW{.98\panelwidth}\csname math@\thepage\endcsname}
+
+Pro ukonèení testu je tøeba kliknout na tlaèítko "`Konec testu"'. Opravení
+testu se provede kliknutím na tlaèítko "`Vısledky"', správné odpovìdi budou
+oznaèeny zelenì a èervenì budou oznaèeny odpovìdi chybné. Pøi pouití otázky
+s tvoøenou odpovìdí se správná odpovìï zobrazí v rámeèku umístìném vpravo dole
+v navigaèním panelu po kliknutí na tlaèítko "`Odpoved"'.
+
+\endinput
+

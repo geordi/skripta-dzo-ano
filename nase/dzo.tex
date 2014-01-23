@@ -1,0 +1,81 @@
+\documentclass{book}
+
+%%% remove comment delimiter ('%') and specify encoding parameter if required,
+%%% see TeX documentation for additional info (cp1252-Western,cp1251-Cyrillic)
+\usepackage[utf8]{inputenc}
+
+%%% remove comment delimiter ('%') and select language if required
+\usepackage[czech]{babel}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{mathrsfs}
+\usepackage{bm}
+\usepackage{graphicx}
+\usepackage{color}
+\usepackage{listings}
+%%% remove comment delimiter ('%') and specify parameters if required
+%\usepackage[dvips]{graphics}
+
+\newcommand{\sinc}{\mathop{\mathrm{sinc}}}
+%\newcommand{\min}{\mathop{\mathrm{min}}}
+%\newcommand{\max}{\mathop{\mathrm{max}}}
+
+\definecolor{grey}{RGB}{220,220,220}
+
+\renewcommand*\lstlistingname{Zdrojový kód}
+\lstset{
+         basicstyle=\footnotesize\ttfamily, % Standardschrift
+         %numbers=left,               % Ort der Zeilennummern
+         numberstyle=\tiny,          % Stil der Zeilennummern
+         %stepnumber=2,               % Abstand zwischen den Zeilennummern
+         numbersep=5pt,              % Abstand der Nummern zum Text
+         tabsize=2,                  % Groesse von Tabs
+         extendedchars=true,         %
+         breaklines=true,            % Zeilen werden Umgebrochen
+         keywordstyle=\bf,
+         frame=b,         
+ %        keywordstyle=[1]\textbf,    % Stil der Keywords
+ %        keywordstyle=[2]\textbf,    %
+ %        keywordstyle=[3]\textbf,    %
+ %        keywordstyle=[4]\textbf,   \sqrt{\sqrt{}} %
+         stringstyle=\color{white}\ttfamily, % Farbe der String
+         showspaces=false,           % Leerzeichen anzeigen ?
+         showtabs=false,             % Tabs anzeigen ?
+         xleftmargin=17pt,
+         framexleftmargin=17pt,
+         framexrightmargin=5pt,
+         framexbottommargin=4pt,
+         backgroundcolor=\color{grey},
+         showstringspaces=false      % Leerzeichen in Strings anzeigen ?        
+}
+
+\begin{document}
+
+\input 01_signaly/signaly.tex
+
+\input 02_transformace/transformace.tex
+
+\input 03_stochastpristup/stochastpristup.tex
+
+\input 04_digitalizace/digitalizace.tex
+
+\input 05_filtrace/filtrace.tex
+
+\input 06_bodoveoperace/bodoveoperace.tex
+
+%\input 07_komprese/komprese.tex
+
+\input 08_segmentace/segmentace.tex
+
+%\input 09_mereni/mereni.tex
+
+%\input 10_rozpoznani/rozpoznani.tex
+
+\input 11_stereo/stereo.tex
+
+%\input 12_pohyb/pohyb.tex
+
+%\input 13_dodatky/dodatky.tex
+
+\end{document}

@@ -1,0 +1,255 @@
+\noindent \textbf{10  Příznakové metody analýzy obrazu}
+
+\noindent Příznakové metody analýzy obrazu předpokládají, že máme k dispozici popis rozpoznávaného objektu ve formě vektoru příznaků \textbf{x}=(\textit{x}1,\textit{x}2,..., \textit{xm})T. Jednotlivými složkami tohoto vektoru jsou hodnoty vhodně zvolených příznaků (kapitola 9). Podle oboru hodnot, kterých mohou příznaky nabývat, je možné rozlišovat spojité, diskrétní a binární (logické, dichotomické) příznaky. Každý konkrétní vektor příznaků reprezentuje nějaký bod v \textit{m}-rozměrném prostoru \textit{Xm}, který zde budeme nazývat příznakovým prostorem. Příznakový prostor \textit{Xm} je kartézským součinem oborů hodnot všech uvažovaných příznaků a je tedy tvořen všemi možnými hodnotami vektoru \textbf{x}=(\textit{x}1,\textit{x}2,..., \textit{xm})T. Jsou-li např. hodnoty všech zvolených příznaků reálné, je \textit{Xm} prostorem reálných \textit{m}-tic. V~konkrétních úlohách nemusí ovšem hodnoty příznaků nabývat všech teoreticky možných hodnot z \textit{Xm}. Obvykle se stává, že je hodnota příznaků v konkrétní úloze nějak omezena. Často jsou např. hodnotami příznaků pouze čísla z jistého intervalu. Zavedeme proto obor $\chi$ hodnot příznaků, které se v uvažované úloze mohou vyskytovat. Samozřejmě platí $\chi$$\subseteq$\textit{Xm}.
+
+\noindent 
+
+\noindent Mějme objekt \textit{O}1, kterému odpovídá vektor příznaků \textbf{x}1, a objekt \textit{O}2, kterému odpovídá vektor příznaků \textbf{x}2. Vektory \textbf{x}1, \textbf{x}2 reprezentují body v prostoru příznaků \textit{Xm}. Příznakové metody analýzy obrazu jsou založeny na myšlence, že podobnost nebo shoda objektů \textit{O}1, \textit{O}2 se projeví tím, že délka vektoru \textbf{x}1$-$\textbf{x}2 v prostoru  \textit{Xm}  je malá nebo nulová. Množinu objektů stejného druhu nazýváme třídou. Pokud bychom konstruovali např. systém pro rozpoznávání dvojrozměrných geometrických objektů, pak by třídami byly jednotlivé obrazce, které chceme rozpoznávat, např. kružnice, čtverec, trojúhelník atd. Cílem rozpoznání je stanovení třídy objektu. Označíme \textit{n} počet tříd, které mají být rozpoznávány. Jednotlivé třídy dále označme $\omega$\textit{i}, 1 $\leq$ \textit{i} $\leq$ \textit{n}. Množina všech tříd je pak $\Omega$ =\{$\omega$1,$\omega$2,..., $\omega$\textit{n}\}. Na obr. 10.1 je znázorněna situace, kdy rozpoznávání spočívá v zařazení rozpoznávaného objektu do jedné ze tří tříd. K rozpoznání je použito dvou příznaků \textit{x}1,\textit{x}2. Značky znázorňují obrazy objektů jednotlivých tříd v prostoru příznaků. Je typické, že obrazy objektů jednotlivých tříd tvoří v prostoru příznaků shluky. Pro potřeby pozdějšího výkladu jsou dále silněji vyznačeny tzv. etalony a čárkovaně jsou vyznačeny hranice mezi třídami.
+
+\noindent \textbf{10.1 Klasifikátory}
+
+\noindent Klasifikátorem nazveme zobrazení  \textit{d}:$\chi$ $\rightarrow$ $\Omega$. Jedná se tedy zobrazení, které ke každému možnému vektoru příznaků přiřadí identifikátor třídy, do které rozpoznávaný objekt náleží. Můžeme tedy psát
+
+\noindent 
+
+ . \eqref{GrindEQ__10_1_}
+
+\noindent Schématicky je činnost klasifikátoru ilustrována na obr.10.2. Rozhodovací pravidlo, podle kterého se provádí klasifikace, indukuje rozklad oblasti $\chi$ na podoblasti. Podoblast $\chi$\textit{i} ($\chi$\textit{i}$\subseteq$$\chi$) je tvořena těmi hodnotami vektoru \textbf{x}, pro které platí \textit{d}(\textbf{x})=$\omega$\textit{i}. Základním problémem při konstrukci klasifikátoru je návrh rozhodovacího pravidla. Této otázce se dále budeme věnovat podrobněji. Podle realizace rozhodovacího kriteria můžeme klasifikátory charakterizovat jako klasifikátory deterministické nebo nedeterministické, s pevným nebo s proměnným počtem příznaků, klasifikátory bez učení nebo s učením. V~tomto textu se však omezíme pouze na nejjednodušší případy.
+
+\noindent 
+
+\noindent \textbf{10.1.1  Klasifikace pomocí diskriminančních funkcí}
+
+\noindent Při klasifikaci pomocí diskriminačních funkcí předpokládáme, že existuje \textit{n} reálných diskriminačních funkcí \textit{g}1(\textbf{x}), \textit{g}2(\textbf{x}),..., \textit{gn}(\textbf{x}) definovaných nad \textit{$\chi$}. Rozpoznání je v~tomto případě založeno na stanovení funkce dávající pro zadaný vektor příznaků maximální hodnotu. Hledaná třída je stanovena podle pravidla:
+
+ jestliže pro zadané \textbf{x} platí  pro každé \textit{s}$\in$(\{1,2,..., \textit{n}\}\textbackslash \{\textit{r}\}), pak . \eqref{GrindEQ__10_2_}
+
+\noindent 
+
+\noindent Funkci klasifikátoru ilustruje obr.10.3. Známe-li funkce \textit{g}1(\textbf{x}), \textit{g}2(\textbf{x}),..., \textit{gn}(\textbf{x}), pak jsou tím také určeny oblasti jednotlivých tříd. Máme
+
+ . \eqref{GrindEQ__10_3_}
+
+\noindent Hranici mezi dvěma sousedními oblastmi $\chi$\textit{r}, $\chi$\textit{s} lze stanovit řešením rovnice
+
+ . \eqref{GrindEQ__10_4_}
+
+\noindent 
+
+\noindent Z~předchozího výkladu je zřejmé, že klíčovým problémem je nalezení vhodné množiny diskriminačních funkcí. Tomuto problému budou věnovány následující odstavce. Zatím pro ilustraci pouze poznamenáváme, že jednoduchou volbou je např. \textit{gr}(\textbf{x}) = \textit{p}(\textbf{x}$\mid$$\omega$\textit{r}), kde \textit{p}(\textbf{x}$\mid$$\omega$\textit{r}) je podmíněná hustota pravděpodobnosti pro hodnoty příznaků za předpokladu, že se jedná o objekt třídy $\omega$\textit{r}. Pro jednorozměrný prostor příznaků je tato volba ilustrována na obr 10.4. V dalším textu tento přístup dále zdokonalíme. V případě klasifikace do dvou tříd (tzv. dichotomie) pracuje klasifikátor pouze se dvěma diskriminačními funkcemi. Pro nalezení maxima tak stačí zjistit znaménko rozdílu  \textit{g}1(\textbf{x})$-$\textit{g}2(\textbf{x}). Jestliže přidělíme třídám identifikátory 1,    $-$1, lze klasifikátor jednoduše zkonstruovat podle předpisu 
+
+ . \eqref{GrindEQ__10_5_}
+
+\noindent Proveďme ještě několik obecných úvah o tvaru diskriminačních funkcí. Nejjednodušším tvarem diskriminační funkce je funkce lineární, která má tvar
+
+ . \eqref{GrindEQ__10_6_}
+
+\noindent Na koeficient \textit{ar,i} můžeme pohlížet jako na váhu příznaku \textit{xi} pro třídu $\omega$\textit{r}, \textit{ar,}0 je práh, kterým je hodnota diskriminační funkce posouvána o konstatní velikost. Rovnici plochy v \textit{Xm}, na níž leží hranice mezi oblastmi $\chi$\textit{r}, $\chi$\textit{s}, snadno určíme ze vztahu 10.4. Vyjde
+
+ . \eqref{GrindEQ__10_7_}
+
+\noindent Vidíme, že v~případě lineárních diskriminačních funkcí je plocha tvořící hranici mezi třídami nadrovinou v prostoru \textit{Xm}. Je zřejmé, že při \textit{n} diskriminačních funkcích je nejvyšší možný počet takových nadrovin dán výrazem \textit{n}(\textit{n}$-$1)/2. V případě dichotomického klasifikátoru jsou k dispozici pouze dvě diskriminační funkce, a v prostoru příznaků existuje tudíž pouze jediná nadrovina, která jej rozděluje na dvě části. Pokud lze danou úlohu řešit za použití lineárních diskriminačních funkcí, tedy pokud je možné najít hranice oddělující oblasti odpovídající různým třídám tak, že jsou tyto hranice částmi    nadrovin, pak úlohu nazveme úlohou s lineárně separabilními třídami. Lineární separabilita je z hlediska praktické realizace samozřejmě výhodná. Nejsou-li třídy lineárně separabilní, pak lze někdy původní prostor \textit{Xm} příznaků zobrazit do nového prostoru \textit{Yq}. Prostor \textit{Yq} a zobrazení \textit{Xm}$\rightarrow$\textit{Yq} vyhledáme tak, aby v \textit{Yq} bylo dosaženo lineární separability. Poznamenejme ovšem, že nalézt takový prostor a zobrazení nemusí být jednoduché a někdy to může být i nemožné. Odhlédněme od této komplikace a předpokládejme, že prostor a zobrazení požadovaných vlastností jsou známy a že platí (\textbf{$\xi$} je vektor příznaků v prostoru \textit{Yq}) 
+
+ . (10.8a)
+
+\noindent Po složkách tedy ,   ,  ...   ,. (10.8b)
+
+\noindent Pro diskriminační funkci \textit{gr}(\textbf{x}) pak s využitím vztahů \eqref{GrindEQ__10_6_} a \eqref{GrindEQ__10_8_} máme
+
+ . \eqref{GrindEQ__10_9_}
+
+\noindent 
+
+\noindent Obr.10.5 ukazuje příklad, kdy by mohl být popsaný postup užitečný. V příznakovém prostoru \textit{x}1, \textit{x}2 znázorněném na obrázku jistě nejsou třídy $\omega$1, $\omega$2 lineárně separabilní. Úlohu však snadno převedeme na lineárně separabilní problém transformací $\xi$=$\surd$[(\textit{x}1$-$\textit{c}1)2+(\textit{x}2$-$\textit{c}2)2]. Klasifikátor bude pracovat pouze s jediným příznakem. V~případech, které nelze vyřešit podobným způsobem a jestliže lineární diskriminační funkce nepostačuje, lze někdy využít následujícího postupu. Funkci \textit{gr}(\textbf{x}) reprezentujeme množinou $\{$\textit{gr},\textit{k}(\textbf{x})$\}$ lineárních funkcí. Hodnotu diskriminační funkce \textit{gr}(\textbf{x}) pak stanovujeme podle vztahu
+
+ . \eqref{GrindEQ__10_10_}
+
+\noindent \textbf{10.1.2 Klasifikace pomocí minimální vzdálenosti}
+
+\noindent Při klasifikaci pomocí minimální vzdálenosti jsou jednotlivé třídy objektů reprezentovány tzv. etalony. Etalon \textbf{e}\textit{r} je vektor obsahující hodnoty příznaků, které jsou v jistém smyslu typické pro třídu $\omega$\textit{r} a které tak třídu $\omega$\textit{r} reprezentují (na obr.10.1 jsou etalony vyznačeny silně). Je-li k dispozici vhodná trénovací množina, pak stanovení etalonů nečiní potíže. Nejjednodušší možností je použít střední hodnoty
+
+ , \eqref{GrindEQ__10_11_}
+
+\noindent kde \textit{Nr} je počet trénovacích vzorků pro třídu $\omega$\textit{r} a \textbf{x}\textit{r},\textit{i} jsou hodnoty vektoru příznaků získané pro jednotlivé vzorky náležící do této třídy. Etalony je zapotřebí stanovit pro všechny třídy. Rozpoznání pak probíhá takto: Nechť \textbf{x} reprezentuje rozpoznávaný objekt v prostoru příznaků. Klasifikátor zařadí rozpoznávaný objekt do té třídy, jejíž etalon má od bodu \textbf{x} nejmenší vzdálenost. Pro zatřídění tedy hledáme minimum
+
+ . \eqref{GrindEQ__10_12_}
+
+\noindent Jako vzdálenost mezi bodem reprezentujícím rozpoznávaný objekt v prostoru příznaků a etalonem \textbf{e}\textit{r} můžeme vzít vzdálenost euklidovskou. Protože vzdálenost je vždy kladná, můžeme místo minima hledat minimum jejího čtverce, což je pohodlnější. Hledáme tedy
+
+ . \eqref{GrindEQ__10_13_}
+
+\noindent Ukážeme, že klasifikace založená na hledání minima vzdálenosti patří do skupiny metod založených na použití diskriminačních funkcí. K tomu postačí převést úlohu o hledání minima na úlohu o hledání maxima. Je zřejmé, že
+
+ . \eqref{GrindEQ__10_14_}
+
+\noindent Vidíme tedy, že diskriminační funkce \textit{gr}(\textbf{x}) má v případě klasifikace pomocí minimální vzdálenosti tvar 
+
+ . \eqref{GrindEQ__10_15_}
+
+\noindent Poznamenejme, že ačkoli jsou funkce \textit{gr}(\textbf{x}) v~tomto případě nelineární, jsou hranice mezi dvěma sousedními oblastmi tvořeny částmi nadrovin. Uvažujme etalony \textbf{e}\textit{r}, \textbf{e}\textit{s}, jim odpovídající oblasti $\chi$\textit{r}, $\chi$\textit{s} a předpokládejme, že se jedná o oblasti sousední. Hranice mezi oblastmi $\chi$\textit{r}, $\chi$\textit{s} je kolmá ke spojnici \textbf{e}\textit{r}, \textbf{e}\textit{s} a půlí vzdálenost mezi \textbf{e}\textit{r}, \textbf{e}\textit{s}.
+
+\noindent \textbf{10.1.3 Určení diskriminačních funkcí minimalizací rizika}
+
+\noindent Až doposud jsme předpokládali, že každý bod v prostoru příznaků může být obrazem objektů nejvýše jediné třídy. Uvažme nyní situaci, kdy se na jediný bod v prostoru příznaků mohou zobrazit objekty více než jedné třídy. Protože klasifikátor ke každému bodu v prostoru příznaků přiřazuje třídu jedinou, je zřejmé, že se v takovém případě nelze vyhnout chybné klasifikaci. Popsaná situace může nastat i při pečlivé volbě množiny příznaků jednoduše tehdy, jestliže jsou si objekty dvou různých tříd příliš podobné, než aby bylo možné ve všech případech předpokládat jejich zcela bezchybné rozpoznání. V tomto případě, kdy se nutně musíme smířit s tím, že klasifikátor občas odpovídá chybně, lze návrh klasifikátoru založit na minimalizaci ztráty. Předpokládejme, že známe funkci $\lambda$($\omega$\textit{r}$\mid$$\omega$\textit{s}) popisující ztrátu, kterou utrpíme, jestliže rozpoznávaný objekt, který je ve skutečnosti ze třídy $\omega$\textit{s}, klasifikátor chybně zařadí do třídy $\omega$\textit{r} (samozřejmým požadavkem je, aby funkční hodnoty $\lambda$($\omega$\textit{r}$\mid$$\omega$\textit{s}) byly nezáporné). Hodnoty, kterých může funkce $\lambda$($\omega$\textit{r}$\mid$$\omega$\textit{s}) nabývat, lze uspořádat do matice
+
+ . \eqref{GrindEQ__10_16_}
+
+\noindent Vhodným měřítkem pro hodnocení kvality klasifikátoru je střední hodnota ztráty, kterou při práci klasifikátoru jeho chybnými rozhodnutími utrpíme. Na minimalizaci této střední ztráty lze založit návrh i učení klasifikátoru. Základní myšlenka je tato: Předpokládejme, že jsme se již rozhodli pro jistý typ klasifikátoru a že pouze zbývá nastavit jeho parametry (v tuto chvíli si např. můžeme zjednodušeně představit, že jsme se rozhodli pro klasifikaci pomocí lineárních diskriminačních funkcí a že zbývá určit hodnoty konstant \textit{ar,i}). Označme \textbf{a} vektor všech parametrů, které mají být v klasifikátoru nastaveny. Střední ztrátu \textit{J} vyjádříme jako funkci \textbf{a}. Je tedy \textit{J}=\textit{J}(\textbf{a}). Zatím neznámý vektor \textbf{a} určíme z podmínky, aby střední ztráta \textit{J}(\textbf{a}) byla minimální. Ve zbytku tohoto odstavce popíšeme naznačený postup podrobněji. Činnost klasifikátoru zapíšeme jako funkci \textit{d}(\textbf{x},\textbf{a}). Parametr \textbf{a}, který byl ve srovnání s rovnicí \eqref{GrindEQ__10_1_} přidán, naznačuje, že klasifikace je závislá na hodnotách parametrů, které musí být nastaveny. Předpokládejme nejprve, že všechny rozpoznávané objekty jsou z třídy $\omega$\textit{s} a určeme střední ztrátu \textit{Js} za tohoto předpokladu. Podle definice střední hodnoty máme   
+
+ , \eqref{GrindEQ__10_17_}
+
+\noindent kde \textit{p}(\textbf{x}$\mid$$\omega$\textit{s}) je podmíněná hustota pravděpodobnosti popisující, jak jsou pro objekty náležící do třídy $\omega$\textit{s} zastoupeny jednotlivé hodnoty vektoru příznaků. Ve skutečnosti jsou klasifikátoru k rozpoznání předkládány objekty různých tříd. Celkovou střední ztrátu \textit{J} proto určíme jako střední hodnotu ztrát \textit{Js} z jednotlivých tříd. Nechť \textit{P}($\omega$\textit{s}) je apriorní pravděpodobnost jevu, že rozpoznávaný objekt patří do třídy $\omega$\textit{s}. Pro celkovou střední ztrátu pak máme (při úpravě následujícího výrazu jsme zaměnili pořadí sumace a integrace)
+
+ . \eqref{GrindEQ__10_18_}
+
+\noindent Nastavení klasifikátoru spočívá v nalezení takových hodnot parametrů, při nichž je celková střední ztráta minimální. Hledáme tedy
+
+ . \eqref{GrindEQ__10_19_}
+
+\noindent Ve výrazu \eqref{GrindEQ__10_19_} nabývají všichni součinitelé za znakem sumace pouze kladných hodnot, a proto také jejich součet, tedy integrand, je vždy kladný. Minimální hodnoty \textit{J}(\textbf{a}) bude proto dosaženo tehdy, bude-li hodnota integrandu v každém bodě \textbf{x} nejmenší možná. Ať je realizace klasifikátoru a hodnota vektoru parametrů jakákoli, neexistuje jiná možnost než, že klasifikátor každé hodnotě \textbf{x} přiřazuje některou třídu z množiny $\Omega$ všech tříd. Má-li být střední hodnota celkové ztráty minimální, pak pro každé \textbf{x} musí být \textit{d}(\textbf{x},\textbf{a})=$\omega$min, kde $\omega$min je ta třída, pro níž integrand nabývá v \textbf{x} minimální hodnoty. Je 
+
+\noindent tedy . \eqref{GrindEQ__10_20_}
+
+\noindent Zaveďme označení . \eqref{GrindEQ__10_21_}
+
+\noindent Pak máme . \eqref{GrindEQ__10_22_}
+
+\noindent Z~doposud uvedeného výkladu vyplývá, že klasifikace založená na minimalizaci střední hodnoty celkové ztráty je současně klasifikací pomocí diskriminačních funkcí. Uvažujme nějakou konkrétní hodnotu \textbf{x}. Výběr minima lze snadno převést na výběr maxima
+
+ . \eqref{GrindEQ__10_23_}
+
+\noindent Nyní již právě popsaný postup hledání hodnoty \textit{J}min koresponduje s klasifikací s využitím diskriminačních funkcí. Hledání \textit{J}min jsme totiž převedli na problém, kdy integrand ve výrazu \eqref{GrindEQ__10_22_} je v každém bodě \textbf{x} stanoven tak, že ze všech možných je vybrána ta funkce $-$\textit{Lr}(\textbf{x}), která dává maximální hodnotu. Tím je současně také pro každé \textbf{x} určena třída, kterou má klasifikátor odpovídat. Vidíme, že stanovení integrandu vedoucího k minimu ztráty probíhá stejným postupem jako rozpoznání pomocí diskriminačních funkcí. Klasifikátor založený na principu minima střední hodnoty celkové ztráty lze proto realizovat jako klasifikátor využívající diskriminačních funkcí. Diskriminační funkce mají tvar 
+
+ . \eqref{GrindEQ__10_24_}
+
+\noindent Ke stanovení diskriminačních funkcí je zapotřebí znát hodnoty \textit{p}(\textbf{x}$\mid$$\omega$\textit{s}), \textit{P}($\omega$\textit{s}), $\lambda$($\omega$\textit{r}$\mid$$\omega$\textit{s}). Hodnoty  \textit{p}(\textbf{x}$\mid$$\omega$\textit{s}) stanovíme měřením na vhodné trénovací množině. Také  hodnoty \textit{P}($\omega$\textit{s}) lze zpravidla dosti dobře stanovit (nebo odhadnout). Volbou ztrátové funkce $\lambda$($\omega$\textit{r}$\mid$$\omega$\textit{s}) lze vzít v úvahu specifické požadavky na chování klasifikátoru. Nejsou-li kladeny žádné speciální požadavky, pak je možné spokojit se s jednoduchou volbou
+
+ . \eqref{GrindEQ__10_25_}
+
+\noindent Tuto volbu lze interpretovat takto: Jestliže klasifikátor odpověděl správně (\textit{r}=\textit{s}), pak nedošlo k žádné ztrátě. Je-li odpověď klasifikátoru chybná (\textit{r}$\neq$\textit{s}), pak je ztráta vždy 1 bez ohledu na to, kterou z chybných tříd klasifikátor odpověděl. Matice hodnot ztrátové funkce je tedy  
+
+ . \eqref{GrindEQ__10_26_}
+
+\noindent Dále odvodíme tvar diskriminačních funkcí pro tento speciální případ. Dosazením vztahu \eqref{GrindEQ__10_25_} do vztahu \eqref{GrindEQ__10_21_} obdržíme
+
+ . \eqref{GrindEQ__10_27_}
+
+\noindent Rovnici upravíme s využitím Bayesova vztahu pro podmíněné pravděpodobnosti \textit{P}(\textit{A}$\mid$\textit{B})\textit{P}(\textit{B}) = \textit{P}(\textit{B}$\mid$\textit{A})\textit{P}(\textit{A}) (\textit{P} značí pravděpodobnost; \textit{A},\textit{B} jsou události). Dostaneme
+
+ . \eqref{GrindEQ__10_28_}
+
+\noindent Konečně ještě uvedeme předpis pro diskriminační funkce. Využijeme vztahů \eqref{GrindEQ__10_24_} a \eqref{GrindEQ__10_28_}. Uvážíme také, že se hodnota \textit{p}(\textbf{x}) vyskytuje ve všech funkcích \textit{Lr}(\textbf{x}), a nepodílí se proto na rozhodování (na výběru minima nebo maxima). Diskriminační funkci proto můžeme stanovit jako 
+
+ . \eqref{GrindEQ__10_29_}
+
+\noindent V tomto případě je tedy ke stanovení diskriminačních funkcí nutné znát hodnoty  \textit{p}(\textbf{x}$\mid$$\omega$\textit{r}), \textit{P}($\omega$\textit{r}). Jak jsme již uvedli v předchozím obecnějším případě, lze tyto hodnoty zpravidla snadno získat. Vztah \eqref{GrindEQ__10_29_} také ukazuje, že volba diskriminačních funkcí v obr. 10.4 byla racionální.
+
+\noindent Modifikujeme-li vztah \eqref{GrindEQ__10_21_} podle Bayesova vzorce \textit{p}(\textbf{x}$\mid$$\omega$\textit{s})\textit{P}($\omega$\textit{s})=\textit{P}($\omega$\textit{s}$\mid$\textbf{x})\textit{p}(\textbf{x}), dostaneme
+
+ . \eqref{GrindEQ__10_30_}
+
+\noindent Hustota pravděpodobnosti \textit{p}(\textbf{x}) nezávisí na klasifikační třídě. Její odstranění neovlivní rozhodování. 
+
+\noindent Můžeme tedy položit . \eqref{GrindEQ__10_31_}
+
+\noindent Při volbě jednotkové ztrátové funkce dle vztahu \eqref{GrindEQ__10_25_} dostaneme
+
+ . \eqref{GrindEQ__10_32_}
+
+\noindent Minimum ztráty obdržíme, jestliže pro dané \textbf{x} odpovídá klasifikátor tou třídou \textit{r}, pro níž je \textit{P}($\omega$\textit{r}$\mid$\textbf{x}) maximální. Z~toho vyplývá, že diskriminační funkci můžeme také konstruovat podle předpisu (jedná se o tzv. aposteriorní pravděpodobnost třídy $\omega$\textit{r})
+
+ . \eqref{GrindEQ__10_33_}
+
+\noindent Na závěr tohoto odstavce poznamenejme, že technika stanovení diskriminačních funkcí minimalizací rizika, která byla v~tomto odstavci popsána, se často nazývá technikou bayesovských odhadů. Odpovídající klasifikátor pak bývá často nazýván bayesovským strojem. My jsme se zde přidrželi názvu, který je popisnější.
+
+\noindent \textbf{10.2  Neuronové sítě}
+
+\noindent Neuronové sítě opět provádějí klasifikaci formálně popsanou vztahem \eqref{GrindEQ__10_1_}, avšak jsou realizovány poněkud speciálně. Neuronovým sítím je v~rámci studia informatiky na FEI VŠB-TU věnován rozsáhlý prostor, a proto se zde omezíme jen na základní případy, které jsou v~praxi příznakového rozpoznávání používány nejčastěji.
+
+\noindent 
+
+\noindent \textbf{10.2.1 Třívrstvá (vícevrstvá) síť s učením „back propagation``}
+
+\noindent 
+
+\noindent 
+
+\noindent Schéma třívrstvé neuronové sítě je znázorněno na obr. 10.6. Do vrstvy vstupních uzlů se zavádí jednotlivé složky vektoru příznaků, a proto je vstupních uzlů tolik, kolik je příznaků. Z~výstupní vrstvy se odebírá identifikátor třídy. Třebaže jsou možné i jiné způsoby, často se používá kódování 1 z~\textit{n}. V~tomto případě je pak počet neuronů ve výstupní vrstvě roven počtu rozpoznávaných tříd. Počet neuronů ve střední skryté vrstvě (případně vrstvách) se zpravidla volí na základě zkušenosti. Neurony po sobě jdoucích vrstev jsou spolu pospojovány tak, jak je naznačeno na obr. 10.6.
+
+\noindent Dopředné šíření vzruchu \textit{i}-tým neuronem popisují rovnice (obr. 10.7)
+
+ , \eqref{GrindEQ__10_34_}
+
+ kde    \eqref{GrindEQ__10_35_}
+
+\noindent 
+
+\noindent Váhy \textit{wi},\textit{j} v předchozí rovnici se stanovují učením, aby síť odpovídala tak, jak je požadováno (koeficienty $\lambda$\textit{i} lze zpravidla stanovit pevně předem). Před zahájením učení se vahám přiřadí např. náhodné hodnoty z~intervalu $\langle$$-$0.5, 0.5$\rangle$. Předpokládáme, že pro učení máme k dispozici trénovací množinu obsahující dvojice \{(\textbf{x}1,\textbf{t}1), (\textbf{x}2,\textbf{t}2),..., (\textbf{x}\textit{q}, \textbf{t}\textit{q})\}. Vektor \textbf{x}\textit{i} je vstup, \textbf{t}\textit{i} je výstup, kterým by neuronová síť měla na vstup \textbf{x}\textit{i} odpovídat. Je užitečné přikládat na vstup neuronové sítě hodnoty (složky vektoru \textbf{x}, tj. příznaky) normalizované, např. do intervalu $\langle$0, 1$\rangle$. To proto, aby všechny složky (příznaky) měly na učení a rozpoznání přibližně stejný vliv. Také hodnoty na výstupu nemohou být s~ohledem na sigmoidální funkci \eqref{GrindEQ__10_34_} předepsány libovolně. Teoreticky se na výstupu mohou objevit hodnoty z~intervalu (0,1). Prakticky však předepisujeme hodnoty z~intervalu užšího, např. z intervalu $\langle$0.1, 0.9$\rangle$. Učení sítě probíhá tak, že na vstup přikládáme postupně všechny vektory \textbf{x}\textit{i} z trénovací množiny. Po přiložení každého vektoru vyhodnotíme rozdíl mezi skutečnou a požadovanou odpovědí neuronové sítě a změnou vah \textit{wi},\textit{j} pro všechny neurony se snažíme dosáhnout zlepšení souhlasu. Nechť (\textbf{x}=(\textit{x}1,\textit{x}2,..., \textit{xm}), \textbf{t}=(\textit{t}1,\textit{t}2,..., \textit{tn})) je jedna dvojice z trénovací množiny. Chyba neuronové sítě pro tuto dvojici činí (\textit{yi} je skutečná, \textit{ti} požadovaná odpověď na \textit{i}-tém výstupním neuronu; sčítáme přes všechny výstupní neurony, kterých je \textit{n})
+
+ . \eqref{GrindEQ__10_36_}
+
+\noindent Logickým principem, na kterém je založeno učení neuronové sítě, je nalezení takových vah \textit{wi},\textit{j}, při kterých je uvedená chyba minimální. Metoda učení „back propagation`` je aplikací hledání minima gradientní metodou. Připomeňme, že gradientní metoda hledá minimum funkce \textit{f}(\textbf{x}) následujícím iteračním postupem
+
+ , \eqref{GrindEQ__10_37_}
+
+\noindent kde horní indexy (\textit{k}), (\textit{k}+1) znamenají pořadové číslo iterace. Gradientní metoda tedy postupuje proti směru gradientu „dolů`` ve směru největšího spádu. Délku kroku ovlivňuje vhodně zvolený násobitel $\eta$. Pro váhy v neuronové síti na základě gradientní metody máme (\textbf{w} je vektor všech vah, vektory i gradient jsme v~následujícím vztahu rozepsali po složkách)
+
+ . \eqref{GrindEQ__10_38_}
+
+\noindent Je tedy  . \eqref{GrindEQ__10_39_}
+
+\noindent Dále vyjádříme jednotlivé derivace z předchozí rovnice. Nejprve se omezíme na výstupní vrstvu neuronů. Máme
+
+ ,     ,     . (10.40a,b,c)
+
+\noindent Pro výstupní vrstvu neuronů tedy máme
+
+ ,   kde   . (10.41a,b)
+
+\noindent Pro vnitřní skrytou vrstvu neuronů (při odvození vztahů pro učení se zde omezíme na sítě třívrstvé) je jiná hodnota $\partial$\textit{E}/$\partial$\textit{yi}. Uvažujme neuron ve skryté vrstvě. Hodnota \textit{yi} na výstupu tohoto neuronu ovlivňuje hodnoty na výstupu všech výstupních neuronů. Je proto (hodnoty se stříškou a suma v~následujícím výrazu se týkají výstupní vrstvy neuronů)
+
+ . \eqref{GrindEQ__10_42_}
+
+\noindent Protože pro hodnoty zbývajících derivací $\partial$\textit{yi}/$\partial$\textit{si}, $\partial$\textit{si}/$\partial$\textit{wi},\textit{j} platí vztahy (10.40b,c) i pro skrytou vrstvu, můžeme pro modifikaci vah \textit{wi},\textit{j} ve skryté vrstvě opět použít vztahu (10.41a), v~němž však položíme
+
+ , \eqref{GrindEQ__10_43_}
+
+\noindent kde  je diference vztahující se k výstupní vrstvě neuronů. Učení probíhá tak, že dvojice (\textbf{x}\textit{i},\textbf{t}\textit{i}) z~trénovací množiny probíráme jednu po druhé a pro každou dvojici provedeme pro všechny váhy jeden krok iterace \eqref{GrindEQ__10_38_}. Tento proces se cyklicky opakuje. Ukončení procesu kontrolujeme pomocí zjišťování velikosti chyby
+
+ , \eqref{GrindEQ__10_44_}
+
+\noindent kde  je chyba na výstupu \textit{k}-tého neuronu při přiložení \textit{i}-té dvojice z trénovací množiny, \textit{n} je počet neuronů ve výstupní vrstvě a \textit{q} je počet prvků (dvojic (\textbf{x}\textit{i},\textbf{t}\textit{i})) trénovací množiny. Učení využívající trénovací množiny, v níž je ke každému vektoru příznaků zadán také požadovaný výstup neuronové sítě (kód třídy objektu), se nazývá učením za asistence učitele. Právě popsané učení „back propagation`` je příkladem takového postupu. Není-li přiřazení tříd jednotlivým vektorům příznaků dopředu známo, nelze učení za asistence učitele použít. 
+
+\noindent \begin{enumerate}
+\item \textbf{10.2.2  }10.2. \textbf{Neuronová síť s~kompeticí}
+\end{enumerate}
+
+\noindent Neuronová síť s~kompeticí nevyžaduje ke svému učení asistenci učitele. V~trénovací množině nemusí být k~jednotlivým vektorům příznaků přiřazeny třídy. Dokonce ani nemusí žádná předem připravená trénovací množina existovat a síť se může učit přímo za provozu. Každý zpracovávaný vektor příznaků reprezentuje nějaký bod v~prostoru příznaků. Neuronová síť s~kompeticí během svého učení detekuje shluky takových bodů. Rozpoznání je založeno na porovnání předloženého vektoru příznaků s~vektory příznaků reprezentujícími jednotlivé shluky. Schéma sítě je uvedeno na obr. 10.8. Síť obsahuje jedinou vrstvu neuronů. Do každého neuronu jsou přivedeny hodnoty jednotlivých složek vektoru příznaků. Označme \textbf{w}\textit{i} vektor vah vstupů \textit{i}-tého neuronu a \textbf{x} vektor příznaků. Na svém výstupu poskytuje \textit{i}-tý neuron signál, jehož velikost je popsána vztahem 
+
+ . \eqref{GrindEQ__10_45_}
+
+\noindent 
+
+\noindent Je zřejmé, že neuron dává na svém výstupu maximální hodnotu (hodnotu 0) tehdy, jestliže se složky přiloženého vektoru příznaků shodují s~vahami jednotlivých vstupů. Se zvětšující se diferencí vektoru příznaků a vektoru vah hodnota \textit{yi} klesá. Rozpoznání se děje tak, že hodnoty \textit{yi} vypočítají všechny neurony a nalezne se neuron, u něhož je hodnota \textit{yi} maximální. Nalezený „vítězný`` neuron identifikuje třídu rozpoznávaného objektu - každá třída má svůj neuron, který ji rozpoznává. Neuronová síť tak kóduje rozpoznanou třídu metodou 1 z~\textit{n}. Počet neuronů je proto nejméně roven počtu tříd, které má síť rozpoznávat. Pokud by bylo zapotřebí výsledek rozpoznání reprezentovat pomocí jiného kódu, bylo by možné na výstupy sítě z~obr. 10.8 přidat vhodný převodník kódu (k~jeho realizaci by bylo možné použít např. další vrstvy neuronů). 
+
+\noindent 
+
+\noindent Po každém rozpoznání proběhne jeden krok učení, během něhož jsou váhy u vítězného neuronu modifikovány podle předpisu
+
+ ,   kde    \eqref{GrindEQ__10_46_}
+
+\noindent a kde $\alpha$ ($\alpha$$<$$<$1) je empiricky stanovený koeficient učení. Je zřejmé, že vztah \eqref{GrindEQ__10_46_} modifikuje váhy vítězného neuronu tak, aby více odpovídaly vektoru příznaků právě rozpoznaného objektu (obr. 10.9). Na začátku provozu neuronové sítě jsou váhy nastaveny buď na předem zvolené hodnoty nebo náhodně. I když se síť může učit i sama během provozu tím, jak zpracovává další a další vektory příznaků, lze jí prakticky samozřejmě používat teprve tehdy, až bylo dosaženo přiměřeného počátečního naučení. K~tomu lze opět použít vhodné reprezentativní množiny příznakových vektorů - trénovací množiny. Při učení lze i v~případě neuronové sítě s~kompeticí probírat trénovací množinu opakovaně (na vstup sítě se postupně přiloží všechny vektory příznaků trénovací množiny a pak se postup opakuje). Opakovaného probírání trénovací množiny lze využít i k jednoduché kontrole naučení sítě. Síť lze považovat za dostatečně naučenou (s ohledem na zvolenou trénovací množinu), jestliže se při opakovaném probírání trénovací množiny nemění klasifikace jednotlivých vektorů do tříd (klasifikace všech vektorů zůstává stejná, jako byla v předchozím průchodu).
+
+\noindent 
+
+\noindent 
+
+\noindent Alternativně může být signál na výstupu neuronu definován vztahem
+
+ . \eqref{GrindEQ__10_47_}
+
+\noindent Předpokládejme v~tomto případě dále, že vektory \textbf{w}\textit{i}, \textbf{x} jsou normalizovány na jednotkovou délku. Podle vztahu \eqref{GrindEQ__10_47_} je pak hodnota \textit{yi} největší tehdy, jestliže vektory \textbf{w}\textit{i} a \textbf{x} mají stejný směr. Uvedeného postupu lze ovšem použít jen tehdy, jestliže při rozpoznání závisí pouze na směru vektoru příznaků, nikoli na jeho délce.
+
+\noindent 
+
+\noindent Na závěr této podkapitoly poznamenejme, že problematika neuronových sítí byla v nedávné minulosti studována velmi intenzivně. Toto úsilí vyústilo v řadu zajímavých závěrů, které zde však není možné pro omezený rozsah tohoto textu prezentovat. Pro podrobnější informace proto čtenáře odkazujeme na specializovanou literaturu.

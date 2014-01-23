@@ -1,0 +1,872 @@
+\chapter{Zpìtná stereoprojekce}
+
+Máme-li k dispozici nìkolik obrazù tée scény, které byly získány nìkolika kamerami umístìnımi ve scénì nebo jedinou kamerou umístìnou postupnì do rùznıch míst, pak lze za jistıch okolností provést rekonstrukci scény.
+Nejmenší poèet kamer (pøípadnì míst), které jsou k provedení rekonstrukce zapotøebí, jsou dvì (obr. \ref{img:11_1}).
+Rekonstrukcí pøi tom rozumíme, e pro zvolené body dokáeme na základì souøadnic jejich obrazù zachycenıch kamerami vypoèítat trojrozmìrné souøadnice ve scénì.
+Øešení naznaèeného problému podrobnìji popíšeme v následujících podkapitolách.
+
+\section{Model kamery}
+
+Pøedpokládáme, e vztah mezi objekty pozorovanımi kamerou a jejich obrazy je lineární projektivní transformací.
+Modelem kamery je tedy dírková komora.
+Ve scénì zavedeme globální souøadnı systém $(O,x,y,z)$ (obr. \ref{img:11_1}).
+Uvaujme $i$-tou kameru (pøípadnì $i$-tou polohu kamery).
+Pro oznaèení velièin vztahujících se k $i$-té kameøe pouijeme symbolù s indexem $i$.
+Støed projekce $i$-té kamery je $O_i$; $\pi_i$ je zobrazovací rovina.
+Kolmice vedená z $O_i$ na rovinu $\pi_i$ je optická osa kamery.
+V zobrazovací rovinì kamery leí zaøízení zachycující obraz (jedná se napøíklad o pole snímacích elementù CCD èipu, pøípadnì o svìtlocitlivou vrstvu).
+Souøadnice bodù v obrazech mìøíme v souøadném systému $(Z_i,u_i,v_i)$ (obr. \ref{img:11_1}).
+V pøípadì CCD kamery jsou èasto souøadné osy tohoto systému hranami pole snímacích elementù.
+Ortogonální souøadnı systém $(O_i, x_i, y_i, z_i)$ je souøadnım systémem kamery.
+Jeho osa $z_i$ je identická s optickou osou kamery, osa $x_i$ je rovnobìná s osou $u_i$
+(v pøípadì CCD kamery tedy s hranou pole snímacích elementù).
+Dále v obraze zavedeme souøadnı systém $(O'_i, x'_i, y'_i)$.
+Bod $O'_i$ leí v místì, kde optická osa kamery protíná zobrazovací rovinu.
+Osa $x'_i$ je rovnobìná s osou $x_i$, osa $y'_i$ je rovnobìná s osou $y_i$.
+Vzdálenost $f_i = \mathrm{dist}(O_i, O'_i)$ je ohniskovou vzdáleností kamery.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=.9]{11_stereo/images/img_11_1.pdf}
+    \end{center}
+    \caption{\dvojt Zpìtná stereoprojekce}
+    \label{img:11_1}
+\end{figure}
+
+Uvaujme nìjakı bod $X$ scény.
+V souøadném systému $(O,x,y,z)$ je bod $X$ reprezentován vektorem $\mathbf{x}=(x,y,z)^\top$.
+V souøadném systému $(O_i,x_i,y_i,z_i)$ je tentı bod reprezentován vektorem $\mathbf{x}_i=(x_i,y_i,z_i)^\top$.
+Pro transformaci ze souøadného systému $(O_i,x_i,y_i,z_i)$ kamery do globálního souøadného systému $(O,x,y,z)$ scény mùeme psát
+\begin{equation} \label{eq:11_1}
+    \mathbf{x}=\mathbf{R}_{i} \mathbf{x}_{i} + \mathbf{o}_{i} \, ,
+\end{equation}
+kde matice $\mathbf{R}_i$ popisuje rotaci kamery a vektor $\mathbf{o}_i$ (zadanı v souøadném systému $(O,x,y,z)$) reprezentuje støed projekce $O_i$.
+Nech $X_i$ je bod v zobrazovací rovinì $i$-té kamery a tento bod nech je obrazem bodu $X$ scény.
+Souøadnice bodu $X_i$ mìøené v souøadném systému $(Z_i,u_i,v_i)$ jsou $(u_i,v_i)$.
+Tyto souøadnice uspoøádáme do trojrozmìrného vektoru $\mathbf{u}_i=(u_i,v_i,1)^\top$.
+V souøadném systému $(O_i',x_i',y_i')$ je poloha bodu $X_i$ popsána vektorem $\mathbf{x}_i' = (x_i', y_i', 1)^\top = \mathbf{Q}_i \mathbf{u}_i$,
+kde $\mathbf{Q}_i$ je matice popisující transformaci ze souøadného systému $(Z_i,u_i,v_i)$ do souøadného systému $(O_i',x_i',y_i')$.
+Snadno ovìøíme, e platí
+\begin{eqnarray} \label{eq:11_2}
+    \mathbf{Q}_{i} &= \left(
+    \left[
+    \begin{array}{ccc}
+    {1} & {0} & {u_{0_{i} } } \\
+    {0} & {1} & {v_{0_{i} } } \\
+    {0} & {0} & {1}
+    \end{array}
+    \right]
+    \left[
+    \begin{array}{ccc}
+    {1} & {0} & {0} \\
+    {0} & {s_{i} } & {0} \\
+    {0} & {0} & {1}
+    \end{array}
+    \right]
+    \left[
+    \begin{array}{ccc}
+    {1} & {-\mathrm{cotg} \ \theta _{i} } & {0} \\
+    {0} & {{1 \mathord{\left/{\vphantom{1 \sin \theta_{i} }}\right.} \sin \theta_{i}}} & 0 \\
+    {0} & {0} & {1}
+    \end{array}
+    \right]
+    \right)^{-1}& \nonumber \\
+    &=
+    \left[
+    \begin{array}{ccc}
+    {1} & {-\mathrm{cotg} \ \theta _{i} } & {u_{0_{i} } } \\
+    {0} & {s \mathord{\left/{\vphantom{s \sin \theta _{i} }}\right. \sin \theta_{i}}} & v_{0_{i}} \\
+    {0} & {0} & {1}
+    \end{array}
+    \right]^{-1} . &
+\end{eqnarray}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_2.pdf}
+    \end{center}
+    \caption{\dvojt K vıznamu prvkù matice $\mathbf{Q}_i$.}
+    \label{img:11_2}
+\end{figure}
+
+\noindent
+Jednotlivé symboly v matici $\mathbf{Q}_i$ mají následující vıznam (obr. \ref{img:11_2}).
+Hodnoty $u_{0i}$, $v_{0i}$ jsou souøadnice (mìøené v souøadném systému $(Z_i,u_i,v_i)$) bodu, v nìm optická osa protíná zobrazovací rovinu kamery.
+Úhel $\theta_i$ modeluje monou odchylku pole snímacích elementù CCD senzoru od ortogonality, pøípadnì monou úchylku kolmosti zobrazovací roviny a optické osy.
+Souøadnı systém $(Z_i,u_i,v_i)$ tedy nemusí bıt ortogonální, ale v praxi je hodnota $\theta_i$ obvykle velmi blízká $\pi/2$.
+Vıznam mìøítkového faktoru $s_i$ je následující: U kamer s CCD èipem zohledòuje moné diference rozmìrù snímacích elementù ve smìru osy $u$ a $v$.
+Jestlie je vıstup kamery analogovı, pak parametr $s_i$ zohledòuje také moné zkreslení rozmìrù snímacích elementù
+zpùsobené následnou zpìtnou digitalizací analogového signálu.
+Ze vztahu \eqref{eq:11_2} je zøejmé, e parametrem $s_i$ korigujeme pouze pomìrné zkreslení délek na osách - skuteèná celková velikost obrazu
+bude vzata v úvahu hodnotou ohniskové vzdálenosti.
+Poznamenejme, e matice $\mathbf{Q}_i^{-1}$ popisuje transformaci v opaèném smìru ne matice $\mathbf{Q}_i$,
+tedy ze souøadného systému $(O_i',x_i',y_i')$ do souøadného systému $(Z_i,u_i,v_i)$.
+Zdá se názornìjší sestavit právì matici $\mathbf{Q}_i^{-1}$.
+Matici $\mathbf{Q}_i$ získáme inverzí.
+Tento postup jsme uplatnili ve vztahu \eqref{eq:11_2}.
+Zavedeme dále matici
+\begin{equation} \label{eq:11_3}
+    \mathbf{F}_{i} = \left[
+    \begin{array}{ccc}
+    {1} & {0} & {0} \\
+    {0} & {1} & {0} \\
+    {0} & {0} & {-f_{i}}
+    \end{array}
+    \right].  
+\end{equation} 
+Snadno ovìøíme, e platí
+\begin{equation} \label{eq:11_4}
+    \mathbf{x}_{i} =\lambda_{i} \mathbf{F}_{i} \mathbf{Q}_{i} \mathbf{u}_{i} \, ,
+\end{equation}
+kde $\lambda_{i}$ je reálnı parametr. S vyuitím vztahu \eqref{eq:11_1} obdríme
+\begin{equation} \label{eq:11_5}
+    \mathbf{x} = \lambda_{i} \mathbf{R}_{i} \mathbf{F}_{i} \mathbf{Q}_{i} \mathbf{u}_{i} + \mathbf{o}_{i} \, ,
+\end{equation}
+pøípadnì
+\begin{equation} \label{eq:11_6}
+    \lambda_{i} \mathbf{u}_{i} = \left(\mathbf{R}_{i} \mathbf{F}_{i} \mathbf{Q}_{i} \right)^{-1} \left(\mathbf{x} - \mathbf{o}_{i} \right) .
+\end{equation}
+Parametry obsaené v maticích $\mathbf{F}_i$, $\mathbf{Q}_{i}$ $(f_i, u_{0i}, v_{0i}, \theta_i, s_i)$ jsou vnitøní (tzv. intrinsické) parametry kamery.
+Matice $\mathbf{Q}_i$ zohledòuje nìkteré rozdíly mezi skuteènou a ideální kamerou.
+V jednoduchıch teoretickıch úvahách se nìkdy pøedpokládá $\mathbf{Q}_i=\mathbf{I}$ (jednotková matice).
+Hodnoty $\mathbf{R}_{i}$, $\mathbf{o}_{i}$ popisující polohu kamer v prostoru se nazıvají vnìjšími (tzv. extrinsickımi) parametry kamery.
+Základní úlohou poèítaèového stereovidìní je na základì souøadnic $(u_i,v_i)$ obrazù nìjakého bodu scény zjistit jeho prostorové souøadnice $(x,y,z)$.
+K øešení této úlohy je zpravidla nejprve nutné provést tzv. kalibraci kamery.
+Úkolem kalibrace je stanovit vnitøní a vnìjší parametry kamery.
+Jen ve vyjímeènıch pøípadech, kdy jsou parametry kamery pøedem známy, mùe kalibrace chybìt (od vırobce napø. mùeme znát hodnoty vnitøních parametrù, umístìní kamer v prostoru mùeme nìkdy dostateènì pøesnì zmìøit).
+
+Vztahy popisující promítání realizované kamerou se zjednoduší, jestlie pouijeme homogenních souøadnic.
+(Pøedpokládáme zde, e je ètenáø obeznámen alespoò s elementárními pojmy  z projektivní geometrie.
+V pøípadì potøeby lze potøebné znalosti získat napø. z prací \cite{Sojka11}, \cite{Budinsky83}, \cite{Penna86}).
+Ostatnì ji døíve jsme vektor $\mathbf{u}_{i}$ zavedli jako $\mathbf{u}_{i}=(u_i,v_i,1)^\top$,
+co lze interpretovat jako homogenní souøadnice bodu $X_i$ v dvojrozmìrném projektivním prostoru.
+Dále navíc pøipustíme, aby homogenní souøadnice nabıvala obecné hodnoty $w_i$, tedy $\mathbf{u}_{i}=(w_i u_i, w_i v_i, w_i)^\top$.
+Podobnì popíšeme v homogenních souøadnicích i polohu bodu $X$ vzhledem ke globálnímu souøadnému systému scény.
+Poloíme $\mathbf{x}=(x,y,z,1)^\top$.
+Projektivní transformaci realizovanou kamerou lze nyní zapsat ve tvaru
+\begin{equation} \label{eq:11_7}
+    \mathbf{u}_{i} = \mathbf{P}_{i} \mathbf{x} \, .
+\end{equation}
+Matice $\mathbf{P}_{i}$ rozmìru $3 \times 4$ popisuje transformaci.
+Vztahy \eqref{eq:11_5}, \eqref{eq:11_6}, \eqref{eq:11_7} popisují rùznımi prostøedky tuté transformaci a jsou vzájemnì ekvivalentní.
+V dalším textu budeme podle potøeby pouívat vdy ten tvar, kterı je pro danou úlohu nejvıhodnìjší.
+Porovnáním vztahu \eqref{eq:11_7} se vztahem \eqref{eq:11_6} zjišujeme, e matice $\mathbf{P}_{i}$ zahrnuje vliv vnìjších i vnitøních parametrù kamery.
+
+
+\section{Dvojice kamer s rovnobìnımi \\ optickımi osami} \label{sec:rovnobezne_kamery}
+%=======================================================================================
+Nejprve ukáeme jednoduchı pøípad ilustrující, e rekonstrukce je moná.
+Pøedpokládejme, e máme dvì kamery, které jsou uspoøádány podle následujících podmínek (obr. \ref{img:11_3}):
+1) Obì kamery mají rovnobìné optické osy.
+2) Pøedpokládáme, e platí $\mathbf{Q}_1=\mathbf{Q}_2=\mathbf{I}$, tedy $x_1'=u_1$, $y_1'=v_1$, $x_2'=u_2$, $y_2'=v_2$.
+3) Souøadné osy $u_1$, $u_2$ leí v jedné pøímce.
+4) Souøadné osy $v_1$, $v_2$ jsou rovnobìné.
+5) Vzdálenost optickıch støedù kamer je $b$.
+6) Poèátek globálního souøadného systému scény pùlí spojnici $O_1$, $O_2$ a osy globálního systému jsou rovnobìné s osami $u_1(u_2)$, $v_1(v_2$).
+7) $f_1=f_2=f$. Uvaujme ve scénì bod $X$ o souøadnicích $(x,y,z)$.
+Bod $X$ se promítá do bodù $X_1$, $X_2$ leících v~zobrazovacích rovinách první a druhé kamery.
+Souøadnice bodù $X_1$, $X_2$ mìøené v obrazech získanıch kamerami jsou $(u_1,v_1)$, $(u_2,v_2)$.
+Z podobnosti trojúhelníkù snadno obdríme následující vztahy (pøedpokládáme, e ohnisková vzdálenost $f$ se zadává jako kladná hodnota)
+\begin{equation} \label{eq:11_8}
+    \frac{x + b/2}{-z} = \frac{u_1}{f} \, , \quad \frac{x - b/2}{-z} = \frac{u_2}{f} \, .
+\end{equation}
+Analogické vztahy snadno zapíšeme také pro souøadnici $y$. Máme
+\begin{equation} \label{eq:11_9}
+    \frac{y}{-z} = \frac{v_1}{f} \, , \quad \frac{y}{-z} = \frac{v_2}{f} \, .
+\end{equation}
+V rovnicích \eqref{eq:11_8} jsou $x$, $z$ neznámımi. Ostatní hodnoty jsou známé. Øešením soustavy pro $z$ získáme
+\begin{equation} \label{eq:11_10}
+    z = - \frac{bf}{u_1 - u_2} \, .
+\end{equation}
+S vyuitím rovnic \eqref{eq:11_8}, \eqref{eq:11_9} pak snadno také nalezneme hodnoty $x$, $y$. Vychází 
+\begin{equation} \label{eq:11_11}
+    x = \frac{b(u_1 + u_2)}{2(u_1 - u_2)} \, , \quad y = \frac{b(v_1 + v_2)}{2(u_1 - u2)} \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_3.pdf}
+    \end{center}
+    \caption{\dvojt Kamery s rovnobìnımi optickımi osami}
+    \label{img:11_3}
+\end{figure}
+
+
+\section{Absolutní kalibrace a rekonstrukce}
+%===========================================
+V tomto odstavci ukáeme postup, v nìm se kalibrace provádí na základì toho, e pro jistı poèet tzv. kalibraèních bodù
+známe jak souøadnice $u_i$, $v_i$ jejich obrazù tak i jejich souøadnice $x$, $y$, $z$ v souøadném systému scény
+(název absolutní kalibrace je odvozen od poadavku znát souøadnice $x$, $y$, $z$ kalibraèních bodù).
+Zamìøíme se na pøípad, kdy máme pouze dvì kamery ($i=1,2$).
+K odvození vıslednıch vztahù pouijeme homogenních souøadnic a vyjdeme ze vztahu \eqref{eq:11_7}.
+Matici $\mathbf{P}_{i}$ rozepíšeme do tøí øádkovıch vektorù rozmìru $1 \times 4$.
+Máme pak $\mathbf{P}_{i}=(\mathbf{p}_{i,1}, \mathbf{p}_{i,2}, \mathbf{p}_{i,3})^\top$.
+Rovnici \eqref{eq:11_7} lze nyní pøepsat takto
+\begin{equation} \label{eq:11_12}
+    \left[
+    \begin{array}{c}
+    {w_{i} u_{i} } \\
+    {w_{i} v_{i} } \\
+    {w_{i} }
+    \end{array}
+    \right]
+    =
+    \left[
+    \begin{array}{c}
+    {\mathbf{p}_{i,1} } \\
+    {\mathbf{p}_{i,2} } \\
+    {\mathbf{p}_{i,3} }
+    \end{array}
+    \right]
+    \mathbf{x} \, .
+\end{equation}
+Pøedpokládejme nyní, e známe projekèní matice $\mathbf{P}_1$, $\mathbf{P}_2$ obou kamer.
+Dále pøedpokládejme, e je ve scénì bod, jeho obraz získanı první kamerou má souøadnice $u_1$, $v_1$ a obraz získanı druhou kamerou má souøadnice $u_2$, $v_2$.
+Ukáeme, jak lze rekonstruovat trojrozmìrné souøadnice $x$, $y$, $z$ tohoto bodu.
+Polome $\mathbf{x}=(x,y,z,1)$. Z posledního øádku rovnice \eqref{eq:11_12} máme
+\begin{equation} \label{eq:11_13}
+    w_{1} = \mathbf{p}_{1,3} \mathbf{x} \, , \quad w_{2} = \mathbf{p}_{2,3} \mathbf{x} \, .
+\end{equation}
+Dosazením rovnic \eqref{eq:11_13} do prvních dvou øádkù vztahu \eqref{eq:11_12} rozepsaného pro první i druhou kameru dostaneme
+\begin{equation} \label{eq:11_14}
+    \left[
+    \begin{array}{c}
+    {\mathbf{p}_{1,1} \mathbf{x} - u_{1} \mathbf{p}_{1,3} \mathbf{x}} \\
+    {\mathbf{p}_{1,2} \mathbf{x} - v_{1} \mathbf{p}_{1,3} \mathbf{x}} \\
+    {\mathbf{p}_{2,1} \mathbf{x} - u_{2} \mathbf{p}_{2,3} \mathbf{x}} \\
+    {\mathbf{p}_{2,2} \mathbf{x} - v_{2} \mathbf{p}_{2,3} \mathbf{x}}
+    \end{array}
+    \right]
+    =
+    \left[
+    \begin{array}{c}
+    {0} \\
+    {0} \\
+    {0} \\
+    {0}
+    \end{array}
+    \right] \, .  
+\end{equation}
+Vztah \eqref{eq:11_14} je lineární nehomogenní (uvame, e $\mathbf{x}=(x,y,z,1)$) soustavou rovnic pro neznámé hodnoty souøadnic $x$, $y$, $z$.
+Protoe pro tøi neznámé jsou k dispozici ètyøi rovnice, jde o soustavu pøedeterminovanou.
+Pøedeterminovanosti lze vyuít ke zmenšení vlivu chyb, které mohou bıt do vıpoètu vneseny nepøesnım zadáním èi mìøením.
+Hodnoty $u_1$, $v_1$, $u_2$, $v_2$ souøadnic mìøenıch v obrazech bıvají toti zatíeny šumem, kterı vzniká nepøesnım odeèítáním souøadnic v obraze.
+Do této kategorie nepøesností patøí i pøípad, kdy jsou v digitalizovaném obraze souøadnice mìøeny pouze celoèíselnımi
+(nikoli reálnımi) hodnotami (nìkdy udáváme souøadnice pixelu, do kterého obraz rekonstruovaného bodu padne, jako celoèíselné).
+Øešení lineárních pøedeterminovanıch systémù lze provést metodou nejmenších ètvercù. % je popsáno v dodatku B FIXME.
+
+Z pøedchozího vıkladu vyplıvá, e jsou-li k dispozici projekèní matice $\mathbf{P}_i$, pak lze provést rekonstrukci souøadnic bodù.
+Postup, v nìm jsou projekèní matice stanoveny, se obvykle nazıvá kalibrací kamer.
+Ukáeme metodu, jak lze kalibraci provést.
+Dosaïme opìt \eqref{eq:11_13} do prvních dvou øádkù vztahu \eqref{eq:11_12} a proveïme transpozici obou takto získanıch rovnic.
+Obdríme
+\begin{equation} \label{eq:11_15}
+    \begin{array}{l}
+    {\mathbf{x}^\top \mathbf{p}_{i,1}^\top - u_{i} \mathbf{x}^\top \mathbf{p}_{i,3}^\top =0 \, ,} \\
+    {\mathbf{x}^\top \mathbf{p}_{i,2}^\top - v_{i} \mathbf{x}^\top \mathbf{p}_{i,3}^\top =0 \, .}
+    \end{array}
+\end{equation}
+Uspoøádejme zatím neznámé prvky projekèní matice $\mathbf{P}_i$ do sloupcového vektoru
+$\mathbf{p}_{i} = (\mathbf{p}^\top_{i,1}, \mathbf{p}^\top_{i,2}, \mathbf{p}^\top_{i,3})^\top$.
+Vztahy \eqref{eq:11_15} lze pak pøepsat maticovì takto
+\begin{equation} \label{eq:11_16}
+    \left[
+    \begin{array}{ccc}
+    {\mathbf{x}^\top} & {\mathbf{0}^\top} & {-u_{i} \mathbf{x}^\top} \\
+    {\mathbf{0}^\top} & {\mathbf{x}^\top} & {-v_{i} \mathbf{x}^\top}
+    \end{array}
+    \right]
+    \left[
+    \begin{array}{c}
+    {\mathbf{p}_{i,1}^\top} \\
+    {\mathbf{p}_{i,2}^\top} \\
+    {\mathbf{p}_{i,3}^\top}
+    \end{array}
+    \right]
+    =
+    \left[
+    \begin{array}{c}
+    {0} \\
+    {0}
+    \end{array}
+    \right].  
+\end{equation} 
+Rozepsáno tedy
+\begin{equation} \label{eq:11_17}
+    \left[
+    \begin{array}{cccccccccccc}
+    {x} & {y} & {z} & {1} & {0} & {0} & {0} & {0} & {-u_{i} x} & {-u_{i} y} & {-u_{i} z} & {-u_{i}} \\
+    {0} & {0} & {0} & {0} & {x} & {y} & {z} & {1} & {-v_{i} x} & {-v_{i} y} & {-v_{i} z} & {-v_{i}}
+    \end{array}
+    \right]
+    \mathbf{p}_{i}
+    =
+    \left[
+    \begin{array}{c}
+    {0} \\
+    {0}
+    \end{array}
+    \right].
+\end{equation} 
+Vidíme, e kadı kalibraèní bod pøispívá k nalezení prvkù projekèní matice dvìma rovnicemi.
+Stanovení dvanácti neznámıch prvkù projekèní matice provedeme na základì rovnic poskytnutıch dostateènım poètem kalibraèních bodù.
+Ukáeme ale, e projekèní matici bude moné pomocí kalibraèních bodù stanovit a na reálného násobitele.
+Uvedenou nejednoznaènost lze snadno ilustrovat pomocí rovnice \eqref{eq:11_7}.
+Násobme levou i pravou stranu rovnice libovolnım nenulovım reálnım násobitelem $\mu$.
+Protoe v homogenních souøadnicích vektor $\mu \mathbf{u}_{i}$ reprezentuje tentı bod obrazu jako vektor $\mathbf{u}_{i}$,
+musí bıt také matice $\mu \mathbf{P}_{i}$ nutnì správnou projekèní maticí.
+Nejednoznaènost vyøešíme zavedením doplòující podmínky. Snadno lze napø. realizovat postup,
+kdy nìkterı z prvkù projekèní matice poloíme roven zvolené hodnotì (napø. roven jedné).
+Jistou potí však v tomto pøípadì pùsobí rozhodnutí, kterı ze èlenù projekèní matice bychom mìli takto nastavit
+(zejména se nesmíme pokoušet takto nastavit èlen, kterı by mìl vyjít nulovı).
+Èistší moností je poadovat, aby vhodná norma projekèní matice byla rovna zvolené hodnotì.
+Mùeme napø. poadovat, aby souèet ètvercù všech prvkù projekèní matice byl roven jedné.
+V tomto pøípadì však bohuel obdríme nelineární úlohu, co je podstatná komplikace.
+
+Podkapitolu mùeme uzavøít konstatováním, e máme-li k dispozici pro kadou kameru alespoò 6 kalibraèních bodù a zvolíme-li doplòující podmínku,
+mùeme pro øešení prvkù projekèní matice sestavit systém rovnic a prvky jednoznaènì vyøešit.
+I pøi pouití minimálního poètu šesti bodù je ovšem tento systém pøedeterminovanı.
+Pro eliminaci šumu (šumem opìt mohou bıt zatíeny zejména hodnoty souøadnic $u_i$, $v_i$ zmìøené v obrazech)
+bıvá však v praxi poèet kalibraèních bodù mnohem vyšší, ne je uvedené teoreticky nutné minimum.
+%V otázce øešení pøedeterminovanıch lineárních soustav opìt odkazujeme na dodatek B FIXME.
+
+
+\section{Relativní kalibrace a rekonstrukce}
+%===========================================
+Èasto pøichází v úvahu úloha, kdy mùeme mìøit pouze souøadnice bodù v obrazech získanıch kamerami.
+Trojrozmìrné souøadnice ádného bodu ve scénì pøi tom nejsou k dispozici.
+Taková situace mùe nastat napø. v pøípadì vizuálního systému robota, kterı pracuje v pøedem neznámé scénì.
+Ukáeme, e i za této situace lze scénu rekonstruovat.
+Uvaujme opìt situaci, kdy máme k dispozici dvì kamery, pøípadnì dva obrazy sejmuté ze dvou rùznıch míst jedinou kamerou.
+Zavedeme matici rotace $\mathbf{R}$ a vektor posunutí $\mathbf{b} = O_2 - O_1$,
+které provádìjí transformaci ze souøadného systému druhé kamery do souøadného systému první kamery podle vztahu
+\begin{equation} \label{eq:11_18}
+    \mathbf{x}_{1} = \mathbf{R} \mathbf{x}_{2} + \mathbf{b} \, .
+\end{equation}
+Pøipomeòme, e $\mathbf{R}$ je ortonormální matice a e $\mathbf{R} = \mathbf{R}_{z} \mathbf{R}_{y} \mathbf{R}_{x}$,
+kde $\mathbf{R}_{x}$, $\mathbf{R}_{y}$, $\mathbf{R}_{z}$ jsou matice odpovídající postupnì provádìnım rotacím kolem os $x_2$, $y_2$ a $z_2$.
+Zavedeme vektor $\varphi = (\varphi_x, \varphi_{y}, \varphi_{z})^\top$ obsahující odpovídající úhly rotace.
+Matice $\mathbf{R}_{x}$, $\mathbf{R}_{y}$, $\mathbf{R}_{z}$ pak mají tvar
+\begin{eqnarray} \label{eq:11_19}
+    \mathbf{R}_{x}
+    &=&
+    \left[
+    \begin{array}{ccc}
+    {1} & {0} & {0} \\
+    {0} & {\cos \varphi _{x} } & {\sin \varphi _{x}} \\
+    {0} & {-\sin \varphi _{x} } & {\cos \varphi _{x}}
+    \end{array}
+    \right], \\
+    \mathbf{R}_{y}
+    &=&
+    \left[
+    \begin{array}{ccc}
+    {\cos \varphi _{y} } & {0} & {-\sin \varphi _{y} } \\
+    {0} & {1} & {0} \\
+    {\sin \varphi _{y}} & {0} & {\cos \varphi _{y}}
+    \end{array}
+    \right], \\
+    \mathbf{R}_{z}
+    &=&
+    \left[
+    \begin{array}{ccc}
+    {\cos \varphi _{z}} & {\sin \varphi _{z}} & {0} \\
+    {-\sin \varphi _{z} } & {\cos \varphi _{z} } & {0} \\
+    {0} & {0} & {1}
+    \end{array}
+    \right].
+\end{eqnarray}
+Jak ukáeme pozdìji, lze v procesu relativní kalibrace urèit právì matici $\mathbf{R}$ a vektor $\mathbf{b}$.
+Známe-li matici $\mathbf{R}_1$ a vektor $\mathbf{o}_1$ urèující polohu první kamery v globálním souøadném systému scény,
+pak mùeme hodnoty $\mathbf{R}_2$, $\mathbf{o}_2$ ze vztahu \eqref{eq:11_1} urèující polohu druhé kamery vyjádøit vztahy
+\begin{equation} \label{eq:11_20}
+    \mathbf{o}_{2} = \mathbf{R}_{1} \mathbf{b} + \mathbf{o}_{1} \, , \quad \mathbf{R}_{2} = \mathbf{R}_{1} \mathbf{R} \, .
+\end{equation}
+Hodnoty $\mathbf{R}_1$, $\mathbf{o}_1$ popisují vztah mezi souøadnım systémem první kamery a globálním souøadnım systémem scény. 
+Tento vztah nelze v procesu relativní kalibrace urèit.
+Nìkdy mohou bıt hodnoty $\mathbf{R}_1$, $\mathbf{o}_1$ známy pøedem.
+Jestlie tomu tak není, pak pro mnoho úloh postaèí poloit $\mathbf{R}_1 = \mathbf{I}$ a $\mathbf{o}_1 = \textbf{0}$, co znamená,
+e globální souøadnı systém scény ztotoníme se souøadnım systémem první kamery a souøadnice bodù ve scénì tak mìøíme v souøadném systému první kamery.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_4.pdf}
+    \end{center}
+    \caption{\dvojt Rekonstrukce polohy bodu}
+    \label{img:11_4}
+\end{figure}
+
+Pøedpokládejme nyní nejprve, e kalibrace ji byla provedena a e matice $\mathbf{R}_i$
+a vektor $\mathbf{o}_{i}$ ($i=1,2$) z rovnice \eqref{eq:11_1} jsou ji pro obì kamery známy.
+Nejprve ukáeme, jak lze provést rekonstrukci trojrozmìrnıch souøadnic bodu, známe-li souøadnice jeho prùmìtù v obrazech získanıch obìma kamerami.
+Nech $X$ oznaèuje rekonstruovanı bod.
+V souøadném systému $(O,x,y,z)$ nech je bod $X$ reprezentován vektorem $\mathbf{x}=(x, y, z)$.
+Nech $X_i$ je obraz bodu $X$ získanı $i$-tou kamerou.
+V souøadném systému $(Z_i,u_i,v_i)$ nech je bod $X_i$ reprezentován vektorem $\mathbf{u}_i=(u_i,v_i ,1)^\top$.
+V souøadném systému $(O,x,y,z)$ je pøímka $\langle O_i X_i \rangle$ popsána rovnicí
+$\mathbf{o}_{i} + \lambda_i \mathbf{R}_i \mathbf{F}_i \mathbf{Q}_i \mathbf{u}_i$, kde $\lambda_{i}$ je reálnı parametr.
+Obì pøímky $\langle O_i X_i \rangle$ ($i=1,2$) by se teoreticky mìly protínat v bodì $X$.
+Opìt je ovšem oprávnìné pøedpokládat, e hodnoty souøadnic v obrazech nelze mìøit zcela pøesnì.
+Proto nech v tomto odstavci pojednávajícím o rekonstrukci souøadnic bodu znaèí $\mathbf{u}_i$ prakticky zjištìné vektory souøadnic,
+jejich sloky jsou zatíeny šumem mìøení.
+Podobnì bude nyní $X_i$ znaèit prakticky zjištìnou polohu prùmìtu bodu $X$ v obraze získaném $i$-tou kamerou.
+Je-li mìøení zatíeno chybami, pak ji bod $X$ obecnì nebude leet souèasnì na obou pøímkách $\langle O_i X_i \rangle$ (obr. \ref{img:11_4}).
+Polohu bodu $X$ lze stanovit na základì podmínky, aby souèet ètvercù vzdáleností bodu $X$ od obou pøímek byl minimální.
+Hledáme tedy minimum
+\begin{equation} \label{eq:11_21}
+    \min\limits_{\mathbf{x}} \sum_{i=1}^{2}\mathrm{dist}^{2} \left(\mathbf{x}, \mathbf{o}_{i} + \lambda_{i} \mathbf{R}_{i} \mathbf{F}_{i} \mathbf{Q}_{i} \mathbf{u}_{i} \right) .
+\end{equation}
+Pro struènost matematickıch vırazù, které budou následovat, zavedeme vektor
+\begin{equation} \label{eq:11_22}
+    \mathbf{v}_{i} = \frac{\mathbf{R}_{i} \mathbf{F}_{i} \mathbf{Q}_{i} \mathbf{u}_{i}}{\left|\mathbf{R}_{i} \mathbf{F}_{i} \mathbf{Q}_{i} \mathbf{u}_{i} \right|} \, .  
+\end{equation}
+Na základì vlastností skalárního souèinu pro hodnotu parametru $\lambda_{i}$ snadno nalezneme vztah
+\begin{equation} \label{eq:11_23}
+    \lambda_{i} = \left|\mathbf{x} - \mathbf{o}_{i} \right| \cos \varphi_{i} = \left(\mathbf{x} - \mathbf{o}_{i} \right)^\top \mathbf{v}_{i} \, .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_5.pdf}
+    \end{center}
+    \caption{\dvojt Stanovení vzdálenosti bodu $X$ od promítacího paprsku}
+    \label{img:11_5}
+\end{figure}
+
+\noindent
+Nech $\mathbf{\Delta}_{i}$ oznaèuje vektor vzdálenosti bodu $X$ od pøímky $\langle O_i X_i\rangle$ (obr. \ref{img:11_5}).
+Je zøejmé, e $\mathbf{\Delta}_{i} = (\mathbf{x}-\mathbf{o}_{i})-\lambda_{i}\mathbf{v}_{i}$.
+Souèet ètvercù vzdáleností mùeme nyní vyjádøit pomocí vztahù
+\begin{eqnarray} \label{eq:11_24}
+    \varepsilon &=& \sum_{i=1}^{2} \Delta_{i}^\top \Delta_{i} = \sum_{i=1}^{2} \left[ \left(\mathbf{x} - \mathbf{o}_{i} \right) - \lambda_{i} \mathbf{v}_{i} \right]^\top \left[ \left(\mathbf{x} - \mathbf{o}_{i} \right) - \lambda_{i} \mathbf{v}_{i} \right] = \nonumber \\ 
+    &=& \sum_{i=1}^{2} \left[ \mathbf{x}^\top \mathbf{x} - 2 \mathbf{o}_{i}^\top \mathbf{x} - 2 \lambda_{i} \mathbf{v}_{i}^\top \mathbf{x} + \mathbf{o}_{i}^\top \mathbf{o}_{i} + 2 \lambda_{i} \mathbf{o}_{i}^\top \mathbf{v}_{i} + \lambda_{i}^{2} \mathbf{v}_{i}^\top \mathbf{v}_{i} \right] .
+\end{eqnarray}
+Derivováním získáme
+\begin{equation} \label{eq:11_25}
+    \frac{\partial \varepsilon}{\partial \mathbf{x}} = 2 \sum_{i=1}^{2} \left[ \mathbf{x} - \mathbf{o}_{i} - \frac{\partial \lambda_{i}}{\partial \mathbf{x}} \mathbf{v}_{i}^\top \mathbf{x} - \lambda_{i} \mathbf{v}_{i} + \frac{\partial \lambda_{i}}{\partial \mathbf{x}} \mathbf{o}_{i}^\top \mathbf{v}_{i} + \lambda_{i} \frac{\partial \lambda_{i}}{\partial \mathbf{x}} \mathbf{v}_{i}^\top \mathbf{v}_{i} \right] .
+\end{equation}
+Z rovnice \eqref{eq:11_23} vyplıvá, e $\partial \lambda_{i}/\partial \mathbf{x} = \mathbf{v}_{i}$.
+Poloíme-li $\partial \varepsilon/\partial \mathbf{x} = \mathbf{0}$, pak po úpravách obdríme vztah
+\begin{equation} \label{eq:11_26}
+    \sum_{i=1}^{2} \left[ \mathbf{x} - \left( \mathbf{v}_{i}^\top \mathbf{x} \right) \mathbf{v}_{i} \right] = \sum_{i=1}^{2} \left[ \mathbf{o}_{i} - \left(\mathbf{o}_{i}^\top \mathbf{v}_{i} \right) \mathbf{v}_{i} \right] .
+\end{equation}
+Øešením rovnice \eqref{eq:11_26} získáme pro hledanı vektor \textbf{x} pøedpis
+\begin{equation} \label{eq:11_27}
+    \mathbf{x} = \left[ \sum_{i=1}^{2} \left( \mathbf{I} - \mathbf{v}_{i} \mathbf{v}_{i}^\top \right) \right]^{-1} \sum_{i=1}^{2} \left[ \mathbf{o}_{i} - \left( \mathbf{o}_{i}^\top \mathbf{v}_{i} \right) \mathbf{v}_{i} \right] .
+\end{equation}
+
+Nyní se vrátíme k problému kalibrace a ukáeme, jak lze zjistit matici $\mathbf{R}$ a vektor $\mathbf{b}$, kterıch lze podle rovnice \eqref{eq:11_20} pouít
+ke zjištìní matice $\mathbf{R}_2$ a vektoru $\mathbf{o}_2$ (jak jsme ji døíve uvedli, pøedpokládáme, e matici $\mathbf{R}_1$ a vektor $\mathbf{o}_1$ známe).
+Uvaujme bod $X$ scény.
+V obrazech získanıch první a druhou kamerou se tento bod zobrazuje na body $X_1$, $X_2$.
+V souøadném systému $(O_1,x_1,y_1,z_1)$ jsou smìry pøímek $\langle O_1 X_1\rangle$, $\langle O_2 X_2\rangle$ reprezentovány vektory $\mathbf{x}_1$, $\mathbf{Rx}_2$.
+Jestlie jsou polohy bodù $X_1$, $X_2$ v obrazech urèeny pøesnì, pak leí pøímky $\langle O_1 X_1 \rangle$,
+$\langle O_2 X_2 \rangle$, $\langle O_1 O_2 \rangle$ v jedné rovinì.
+Podmínku koplanarity lze matematicky zapsat vztahem $\mathbf{x}_1 \cdot (\mathbf{b} \times (\mathbf{Rx}_2)) = 0$.
+Zápisem $[\mathbf{b}]_\times$ oznaèíme antisymetrickou matici realizující vektorovı souèin, tj. matici,
+která pro kadı vektor $\mathbf{a}$ vyhovuje podmínce $[\mathbf{b}]_\times \mathbf{a} = \mathbf{b} \times \mathbf{a}$.
+Lze snadno ovìøit, e platí
+\begin{equation} \label{eq:11_28}
+    \left[ \mathbf{b} \right]_{\times} = \left[
+    \begin{array}{ccc}
+    {0} & {-b_{z}} & {b_{y}} \\
+    {b_{z}} & {0} & {-b_{x}} \\
+    {-b_{y} } & {b_{x}} & {0}
+    \end{array}
+    \right].
+\end{equation}
+Pøepíšeme-li nyní podmínku koplanarity do maticového tvaru, obdríme rovnici $\mathbf{x}_1^\top[\mathbf{b}]_\times\mathbf{Rx}_2 = 0$.
+Dosadíme-li do podmínky rovnici \eqref{eq:11_4}, dostaneme
+\begin{equation} \label{eq:11_29}
+    \mathbf{u}_{1}^\top \mathbf{Q}_{1}^\top \mathbf{F}_{1}^\top \left[ \mathbf{b} \right]_{\times } \mathbf{RF}_{2} \mathbf{Q}_{2} \mathbf{u}_{2} =0 \, ,
+\end{equation}
+pøípadnì
+\begin{equation} \label{eq:11_30}
+    \mathbf{u}_{1}^\top \mathbf{Q}_{1}^\top \mathbf{F}_{1}^\top \left[ \mathbf{b} \right]_{\times} \mathbf{R}_{z} \mathbf{R}_{y} \mathbf{R}_{x} \mathbf{F}_{2} \mathbf{Q}_{2} \mathbf{u}_{2} = 0
+\end{equation}
+nebo také
+\begin{eqnarray} \label{eq:11_31}
+    &u_{1}^\top \mathbf{Cu}_{2} = 0 \, ,& \nonumber \\
+    &\mathrm{kde} \quad \mathbf{C} = \mathbf{Q}_{1}^\top \mathbf{F}_{1}^\top \left[ \mathbf{b} \right]_{\times} \mathbf{RF}_{2} \mathbf{Q}_{2} 
+  = \mathbf{Q}_{1}^\top \mathbf{F}_{1}^\top \left[ \mathbf{b} \right]_{\times} \mathbf{R}_{z} \mathbf{R}_{y} \mathbf{R}_{x} \mathbf{F}_{2} \mathbf{Q}_{2} \, .&
+\end{eqnarray}
+Rovnice \eqref{eq:11_29}, \eqref{eq:11_30}, \eqref{eq:11_31} bıvají nazıvány rovnicemi koplanarity.
+Podobnì bıvá matice $\mathbf{C}$ z rovnice \eqref{eq:11_31} nazıvána maticí koplanarity.
+Kadá dvojice obrazù jednoho kalibraèního bodu popsaná souøadnicemi $\mathbf{u}_1$ v prvním obraze
+a souøadnicemi $\mathbf{u}_2$ v druhém obraze dává vzniknout jedné rovnici koplanarity.
+Je-li k dispozici $q$ kalibraèních bodù, pak lze sestavit soustavu $q$ rovnic koplanarity.
+Této soustavy lze pak pouít k øešení neznámıch vnìjších a vnitøních parametrù kamery,
+které jsou obsaeny v maticích $\mathbf{Q}_1$, $\mathbf{Q}_2$, $\mathbf{F}_1$, $\textbf{F}_2$, $[\mathbf{b}]_\times,\mathbf{R}$.
+
+Z rovnice \eqref{eq:11_29} vyplıvá, e øešení bude moné provést a na mìøítko vektoru $\mathbf{b}$.
+Jestlie je toti $\mathbf{b}$ vektor, kterı vyhovuje rovnici \eqref{eq:11_29}, pak také vektor $\mu \mathbf{b}$, kde $\mu$ je reálnı násobitel, rovnici vyhovuje.
+Abychom úlohu specifikovali jednoznaènì, zvolíme doplòující podmínku.
+Mùeme napø. poadovat $|\mathbf{b}| = d$, kde $d$ je zvolená hodnota (napø. $d=1$).
+V pøípadì euklidovské metriky lze pak podmínku rozepsat do tvaru
+\begin{equation} \label{eq:11_32}
+    b_{x}^{2} + b_{y}^{2} + b_{z}^{2} = d^{2} \, .
+\end{equation}
+Ze skuteènosti, e délku vektoru $\mathbf{b}$ je zapotøebí zvolit, vyplıvá, e rekonstrukci scény bude moné provést a na mìøítko.
+To znamená, e pro rùzné hodnoty $d$ budeme dostávat podobné, avšak rùznì veliké scény.
+Problém lze jednoduše vyøešit tak, e kalibraci provedeme pøi $|\mathbf{b}|=1$.
+Známe-li pak skuteènou vzdálenost mezi nìkterımi dvìma body ve scénì, mùeme stanovit mìøítko,
+kterım je tøeba dodateènì násobit všechny souøadnice ve scénì (rozmìry scény) tak, aby poadované vzdálenosti mezi body bylo skuteènì dosaeno.
+
+Z rovnice \eqref{eq:11_29} vidíme, e pøi relativní kalibraci lze stanovit vzájemnou polohu kamer a vnitøní parametry kamery.
+Vzájemná poloha kamer je popsána maticí $\mathbf{R}$ a vektorem $\mathbf{b}$.
+Protoe však mùe existovat nejvıše 7 nezávislıch rovnic koplanarity (podrobnı dùkaz tohoto tvrzení neuvádíme, ponìvad by pøesáhl rámec tohoto textu),
+lze pomocí rovnic koplanarity a s vyuitím doplòující podmínky \eqref{eq:11_32} zjistit nejvıše osm parametrù.
+To však nemusí bıt na závadu.
+Èasto lze toti pøedpokládat, e se nìkteré parametry (zejména vnitøní parametry kamery obsaené v maticích $\mathbf{Q}_1$, $\mathbf{Q}_2$) v èase nemìní, a lze je proto pøedem stanovit pøedchozím mìøením (kalibrací) v laboratorních podmínkách.
+
+Øešení soustavy kalibraèních rovnic je obtíné, protoe se jedná o nelineární problém.
+V posledním desetiletí bylo prezentováno nìkolik pøístupù k jeho øešení.
+Zde nastíníme jednu z monıch variant.
+Vyjdeme z rovnic ve tvaru \eqref{eq:11_30}.
+Pøedpokládáme, e máme k dispozici $q$ kalibraèních bodù.
+Souøadnice prùmìtù $i$-tého kalibraèního bodu v obraze první a druhé kamery oznaèíme postupnì $\mathbf{u}_1^{(i)}$, $\mathbf{u}_2^{(i)}$.
+Kadá dvojice $\mathbf{u}_1^{(i)}$, $\mathbf{u}_2^{(i)}$ dává vzniknout jedné rovnici koplanarity.
+Dostaneme tak celkem $q$ rovnic koplanarity, kterıch vyuijeme spolu s podmínkou \eqref{eq:11_32} ke stanovení hodnoty parametrù
+$f_1$, $f_2$, $\varphi_x$, $\varphi_y$, $\varphi_z$, $b_x$, $b_y$, $b_z$.
+Je zøejmé, e nejmenší hodnota $q$, pøi ní lze úlohu øešit, je 7.
+Prakticky však bıvá $q$ vyšší.
+Pøedeterminovanosti soustavy lze opìt vyuít k redukci vlivu šumu, kterım mùe bıt zatíeno mìøení souøadnic vektorù $\mathbf{u}_1^{(i)}$, $\mathbf{u}_2^{(i)}$.
+Hledané hodnoty parametrù uspoøádáme do vektoru $\mathbf{p} = (f_1, f_2, \varphi_x, \varphi_y, \varphi_z, b_x, b_y, b_z)^\top$.
+Pro dvojici obrazù $i$-tého kalibraèního bodu mùeme pak rovnici \eqref{eq:11_30} zapsat pøehlednì ve tvaru
+\begin{equation} \label{eq:11_33}
+    F \left( \mathbf{u}_1^{(i)}, \mathbf{u}_2^{(i)}, \mathbf{p} \right) = 0 \, .
+\end{equation}
+Podmínka \eqref{eq:11_32} spolu s $q$ ($q>7$) rovnicemi \eqref{eq:11_33} tvoøí pøedeterminovanı nekonzistentní systém
+(nekonzistence vyplıvá z pøítomnosti šumu ve vstupních hodnotách).
+Nekonzistentní systém nemá pøísnì vzato ádné øešení. Lze pouze najít øešení, které systému v jistém smyslu vyhovuje nejlépe.
+Mùeme napøíklad najít vektor parametrù $\mathbf{p}$ tak, aby souèet ètvercù reziduí rovnic \eqref{eq:11_33} byl minimální.
+Hledáme tedy takovou hodnotu vektoru parametrù, která minimalizuje funkci
+\begin{equation} \label{eq:11_34}
+    \Phi = \sum_{i=1}^{q} \left[ F\left( \mathbf{u}_1^{(i)}, \mathbf{u}_2^{(i)}, \mathbf{p} \right) \right]^2,
+\end{equation}
+a to za souèasného splnìní podmínky \eqref{eq:11_32}. Hledání minima funkce za doplòujících podmínek lze provést metodou
+Lagrangeovıch multiplikátorù (jedná se o standardní matematickou metodu). %, která je popsána v dodatku C FIXME.
+Metoda pøevádí problém na problém nalezení prostého minima (bez doplòující podmínky) nové funkce, která však má vìtší poèet argumentù.
+V našem pøípadì je jistou komplikací, e je úloha nelineární. Nelineární úlohu minimalizace lze øešit napø. gradientní metodou.
+%Postup je popsán v dodatku D FIXME.
+
+\section{Epipolára}
+%==================
+Uvaujme bod $X$ scény.
+V obrazech získanıch první a druhou kamerou jsou souøadnice prùmìtù tohoto bodu popsány vektory
+$\mathbf{u}_1 = (u_1,v_1,1)$, $\mathbf{u}_2 = (u_2,v_2,1)$.
+Dosadíme-li do rovnice \eqref{eq:11_18} rovnici \eqref{eq:11_4} zapsanou pro první a druhou kameru, snadno získáme vztah
+\begin{equation} \label{eq:11_35}
+    \lambda_{1} \mathbf{F}_{1} \mathbf{Q}_{1} \mathbf{u}_{1} = \lambda_{2} \mathbf{RF}_{2} \mathbf{Q}_2 \mathbf{u}_{2} + \mathbf{b} \, .
+\end{equation}
+Odtud máme
+\begin{equation} \label{eq:11_36}
+    \lambda_2 \mathbf{u}_2 = \lambda_1 \mathbf{Q}_2^{-1} \mathbf{F}_2^{-1} \mathbf{R}^\top \mathbf{F}_1 \mathbf{Q}_{1} \mathbf{u}_1 - \mathbf{Q}_2^{-1} \mathbf{F}_2^{-1} \mathbf{R}^\top \mathbf{b} \, .
+\end{equation}
+Souèin $\lambda_2 \mathbf{u}_2$ ve vztahu \eqref{eq:11_36} reprezentuje v homogenních souøadnicích prùmìt bodu $X$ v obraze druhé kamery.
+Rovnice \eqref{eq:11_36} je homogenní parametrickou rovnicí pøímky, v ní je parametrem hodnota $\lambda_1$.
+Mùeme tedy uèinit tento závìr: Jestlie máme v obraze první kamery bod, jeho souøadnice jsou $\mathbf{u}_1 = (u_1,v_1,1)$,
+pak poloha jemu odpovídajícího bodu v obraze druhé kamery závisí na hodnotì $\lambda_1$ (pouitím vztahu \eqref{eq:11_4} lze snadno ovìøit,
+e platí $\lambda_1 = -z_1/f_1)$.
+Všechny moné polohy vytvoøí v obraze získaném druhou kamerou pøímku.
+Tato pøímka se nazıvá epipolárou.
+Pro $\lambda_1 = 0$ rovnice \eqref{eq:11_36} urèuje v obraze získaném druhou kamerou polohu prùmìtu støedu projekce první kamery.
+Tento bod se nazıvá epipól.
+Epipolára i epipól jsou vyobrazeny na obr. \ref{img:11_6}.
+Poznamenejme, e odvozené vztahy je samozøejmì moné také obrátit, co znamená,
+e k bodu v obraze získaném druhou kamerou je moné nalézt epipoláru v obraze získaném první kamerou.
+Toté platí i pro epipól.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_6.pdf}
+    \end{center}
+    \caption{\dvojt Epipolára a epipól}
+    \label{img:11_6}
+\end{figure}
+
+V pøípadì kamer s rovnobìnımi osami (podkapitola \ref{sec:rovnobezne_kamery}) se rovnice \eqref{eq:11_36} podstatnì zjednoduší.
+V tomto pøípadì toti máme $\mathbf{F}_1 = \mathbf{F}_2$ (proto dále píšeme jen $\mathbf{F}$), $\mathbf{Q}_1 = \mathbf{Q}_2 = \mathbf{I}$
+(jednotková matice) a $\mathbf{R} = \mathbf{I}$.
+Z rovnice \eqref{eq:11_36} obdríme vztah $\lambda_2 \mathbf{u}_2 = \lambda_1 \mathbf{u}_1 - \mathbf{F}^{-1} \mathbf{b}$.
+Uváíme-li, e $\mathbf{b} = (b_x,0,0)$, pak z rovnice pro souøadnici $z$ zjišujeme, e $\lambda_2 = \lambda_1$ (dále proto píšeme jen $\lambda$).
+Parametrické rovnice epipoláry pak jsou $u_2 = u_1 - b_x / \lambda$, $v_2 = v_1$.
+
+\section{Automatizované hledání korespondence}
+%=============================================
+Pro rekonstrukci polohy bodu je zapotøebí identifikovat jeho prùmìty v obraze získaném první a druhou kamerou.
+Zdá se, e je moné uvaovat i o automatizaci této úlohy.
+Lze postupovat napø. v následujících krocích:
+1) V obraze získaném první kamerou identifikujeme body zájmu napø. nìkterım z detektorù rohù. %(kapitola FIXME).
+2) Pro kadı bod zájmu nalezenı v prvním obraze urèíme korespondující bod v druhém obraze.
+Druhı krok popíšeme podrobnìji.
+Nech $X_1$ je bod zájmu nalezenı v prvním obraze a jeho souøadnice nech jsou $u_1$, $v_1$.
+Z pøedchozí podkapitoly víme, e korespondující bod $X_2$ bude v druhém obraze leet na epipoláøe.
+Pøedpokládáme, e kromì hodnoty $\lambda_1$, která je parametrem, jsou všechny zbıvající hodnoty
+na pravé stranì rovnice \eqref{eq:11_36} k~dispozici (øeknìme, e ji byla provedena kalibrace).
+Mùeme proto stanovit rovnici epipoláry, na ní bod $X_2$ leí.
+Pøesnou polohu bodu $X_2$ nalezneme tak, e systematicky provìøujeme všechny body
+na epipoláøe (pøi praktické implementaci mùeme postupovat napø. po celıch pixelech).
+Oznaème $\varphi_1(u,v)$, $\varphi_2(u,v)$ obrazové funkce prvního a druhého obrazu.
+Nech $u$, $v$ jsou souøadnice provìøovaného bodu ve druhém obraze ($u_1$, $v_1$ jsou souøadnice v obraze prvním, tedy souøadnice bodu $X_1$).
+Otázku, zda provìøovanı bod koresponduje s $X_1$, mùeme rozhodnout na základì porovnání okolí bodu $X_1$ s okolím bodu provìøovaného.
+K porovnání lze pouít napø. vztahu (obr. \ref{img:11_7})
+\begin{equation} \label{eq:11_37}
+    \mathrm{Diff} \left( u,v \right) = \sum_{\Delta u=-a}^{a} \sum_{\Delta v=-a}^{a} \left[ \varphi_1 \left( u_1 + \Delta u,v_1 + \Delta v \right) - \varphi_2 \left( u + \Delta u, v + \Delta v \right) \right]^2.
+\end{equation}
+Je zøejmé, e vztah \eqref{eq:11_37} porovnává okolí ètvercového tvaru o stranì $2a + 1$.
+Èím menší hodnota vyjde, tím jsou si okolí podobnìjší.
+Za bod korespondující s $X_1$ lze povaovat takovı bod $X_2$, kterı splòuje následující kriteria:
+1) hodnota vypoèítaná podle vztahu \eqref{eq:11_37} je pro $X_2$ minimální a menší ne nìjakı zvolenı práh,
+2) pro všechny ostatní body na epipoláøe je hodnota \eqref{eq:11_37} vıznamnì vìtší ne pro bod $X_2$.
+Druhé kriterium zohledòuje poadavek jednoznaènosti detekce.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_7.pdf}
+    \end{center}
+    \caption{\dvojt Hledání korespondence porovnáním okolí bodu (kamery s rovnobìnımi optickımi osami)}
+    \label{img:11_7}
+\end{figure}
+
+Aèkoli právì popsanı postup vypadá dosti pøímoèaøe, skrıvá mnohá úskalí.
+Prvním problémem je volba vhodné velikosti okénka.
+Je-li okénko malé, hrozí, e detekce nebude jednoznaèná.
+Pøi velkém okénku se naopak vıznamnìji uplatní fakt, e obrazy sejmuté z rùznıch míst jsou pøesnì vzato rùzné
+a nelze obecnì oèekávat shodu pøíliš velkıch oblastí ve smyslu vztahu \eqref{eq:11_37}.
+Vztah \eqref{eq:11_37} dále pøedpokládá, e okénku velikosti  $2a+1$ v prvním obraze odpovídá ve druhém obraze okénko
+tée velikosti a e hrany okének jsou v obou obrazech rovnobìné se souøadnımi osami.
+To je splnìno pouze ve speciálních pøípadech (napø. v pøípadì kamer s rovnobìnımi optickımi osami
+z podkapitoly \ref{sec:rovnobezne_kamery}).
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{11_stereo/images/img_11_8.pdf}
+    \end{center}
+    \caption{\dvojt K nejednoznaènosti øešení problému korespondence}
+    \label{img:11_8}
+\end{figure}
+
+Otázka jednoznaènosti detekce korespondence je klíèová. Pøísnì vzato je zapotøebí se smíøit s faktem,
+e mohou existovat pøípady, kdy jednoznaènou detekci zajistit nelze.
+Uvame napø. pøíklad dle obr. \ref{img:11_8}.
+Ani èlovìku se zde bez doplòujících informací nepodaøí stanovit, kterı bod v~druhém obraze koresponduje s~bodem $X_1$.
+Tím ménì lze u podobnıch úloh oèekávat øešení automatizované.
+Automatizované hledání korespondence je z vıše uvedenıch dùvodù úlohou, její obecné øešení je obtíné.
+I kdy bylo pro automatizované hledání korespondence publikováno více postupù, nelze zatím ádnı z nich povaovat za zcela uspokojivı.
+Ve zbytku této podkapitoly podáme pøehled nìkterıch základních pøístupù, které s v prùbìhu øešení problému hledání korespondence objevily.
+
+Na stereokorespondenci mùeme pohlíet jako na proces hledání podobnosti mezi dvìma skupinami dat v obrazech.
+Nalezení správné stereokorespondence je klíèovım èlánkem pro následnou 3D rekonstrukci scény.
+Zatímco náš mozek je schopen provádìt tyto operace zcela automaticky, bez pøispìní vìdomí, pro poèítaè je tento problém obtínì uchopitelnı.
+Odpovídající algoritmy se vyvíjejí více ne 30 let a stále se nedá øíci, e by se podaøilo najít optimální øešení.
+
+Metody hledání korespondence se dìlí podle typu vısledné disparitní mapy na husté (obsahující hodnotu disparity pro témìø všechny body v obraze) a na øídké (disparita je pøiøazena jen vıznaènım bodùm, napø. rohùm).
+Další moností, jak tyto algoritmy rozèlenit, je na základì pøístupu k hledání korespondence.
+Lokální metody hledají korespondenci jen na základì informací získanıch z koneèného okolí hledaného bodu, nejèastìji se jedná o malá ètvercová okénka.
+Globální metody pøistupují k problému korespondence jako k optimalizaèní úloze, kdy se urèí disparita a zákryty na celé ploše obrazu.
+V následujících podkapitolách si ukáeme pøíklady obou pøístupù.
+
+\subsection{Okénkové algoritmy}
+%==============================
+Okénkové algoritmy vycházejí z pøedpokladu podobnosti okolí korespondujících bodù.
+Na prvním obraze vymezíme malou oblast, nejèastìji ètvercového tvaru, a tu postupnì porovnáváme s potenciálními pozicemi,
+kde by se mohl nalézat korespondující bod druhého obrazu.
+Epipolární geometrie nám zajišuje vıskyt korespondujícího bodu na epipoláøe, u rektifikovanıch obrazù dokonce na stejné horizontální souøadnici.
+Pro porovnání oblastí okolí bodu se nejèastìji pouívají tøi druhy metrik: rozdíl hodnot jasu (SAD, SSD), korelace (NCC) a metrika tzv. rank transformace.
+Máme-li definováno okénko $u \times v$, jsme schopni urèit míru podobnosti pro danou hodnotu disparity $d$ pro jednotlivé metriky pomocí vztahù
+\begin{equation}
+    \label{e2}
+	\mbox{{SAD}}(u,v) =  \sum\limits_{u,v} \mid \varphi_{1}(u,v) - \varphi_{2}(u + d,v) \mid \, ,
+\end{equation}
+\begin{equation}
+    \label{e1}
+	\mbox{{SSD}}(u,v) =  \sum\limits_{u,v} (\varphi_{1}(u,v) - \varphi_{2}(u + d,v))^2 \, ,
+\end{equation}
+\begin{equation}
+    \label{e3}
+	\mbox{{NCC}}(u,v) =  \sum\limits_{u,v} \frac{(\varphi_{1}(u,v) - \bar{\varphi_{1}}) \cdot (\varphi_{2}(u + d,v) - \bar{\varphi_{2}})}{\sqrt{(\varphi_{1}(u,v) - \bar{\varphi_{1}})^{2} \cdot (\varphi_{2}(u + d,v) - \bar{\varphi_{2}})^{2} } } \, .
+\end{equation}
+Algoritmy vyuívající pøedchozí metriky jsou jednoduše implementovatelné a také snadno paralelizovatelné.
+Hlavní slabina tìchto metod ale tkví ve volbì velikosti pouitého okna.
+Malá okénka mají menší diskriminaèní schopnost a budou vytváøet vìtší poèet chybnıch korespondencí.
+Oproti tomu velká okénka mají sice vìtší odolnost proti šumu a poruchám v obraze, ale souèasnì také rozmazávají disparitní mapu,
+protoe nejsou schopny zachytit dostateènì jemnì zmìnu disparity.
+Na obrázku \ref{img:stereo_demo_window} je vısledná disparitní mapa pøi pouití metriky SAD.
+Z obrázku je patrné, e lokální metody selhávají na velkıch jednolitıch plochách.
+Problém volby velikosti porovnávaného okénka se snaí øešit algoritmy mající adaptivní velikost okna,
+jeho velikost a tvar se mìní podle potøeby, nejèastìji na základì èlenitosti disparitní mapy a prùbìhu jasové funkce porovnávanıch obrazù.
+
+Kromì klasickıch metod vyuívajících pøímo jasové hodnoty pixelù existují i alternativní metody vyuívající neparametrické transformace vstupních obrazù. 
+Pøíkladem je tzv. rank transformace.
+Rank transformace udává poèet bodù v malém okénku kolem centrálního bodu, jejich jasová hodnota je menší ne jasová hodnota støedového bodu.
+Vısledná hodnota tak závisí pouze na relativním uspoøádání jasovıch hodnot, ne na hodnotách samotnıch.
+Poté, co je provedena tato transformace, je moné bloky porovnávat bìnou $L_{2}$ normou.
+\begin{eqnarray}
+\mathrm{Rank}(u,v) &=&  \sum\limits_{u, v} (\varphi'_{1}(u,v) - \varphi'_{2}(u + d,v))^2 \, , \\
+\varphi'_{k}(u,v) &=& \sum\limits_{m, n} \mathrm{R}(m,n,u,v), \, \\
+\mathrm{R}(m,n,u,v) &=& \left\{
+\begin{array}{cc}
+  0 & \varphi_{k}(m,n) \ge \varphi_{k}(u,v) \\
+  1 & \varphi_{k}(m,n) < \varphi_{k}(u,v)
+ \end{array}
+ \right. .
+\end{eqnarray}
+Vıhodou rank transformace je vìtší odolnost proti šumu.
+Z dùvodu ztráty èásti informací je však sníena i rozlišovací schopnost porovnávání. 
+
+\begin{figure}[bh]
+    \centering
+    \includegraphics[width=5in]{11_stereo/images/stereo_demo_window}
+    \caption{\dvojt Vısledná disparitní mapa SAD a správné øešení}
+    \label{img:stereo_demo_window}
+\end{figure}
+
+
+\subsection{Dynamické programování}
+Dynamické programování je technika, která se èasto uívá pro øešení optimalizaèních úloh.
+Tuto techniku lze pouít tehdy, lze-li pùvodní úlohu rozloit na menší podúlohy, z jejich optimálních øešení se poté sloí øešení celé pùvodní úlohy.
+Základem je Bellmanùv princip optimality, kterı øíká, e podstrategie optimální strategie je opìt optimální.
+Vyuití dynamického programování vede k èasovì efektivnìjším algoritmùm, zpravidla však za cenu mírného zvıšení pamìovıch nárokù. 
+
+Pøedtím, ne se podíváme na princip této metody, je tøeba zavést nìkterá omezení, bez kterıch by tato metoda nebyla pouitelná.
+Pøi hledání korespondence budeme pøedpokládat, e bod $X_{1}$ mùe korespondovat pouze s jedním bodem $X_{2}$ druhého obrazu.
+Zanedbáváme tím situace, ke kterım mùe docházet v pøípadech, kdy se objekt snímanı jednou kamerou promítne do podoby jednoho pixelu,
+zatímco druhá kamera jej vlivem natoèení vidí jako pixely dva.
+Dále musíme pøedpokládat, e zmìny v obrazech zpùsobené rozdílnım umístìním kamer jsou natolik malé, e nedochází k zámìnì poøadí bodù leících na epipoláøe.
+Nachází-li se dva body $A$ a $B$ (oba leí na epipoláøe) v tìsné blízkosti, a bod A je situován vlevo od bodu B, pøedpokládáme,
+e na druhém snímku bude bod $A$ leet opìt vlevo od bodu $B$.
+Jako poslední omezení se èasto klade poadavek, aby vısledná disparitní mapa byla hladká, tj. disparita sousedních bodù se pøíliš neodlišovala.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=4in]{11_stereo/images/stereo}
+    \caption{\dvojt Optimální cesta v síti}
+    \label{img:stereo}
+\end{figure}
+
+Za pøedpokladu splnìní pøedchozích podmínek jsme nyní schopni problém korespondence pøevést na problém nalezení optimální cesty v síti.
+Hledání korespondence probíhá po jednotlivıch øádcích. Podívejme se na pøíklad na obr. \ref{img:stereo}.
+Vidíme zde øádky levého a pravého obrazu a vyznaèené korespondence mezi jednotlivımi body.
+Barevnì odlišeny jsou ty body, ke kterım nelze najít korespondující bod z dùvodu zákrytu.
+Stejnou situaci ilustruje i sí zobrazená v pravé èásti obrázku.
+
+Algoritmus vyuívající dynamického programování pak funguje následovnì:
+Pro kadı øádek levého ($I_{l}$) a pravého ($I_{r}$) obrazu vypoèítáme matici $M_{h}$ velikosti $W \times W$, kde hodnota $W$ odpovídá šíøce vstupních obrazù.
+Matice $M_{h}$ je maticí cen korespondence mezi pixely $p(x,y)$ a $q(x + d,y)$ a hodnotou disparity $d$, pøièem $x + d < W$. Cena $M_{h}$ je definována jako  
+\begin{equation}
+    \label{cena}
+    M_{h}(i,j) = \mbox{min}( \mbox{Diff}(i,j) + M_{h}(i-1, j-1), \lambda + M_{h}(i-1, j), \lambda + M_{h}(i, j-1)),
+\end{equation}
+kde $\lambda$ je hodnota penalizace, která se zapoèítává, pokud není nalezena korespondence, a $\mbox{Diff}(i,j)$ je funkce porovnávající body,
+napøíklad pomocí podobnosti jejich okolí (SAD, SSD). Implementace vıpoètu matice $M_{h}$ je ilustrována na vıpisu \ref{alg1}.
+
+%\lstset{language=C,caption={DP Vıpoèet matice $M_{h}$},label=alg1}
+%\begin{lstlisting}
+%    for (int i = 1; i < W; i++)
+%        for (int j = 1; j < W; j++) {
+%            min1 = diff(i, j) + M[j-1, i-1 ];
+%            min2 = lambda + M[j-1, i ];
+%            min3 = lambda + M[j, i-1 ];
+%            M[i, j] = min(min1, min2, min3);
+%            D[i, j] = argmin(min1, min2, min3);
+%        }
+%\end{lstlisting}
+
+%\begin{center}
+\texttt{
+\begin{tabbing} \label{alg1}
+for \= (int i = 1; i < W; i++) \\
+\> for \= (int j = 1; j < W; j++) \{ \\
+\> \> min1 = diff(i, j) + M[j-1, i-1 ]; \\
+\> \> min2 = lambda + M[j-1, i ]; \\
+\> \> min3 = lambda + M[j, i-1 ]; \\
+\> \> M[i, j] = min(min1, min2, min3); \\
+\> \> D[i, j] = argmin(min1, min2, min3); \\
+\}
+\end{tabbing}
+}
+\begin{center}
+Zdrojovı kód 1: DP -- Vıpoèet matice $M_{h}$
+\end{center}
+\vskip1cm
+
+Disparitní mapu pro danı øádek získáme zpìtnım prùchodem matice $M_{h}$.
+Zpìtnı prùchod zaèíná na pozici $M_{h}(W,W)$ a pokraèuje po smìru nejlevnìjší cesty.
+Pro implementaci je vhodné si zaznamenávat kromì ceny i smìr, kterım jsme se do dané buòky dostali (v kódu matice $D$).
+Hodnotu disparity urèíme bìhem zpìtného prùchodu jako rozdíl souøadnic korespondujících bodù $d = i - j$.
+Vıpis \ref{alg2} obsahuje monou implementaci zpìtného prùchodu matice $M_{h}$ na základì smìru urèeného pomocí matice $D$.
+
+\texttt{
+\begin{tabbing} \label{alg2}
+i = \=j = W; \\
+while ( (i != 0) \&\& (j != 0)) \{ \> \\
+\> swit\=ch (D[i, j]) \{ \\
+\> \> case 1: i--; j--; break; \\
+\> \> case 2: i--; break; \\
+\> \> case 3: j--; break; \\
+\> \} \> \\
+\> d = i - j; \> \\
+\} \> \>
+\end{tabbing}
+}
+\begin{center}
+Zdrojovı kód 2: DP -- Zpìtnı prùchod
+\end{center}
+\vskip1cm
+
+%\lstset{language=C,caption={DP -- Zpìtnı prùchod},label=alg2}
+%\begin{lstlisting}
+%   i = j = W;
+%   while ( (i != 0) && (j != 0)) {
+%        switch (D[i, j]) {
+%            case 1: i--; j--; break;
+%            case 2: i--; break;
+%            case 3: j--; break;
+%        }
+%        d = i - j;
+%    }
+%\end{lstlisting}
+
+Dynamické programování poskytuje lepší vısledky ne bìné okénkové metody díky minimalizaci ceny korespondence.
+Zpracování kadého øádku obrazu je nezávislé, a proto lze takto snadno algoritmus paralelizovat.
+Jednou z nevıhod této metody je, e v základním provedení se provádí optimalizace jen v rámci jednoho øádku a nebere se ohled na okolní vısledky.
+Ukázka vısledné disparitní mapy je na obr. \ref{img:stereo_demo_dp}.
+
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=5in]{11_stereo/images/stereo_demo_dp}
+    \caption{\dvojt Vısledná disparitní mapa DP a správné øešení}
+    \label{img:stereo_demo_dp}
+\end{figure}
+
+\subsection{Globální metody}
+Globální metody hledají minimum funkce ceny ohodnocení disparity celého obrazu.
+V kontextu globálních metod se berou nejèastìji v úvahu tyto dvì podmínky: 
+\begin{itemize}
+	\item datová podmínka: Dva body mohou korespondovat jen tehdy, mají-li podobnou intenzitu všech sloek.
+	\item poadavek hladkosti: Vısledná disparitní mapa by mìla bıt po èástech hladká,
+    tedy dva sousední body musí mít pokud mono co nejvíce podobné hodnoty disparity.
+\end{itemize}
+
+\noindent
+Na základì tìchto dvou podmínek je konstruována funkce reprezentující celkovou energii disparit.
+Algoritmy hledají takovou disparitní funkci $d$, která minimalizuje funkcionál $E(d)$ danı vztahem
+\begin{equation}
+    \label{funkcional}
+	E(d) = E_\mathrm{d}(d) + \lambda E_\mathrm{s}(d) \, ,
+\end{equation}
+kde $E_\mathrm{d}(d)$ reprezentuje datovou podmínku, $E_\mathrm{s}(d)$ pøedpoklad hladkosti a konstanta $\lambda$ udává váhu hladkosti.
+Hodnota $E_\mathrm{d}(d)$ udává podobnost dvou pixelù, kterou je moné vypoèítat pomocí døíve zmínìnıch metrik (napø. SSD, SAD).
+Funkce $E_\mathrm{s}(d)$ pak mùe vypadat následovnì:
+\begin{equation}
+    \label{funkcional2}
+	E_\mathrm{s}(d) = \sum\limits_{u, v}  \rho(d(u,v) - d(u+1, v)) + \rho(d(u,v) - d(u, v+1)) \, ,
+\end{equation}
+kde $\rho$ je monotónnì rostoucí funkce rozdílu disparit sousedních pixelù.
+Platí, e èím více se liší hodnota disparit sousedních pixelù, tím vìtší je i hodnota $E_\mathrm{s}(d)$.
+
+Ukázalo se bohuel, e minimalizace funkcionálu $E(d)$ je NP-obtínı problém.
+Z tohoto dùvodu se pro nalezení øešení uívají rùzné pøibliné metody, jakımi jsou grafové øezy, propagace zpráv, simulované íhání a další.
+Není bohuel v monostech tohoto textu popsat tyto metody podrobnìji. %, a proto zde odkazujeme ètenáøe na literaturu.
+

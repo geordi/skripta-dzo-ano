@@ -1,0 +1,439 @@
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+
+\noindent \textbf{7  Komprese obrazu}
+
+\noindent Pro obrazy reprezentované maticí hodnot je charakteristická vysoká spotřeba paměti. Spotřeba paměti limituje možnosti archivace obrazů i možnosti jejich transportu v~počítačových sítích. Je samozřejmě možné obrazy komprimovat běžnými metodami bezeztrátové komprese. Kompresní poměry, kterých by tak bylo možné dosáhnout (např. 2:1 až 4:1), jsou ale obvykle nižší, než by bylo žádoucí. Velká pozornost byla proto v~posledním desetiletí věnována vývoji kompresních metod založených na předpokladu, že v~mnoha aplikacích příliš nevadí, dojde-li během komprese k~malé změně obrazu. Tento postup je označován za kompresi se ztrátou informace. Výhodou komprese se ztrátou informace jsou vyšší dosahované kompresní poměry, které se v~závislosti na požadované kvalitě obrazu pohybují v~rozmezí přibližně 7:1 až 30:1. Protože metody bezeztrátové komprese jsou všeobecně známy, zaměříme se v~této kapitole pouze na kompresi ztrátovou. Popíšeme princip komprese JPEG, MPEG a komprese fraktální.
+
+\noindent \textbf{7.1  Redukce objemu barvonosné informace}
+
+\noindent Reprezentace barev v prostoru \textit{RGB} není z~hlediska komprese obrazů a videosekvencí příliš výhodná. Je dobře známo, že lidské oko je citlivější na změny jasu než na změny barvy. Nabízí se myšlenka využít této nedokonalosti lidského zraku i při kompresi obrazů. K redukci barvonosné informace se barva reprezentuje nečastěji v~některém z~prostorů \textit{YCbCr}, \textit{YUV}, \textit{YIQ}. Složka \textit{Y} je jas, zbývající dvě složky jsou barvonosné. Převodní vztahy mezi uvedenými prostory a prostorem \textit{RGB} jsou následující:
+
+ ,   ,   , \eqref{GrindEQ__7_1_}
+
+ ,   , \eqref{GrindEQ__7_2_}
+
+ ,   . \eqref{GrindEQ__7_3_}
+
+\noindent Aby se dosáhlo redukce objemu barvonosné informace, bývají složky \textit{Cb},\textit{U},\textit{I}, \textit{Cr},\textit{V},\textit{Q} vzorkovány s~nižší frekvencí než složka \textit{Y}. Nejčastěji se používá formátů označovaných kódy 4:2:0 nebo 4:2:2. Formát 4:2:0 používá pro barvonosnou informaci polovičního počtu vzorků na řádku a polovičního počtu řádků. Čtveřice 2$\times$2 pixelů obrazu je proto reprezentována čtyřmi hodnotami \textit{Y}, jednou hodnotou \textit{Cb}(\textit{U},\textit{I}) a jednou hodnotou \textit{Cr}(\textit{V},\textit{Q}). Formát 4:2:2 používá polovičního počtu vzorků na řádku a plného počtu řádků. Čtveřice 2$\times$2 pixelů obrazu je proto reprezentována čtyřmi hodnotami \textit{Y}, dvěma hodnotami \textit{Cb}(\textit{U},\textit{I}) a dvěma hodnotami \textit{Cr}(\textit{V},\textit{Q}). Dodejme, že 4:4:4 je formát, který používá plného počtu vzorků i pro složky barvonosné. U JPEG komprese je redukce objemu barvonosné informace nepovinná, ale obvyklá. U MPEG-1 komprese se redukce provádí vždy. Používá se barevného prostoru \textit{YCbCr} a formátu 4:2:0. Komprese MPEG-2 podporuje i formát 4:2:2. Pro úplnost poznamenejme, že myšlenka redukce objemu barvonosné informace není nová. Byla využita i při návrhu dnes běžně používaných televizních soustav. Televizní soustava PAL používá prostoru \textit{YUV}. Složka \textit{Y} je přenášena v~pásmu širokém 5 MHz, zatímco složky \textit{U},\textit{V} v~pásmech širokých pouze 1.3 MHz. Americká televizní soustava NTSC používá prostoru \textit{YIQ}. Jednotlivé složky jsou v~tomto případě přenášeny v~pásmech širokých 4, 1.5, 0.6 MHz.
+
+\noindent \textbf{7.2  Komprese JPEG}
+
+\noindent JPEG je zkratkou pro Joint Photographic Expert Group. Výsledek práce této skupiny byl v~roce 1992 přijat jako standard pro kompresi nepohyblivých obrazů. Principy JPEG komprese popíšeme v~této podkapitole podrobněji. Protože se jedná o rozsáhlý standard, který na mnoha místech umožňuje volbu z~více variant, zaměříme se z~pochopitelných důvodů v~tomto textu vždy pouze na variantu nejtypičtější, a to bez toho, abychom na to dále upozorňovali a ostatní varianty systematicky vyjmenovávali. Pro vyčerpávající informaci odkazujeme eventuální zájemce na normu samotnou (CCITT 92).
+
+\noindent 
+
+\noindent 
+
+\noindent Komprese JPEG je obvykle prováděna v~následujících krocích: Obraz se převede do prostoru umožňujícího redukci objemu barvonosné informace (např. do prostoru \textit{YIQ}). Provede se snížení počtu vzorků v~barvonosných rovinách (např. formátem 4:2:0). Rovina \textit{Y} i roviny barvonosné se rozdělí na bloky 8$\times$8 bodů. Další zpracování probíhá po tzv. makroblocích. Makroblok se skládá ze čtyř bloků v~rovině \textit{Y}, kde tyto čtyři bloky vytvářejí oblast 16$\times$16 pixelů, a dále z~bloků obsahujících barvonosné složky pro tutéž oblast. Při kódování 4:2:0 je pro každou složku zapotřebí po jednom bloku, při kódování 4:2:2 jsou to pro každou složku dva bloky. V~dalším výkladu se omezíme na kódování 4:2:0, kdy pro jeden makroblok máme celkem šest bloků, které jsou na obr.7.1 označeny jako bloky \textit{Y}1, \textit{Y}2, \textit{Y}3, \textit{Y}4,\textit{ I}, \textit{Q}. Zpracování jednotlivých bloků v~makrobloku probíhá v~tom pořadí, jak byly právě uvedeny, tj. v~pořadí \textit{Y}1, \textit{Y}2, \textit{Y}3, \textit{Y}4, \textit{I}, \textit{Q}. Předpokládejme, že hodnoty v~bloku jsou popsány celými čísly $\langle$0,1,...,  2\textit{P}$-$1$\rangle$. Pro každý blok se provede následující: Provede se posunutí hodnot tak, aby byly z~intervalu $\langle$$-$2\textit{P}$-$1,..., 2\textit{P}$-$1$-$1$\rangle$. Dále se provede diskrétní kosinová transformace bloku. Dopředná kosinová transformace je definována předpisem
+
+ , \eqref{GrindEQ__7_4_}
+
+\noindent kde, . \eqref{GrindEQ__7_1_}
+
+\noindent Pro dekódování je zapotřebí i předpis pro zpětnou kosinovou transformaci
+
+ . \eqref{GrindEQ__7_5_}
+
+\noindent Je samozřejmé, že při praktické implementaci enkodéru i dekodéru je žádoucí použít pro výpočet kosinové transformace některého z~rychlých algoritmů, kterých bylo vyvinuto nepřeberné množství. V~závislosti na tom, jak přesně jsou reprezentovány kosinové členy a desetinné části mezivýsledků, se jednotlivé algoritmy mohou dosti lišit svoji přesností. Norma JPEG konkrétní algoritmus nepředepisuje, ale předepisuje přesnost, které musí být při transformaci dosaženo.
+
+\noindent 
+
+\noindent Po provedení kosinové transformace se pro každý zpracovávaný blok provede kvantování podle předpisu
+
+ , \eqref{GrindEQ__7_6_}
+
+\noindent kde \textit{Q}(\textit{k},\textit{l}) jsou prvky kvantizační tabulky. Rozměr kvantizační tabulky je 8$\times$8. Kvantizace se opírá o pozorování, že některé frekvence v~obraze (zpravidla vysoké) lze reprezentovat dosti hrubě (tj. na malém počtu bitů), aniž by se obraz pozorovatelně poškodil. Pro mnoho hodnot \textit{k},\textit{l} často dokonce vychází \textit{FQ}(\textit{k},\textit{l})=0. Konkrétní kvantizační tabulku norma JPEG nepředepisuje. Teoreticky může být s~ohledem na charakter obrazu stanovena speciální kvantizační tabulka. Kvantizační tabulka se stává součástí komprimovaného obrazu. Pro informaci však norma uvádí tabulky, které byly experimentálně stanoveny v~rámci doporučení CCIR-601 a které jsou nyní v mnoha případech používány. Obr. 7.3c ukazuje kvantizační tabulku určenou pro složku \textit{Y} (prvek \textit{Q}(0,0) v~levém horním rohu je dělitel pro stejnosměrnou složku, prvek \textit{Q}(7,7) je dělitel pro nejvyšší frekvenční složku). Pro barvonosné složky se používá tabulky uvedené v~tab. 7.1. Mnoho enkodérů umožňuje zadat požadovanou kvalitu obrazu. Ve většině implementací je problém jednoduše vyřešen tak, že se kvantizační tabulka násobí nějakou hodnotou. Při dekódování obrazu se provádí dekvantizace podle předpisu
+
+\noindent 
+
+ . \eqref{GrindEQ__7_7_}
+
+\noindent Po provedení kvantizace pokračuje zpracování každého bloku převodem výsledku kvantizace do intermediální sekvence. Stejnosměrná a střídavé složky se kódují odlišně. Popíšeme nejprve kódování složek střídavých. Pole \textit{FQ}(\textit{k},\textit{l}) se prochází postupně tak, jak je naznačeno na obr. 7.2. Nalezení nenulové hodnoty vede k~vytvoření nové položky v~intermediální sekvenci. Položka má tvar dvojice Symbol-1, Symbol-2. Symbol-1 obsahuje dva údaje (RUNLENGTH, SIZE), Symbol-2 obsahuje pouze jediný údaj (AMPLITUDE). Význam údajů je následující: Hodnota AMPLITUDE je nalezená nenulová hodnota \textit{FQ}(\textit{k},\textit{l}). Jedná se o celočíselnou hodnotu se znaménkem. Hodnota RUNLENGTH je počet nulových hodnot, které nalezenou nenulovou hodnotu \textit{FQ}(\textit{k},\textit{l}) předcházely. SIZE udává počet bitů, které jsou zapotřebí k~reprezentaci hodnoty AMPLITUDE.
+
+\noindent 
+
+\noindent Předpokládejme, že platí $-$2\textit{P}$\leq$\textit{f}(\textit{m},\textit{n})$\leq$2\textit{P}$-$1. Analýzou činnosti kosinové transformace lze ukázat, že pro hodnoty \textit{F}(\textit{k},\textit{l}) platí $-$2\textit{P}+3$\leq$\textit{F}(\textit{k},\textit{l})$\leq$2\textit{P}+3$-$1. Odtud např. plyne, že pro osmibitovou reprezentaci vstupního obrazu (\textit{P}=7) platí 1$\leq$SIZE$\leq$10 (vzhledem ke kvantování je hodnota SIZE zpravidla ještě menší). Hodnota RUNLENGTH je maximálně 15. Protože počet po sobě jdoucích nul může být větší, je zavedena speciální hodnota Symbol-1 = (15,0), která říká, že po průchodu patnácti nulovými hodnotami nebyla zatím nenulová hodnota \textit{FQ}(\textit{k},\textit{l}) nalezena. Hodnota Symbol-1 = (0,0) říká, že předchozí nenulová hodnota zapsaná do intermediální sekvence byla poslední a že žádné další nenulové hodnoty již následovat nebudou. Jedná se tedy o příznak konce bloku. Stejnosměrná složka je kódována poněkud odlišně. V~tomto případě je Symbol-1 = (SIZE), Symbol-2 = (AMPLITUDE). Hodnota AMPLIDUDE je hodnotou \textit{FQ}(0,0), která je však vztažena relativně k~hodnotě \textit{FQ}(0,0) předchozího zpracovávaného bloku. Hodnota SIZE opět udává počet bitů, které jsou zapotřebí k~reprezentaci hodnoty AMPLITUDE. Pro osmibitovou reprezentaci vstupního obrazu vychází SIZE$\leq$11.
+
+\noindent 
+
+\noindent Poslední fází komprese je zakódování intermediální sekvence. Hodnoty Symbol-1 jsou zakódovány Huffmanovým kódováním. Připomeňme, že v~Huffmanově kódování jsou často používaným symbolům přiřazeny krátké kódy a symbolům používaným méně často kódy delší. Nalezení optimálního kódu závisí na povaze komprimovaných obrazů, a proto norma JPEG tabulku kódů pevně nepředepisuje. Mnoho enkodérů však pracuje s kódy uvedenými v~informativní nezávazné příloze normy. Kódovací tabulka se stává součástí komprimovaného obrazu. Symbol-2 je číslo zakódované na proměnném počtu bitů. V~tomto případě je způsob kódování normou pevně stanoven. Např. čísla $-$1,1 se kódují na jednom bitu takto ($-$1)$\rightarrow$0, \eqref{GrindEQ__1_}$\rightarrow$1. Čísla $-$3,$-$2,2,3 se kódují na dvou bitech: ($-$3)$\rightarrow$00, ($-$2)$\rightarrow$01, \eqref{GrindEQ__2_}$\rightarrow$10, \eqref{GrindEQ__3_}$\rightarrow$11 atd.
+
+\noindent 
+
+\noindent Ilustrujme postup provádění komprese JPEG na příkladě. Pro jednoduchost uvažujeme pouze jediný blok roviny \textit{Y}. Obr.7.3a ukazuje hodnoty jasu ve zpracovávaném bloku (funkce \textit{f}(\textit{m},\textit{n})). Obr.7.3b je výsledkem kosinové transformace (funkce \textit{F}(\textit{k},\textit{l})). Obr. 7.3c je kvantizační matice \textit{Q}(\textit{k},\textit{l}). Obr.7.3d ukazuje spektrum po provedení kvantování (funkce \textit{FQ}(\textit{k},\textit{l})). Intermediální sekvence má tvar (předpokládáme, že v~předchozím bloku byla stejnosměrná složka 12): \eqref{GrindEQ__2_}\eqref{GrindEQ__3_}, (1,2)($-$2), (0,1)($-$1), (0,1)($-$1), (0,1)($-$1), (2,1)($-$1), (0,0). Kódování hodnot Symbol-1 provedeme podle přílohy normy JPEG. V~příloze nalezneme: \eqref{GrindEQ__2_}$\rightarrow$011, (0,0)$\rightarrow$1010, (0,1)$\rightarrow$00, (1,2)$\rightarrow$11011, (2,1)$\rightarrow$11100. Způsob kódování potřebných hodnot Symbol-2 jsme uvedli již dříve. Výsledný kód pro uvažovaný blok je tedy: 011  11  11011  01  00  0  00  0  00 0  11100  0  1010. Nyní můžeme vyhodnotit efektivnost komprese. Informaci o hodnotách 64 vzorků se podařilo zkomprimovat do 31 bitů. Po komprimaci je tedy zapotřebí méně než 0.5 bitů na vzorek. Rekonstruovaný obraz je na obr.7.3f.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+139 & 144 & 149 & 153 & 155 & 155 & 155 & 155 \\ \hline 
+144 & 151 & 153 & 156 & 159 & 156 & 156 & 156 \\ \hline 
+150 & 155 & 160 & 163 & 158 & 156 & 156 & 156 \\ \hline 
+159 & 161 & 162 & 160 & 160 & 159 & 159 & 159 \\ \hline 
+159 & 160 & 161 & 162 & 162 & 155 & 155 & 155 \\ \hline 
+161 & 161 & 161 & 161 & 160 & 157 & 157 & 157 \\ \hline 
+162 & 162 & 161 & 163 & 162 & 157 & 157 & 157 \\ \hline 
+162 & 162 & 161 & 161 & 163 & 158 & 158 & 158 \\ \hline 
+\end{tabular}
+
+a) Blok obsahující vzorky jasů.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+235.6 & -1.0 & -12.1 & -5.2 & 2.1 & -1.7 & -2.7 & 1.3 \\ \hline 
+-22.6 & -17.5 & -6.2 & -3.2 & -2.9 & -0.1 & 0.4 & -1.2 \\ \hline 
+-10.9 & -9.3 & -1.6 & 1.5 & 0.2 & -0.9 & -0.6 & -0.1 \\ \hline 
+-7.1 & -1.9 & 0.2 & 1.5 & 0.9 & -0.1 & 0.0 & 0.3 \\ \hline 
+-0.6 & -0.8 & 1.5 & 1.6 & -0.1 & -0.7 & 0.6 & 1.3 \\ \hline 
+1.8 & -0.2 & 1.6 & -0.3 & -0.8 & 1.5 & 1.0 & -1.0 \\ \hline 
+-1.3 & -0.4 & -0.3 & -1.5 & -0.5 & 1.7 & 1.1 & -0.8 \\ \hline 
+-2.6 & 1.6 & -3.8 & -1.8 & 1.9 & 1.2 & -0.6 & -0.4 \\ \hline 
+\end{tabular}
+
+b) Výsledek kosinové transformace.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+15 & 0 & -1 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+-2 & -1 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+-1 & -1 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+\end{tabular}
+
+d) Spektrum po kvantizaci.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+16 & 11 & 10 & 16 & 24 & 40 & 51 & 61 \\ \hline 
+12 & 12 & 14 & 19 & 26 & 58 & 60 & 55 \\ \hline 
+14 & 13 & 16 & 24 & 40 & 57 & 69 & 56 \\ \hline 
+14 & 17 & 22 & 29 & 51 & 87 & 80 & 62 \\ \hline 
+18 & 22 & 37 & 56 & 68 & 109 & 103 & 77 \\ \hline 
+24 & 35 & 55 & 64 & 81 & 104 & 113 & 92 \\ \hline 
+49 & 64 & 78 & 87 & 103 & 121 & 120 & 101 \\ \hline 
+72 & 92 & 95 & 98 & 112 & 100 & 103 & 99 \\ \hline 
+\end{tabular}
+
+c) Kvantizační matice pro složku \textit{Y}.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+240 & 0 & -10 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+-24 & -12 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+-14 & -13 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+\end{tabular}
+
+e) Spektrum po dekvantizaci.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+144 & 146 & 149 & 152 & 154 & 156 & 156 & 156 \\ \hline 
+148 & 150 & 152 & 154 & 156 & 156 & 156 & 156 \\ \hline 
+155 & 156 & 157 & 158 & 158 & 157 & 156 & 155 \\ \hline 
+160 & 161 & 161 & 162 & 161 & 159 & 157 & 155 \\ \hline 
+163 & 163 & 164 & 163 & 162 & 160 & 158 & 156 \\ \hline 
+163 & 164 & 164 & 164 & 162 & 160 & 158 & 157 \\ \hline 
+160 & 161 & 162 & 162 & 162 & 161 & 159 & 158 \\ \hline 
+158 & 159 & 161 & 161 & 162 & 161 & 159 & 158 \\ \hline 
+\end{tabular}
+
+f) Rekonstruovaný obraz.
+
+\noindent 
+
+\noindent Intermediální sekvence: \eqref{GrindEQ__2_}\eqref{GrindEQ__3_}, (1,2)($-$2), (0,1)( $-$1), (0,1)( $-$1), (0,1)( $-$1), (2,1)( $-$1), (0,0)
+
+\noindent (předpokládáme, že v~předchozím bloku byla stejnosměrná složka 12).
+
+\noindent Kódování hodnot Symbol-1: \eqref{GrindEQ__2_}$\rightarrow$011, (0,0)$\rightarrow$1010, (0,1)$\rightarrow$00, (1,2)$\rightarrow$11011 , (2,1)$\rightarrow$11100.
+
+\noindent Kódování hodnot Symbol-2: ($-$1)$\rightarrow$0, \eqref{GrindEQ__1_}$\rightarrow$1, ($-$3)$\rightarrow$00, ($-$2)$\rightarrow$01, \eqref{GrindEQ__2_}$\rightarrow$10, \eqref{GrindEQ__3_}$\rightarrow$11.
+
+\noindent Výsledný kód: 011  11  11011  01  00  0  00  0  00 0  11100  0  1010.
+
+\noindent 
+
+\noindent \textbf{Obr.7.3.} Příklad postupu komprese JPEG.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+17 & 18 & 24 & 47 & 99 & 99 & 99 & 99 \\ \hline 
+18 & 21 & 26 & 66 & 99 & 99 & 99 & 99 \\ \hline 
+24 & 26 & 56 & 99 & 99 & 99 & 99 & 99 \\ \hline 
+47 & 66 & 99 & 99 & 99 & 99 & 99 & 99 \\ \hline 
+99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\ \hline 
+99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\ \hline 
+99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\ \hline 
+99 & 99 & 99 & 99 & 99 & 99 & 99 & 99 \\ \hline 
+\end{tabular}
+
+\textbf{Tab.7.1.} Kvantizační matice pro barevné složky.
+
+\noindent \textbf{7.3  Komprese MPEG}
+
+\noindent \textbf{}
+
+\begin{tabular}{|p{0.5in}|p{0.5in}|p{0.5in}|p{0.5in}|} \hline 
+Profil  \newline    Úroveň         & Simple & Main & High \\ \hline 
+Low &  & 4:2:0\newline 352$\times$288\newline 4 Mb/s\newline I,P,B &  \\ \hline 
+Main & 4:2:0\newline 720$\times$576\newline 15 Mb/s\newline I,P & 4:2:0\newline 720$\times$576\newline 15 Mb/s\newline I,P,B & 4:2:0, 4:2:2\newline 720$\times$576\newline 20 Mb/s\newline I,P,B \\ \hline 
+High &  & 4:2:0\newline 1920$\times$1152\newline 80 Mb/s\newline I,P,B & 4:2:0, 4:2:2\newline 1920$\times$1152\newline 100 Mb/s\newline I,P,B \\ \hline 
+\end{tabular}
+
+\textbf{Tab.7.2.} MPEG-2: profily a úrovně.
+
+\noindent MPEG je zkratkou pro Moving Picture Expert Group. Cílem práce této skupiny bylo standardizovat metody komprese videosignálu. Standard MPEG-1 byl dokončen v~roce 1991 a jako norma přijat v~roce 1992. Byl navržen zejména pro práci s~obrazy o rozměru 352$\times$288 pixelů, 25 rámců/s (odvozeno od televizní normy PAL) nebo 352$\times$240, 30 rámců/s (odvozeno od normy NTSC) při datovém toku přibližně 1.5Mbit/s. Uvedené hodnoty rozměrů a datového toku nebyly sice maximální možné, ale ve standardu MPEG-1 byly považovány za optimální. Standard MPEG-2 byl dokončen v~roce 1994. Tento standard je koncipován mnohem velkoryseji a snaží se být standardem co nejuniverzálnějším. Zavádí několik tzv. profilů a úrovní. Profil označuje jistou podmnožinu z~nejširší možné syntaxe. Úroveň definuje parametry v~rámci jednoho profilu. Příklady jsou uvedeny v~tabulce 7.2 (oproti originální tabulce uvedené v~normě MPEG je tabulka poněkud zjednodušena). Standardy MPEG-1, MPEG-2 jsou si přístupem k~řešení komprese navzájem velmi podobné. Rozdíly mezi nimi jsou mnohdy pod rozlišovací úrovní tohoto textu. Od metod použitých ve standardech MPEG-1,2 se dosti odlišují metody navrhované standardem MPEG-4, který je určen pro extrémně nízké datové toky (méně než 64kb/s). Standardem MPEG-4 se v~tomto textu podrobněji zabývat nebudeme. Pro úplnost poznamenejme, že práce na standardu označovaném jako MPEG-3 byly zastaveny. Tento standard měl původně sloužit pro HDTV, ale v~průběhu času se ukázalo, že potřeby stačí pokrýt standard MPEG-2.
+
+\noindent 
+
+\noindent Standard MPEG používá tří typů rámců I,P,B. Rámce typu I jsou kódovány každý zvlášť, bez vazby na rámce předcházející či následující. Princip kódování rámců I je shodný jako u standardu JPEG, i když v~detailech existují některé odlišnosti. Jiná je např. vzorová kvantovací tabulka (tab. 7.3), poněkud jiná je struktura a způsob kódování intermediální sekvence (tab. 7.5). Dále lze např. při kódování podle normy MPEG-2 kromě cik-cak postupu dle obr. 7.2 zvolit ještě postup dle obr. 7.4. Měřítko kvantizační matice může být jiné pro každý makroblok. Změnou měřítka lze řídit tok dat. Mnoho aplikací totiž vyžaduje, aby byl tok dat přibližně konstantní. Aby nedošlo k~přetečení nebo naopak k vyprázdnění bufferů, lze tok měnit buď změnou měřítka kvantizační matice nebo dokonce záměnou kvantizační matice. Přesný předpis pro řešení uvedené situace však norma nepředepisuje. Konkrétní řešení je ponecháno na tvůrci enkodéru.
+
+\noindent 
+
+\noindent 
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+8 & 16 & 19 & 22 & 26 & 27 & 29 & 34 \\ \hline 
+16 & 16 & 22 & 24 & 27 & 29 & 34 & 37 \\ \hline 
+19 & 22 & 26 & 27 & 29 & 34 & 34 & 38 \\ \hline 
+22 & 22 & 26 & 27 & 29 & 34 & 37 & 40 \\ \hline 
+22 & 26 & 27 & 29 & 32 & 35 & 40 & 48 \\ \hline 
+26 & 27 & 29 & 32 & 35 & 40 & 48 & 58 \\ \hline 
+26 & 27 & 29 & 34 & 38 & 46 & 56 & 69 \\ \hline 
+27 & 29 & 35 & 38 & 46 & 56 & 69 & 83 \\ \hline 
+\end{tabular}
+
+\textbf{Tab.7.3.} Vzorová kvantovací tabulka pro složku \textit{Y} a rámce I v MPEG.
+
+\begin{tabular}{|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|p{0.2in}|} \hline 
+8 & 4 & 2 & 1 & 0 & 0 & 0 & 0 \\ \hline 
+4 & 2 & 1 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+2 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 1 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+0 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\ \hline 
+\end{tabular}
+
+\textbf{Tab.7.4.} Příklad bloku po DCT a kvantizaci.
+
+\noindent 
+
+\noindent 
+
+\begin{tabular}{|p{0.6in}|p{0.6in}|p{0.6in}|} \hline 
+Počet nul před & Amplituda & MPEG kódování \\ \hline 
+- & 8 & 110 1000 \\ \hline 
+0 & 4 & 0000 1100 \\ \hline 
+0 & 4 & 0000 1100 \\ \hline 
+0 & 2 & 0 1000 \\ \hline 
+0 & 2 & 0 1000 \\ \hline 
+0 & 2 & 0 1000 \\ \hline 
+0 & 1 & 110 \\ \hline 
+0 & 1 & 110 \\ \hline 
+0 & 1 & 110 \\ \hline 
+0 & 1 & 110 \\ \hline 
+12 & 1 & 0 0100 0100 \\ \hline 
+EOB & EOB & 10 \\ \hline 
+\end{tabular}
+
+\textbf{Tab.7.5.} Kódování bloku z~tab. 7.4.
+
+\noindent Kromě prostorové koherence (což je stejné jako u normy JPEG) využívá norma MPEG i koherence časové. Jinak řečeno: K~dosažení vyšších stupňů komprese se předpokládá, že po sobě jdoucí rámce jsou s~největší pravděpodobností dosti podobné. Počítá se ovšem s~tím, že se jednotlivé části obrazu mohly přemístit a pozměnit. Využití časové koherence je dosaženo vložením rámců typu P a B.
+
+\noindent 
+
+\noindent 
+
+\noindent Na rozdíl od rámců typu I nejsou rámce typu P a B kódovány nezávisle, nýbrž vzhledem k~jednomu resp. dvěma jiným referenčním rámcům. Při kódování se využívá podobnosti rámce s~rámci referenčními. Rámce P (predicted) jsou kódovány vzhledem k~jedinému předcházejícímu rámci, kterým mohl být rámec typu I nebo P. Rámce typu B (interpolated bi-directionally) jsou kódovány vzhledem k~nejbližšímu předchozímu a nejbližšímu budoucímu rámci typu I nebo P. Velmi často je např. používáno řazení rámců podle schématu IBBPBBPBBI... (obr. 7.5). Použití rámců B je sice nepovinné, ale z~hlediska dosahovaných kompresních poměrů výhodné. Typické hodnoty kompresních poměrů dosahované v~rámcích typu I,P,B se totiž pohybují okolo hodnot 7:1, 20:1, 50:1. Komplikací vyplývající z použití rámců B je nutnost uchovávat v~paměti dva kotevní obrazy. Dále je nevyhnutelné jisté časové zpoždění, protože  nejprve musí být k~dispozici obraz novější a teprve potom může být kódován obraz starší.
+
+\noindent 
+
+\noindent 
+
+\noindent Také kódování rámců typu P a B probíhá po makroblocích. Pro každý makroblok v~cílovém (tj. právě kódovaném) rámci jsou stanoveny vektory pohybu vzhledem k~rámcům referenčním. Ke každému makrobloku v~rámci P je tedy stanoven jeden vektor pohybu. Pro makroblok v~rámci B jsou vektory pohybu dva. Vektor pohybu je definován takto: Jestliže o uvedený vektor posuneme kódovaný makroblok a porovnáme s~odpovídající částí referenčního obrazu, pak je dosaženo dobré shody. Vektory posunutí se stávají součástí komprimované sekvence. Po nalezení vektoru posunutí jsou kódovány diference. Uvažujme nejprve rámce typu P. Nechť \textit{T} označuje makroblok v~cílovém rámci a \textit{R} odpovídající oblast v~rámci referenčním. Diferencí se rozumí rozdíl \textit{T}$-$\textit{R}. Jedná se o obraz obsahující čtyři bloky roviny \textit{Y} a po jednom bloku od každé roviny barevné. Diference se kóduje stejným postupem, jako jsou kódovány makrobloky v~rámcích typu I. Protože lze očekávat, že diference \textit{T}$-$\textit{R} bude malá, vyjde po kosinové transformaci a kvantizaci v~každém bloku většina členů nulových. Bloky tak ke svému zakódování vyžadují pouze krátké sekvence. Jako příklad kvantizační matice pro kódování diferencí uvádí norma MPEG matici, jejíž všechny prvky jsou rovny hodnotě 16. Kódování diferencí v~rámcích typu B se provádí obdobně. Nechť \textit{T} je opět makroblok v~cílovém rámci a \textit{R}1, \textit{R}2 nechť jsou odpovídající oblasti v~rámcích referenčních. V~rámcích typu B se kóduje diference \textit{T}$-$0.5(\textit{R}1+\textit{R}2).
+
+\noindent 
+
+\noindent Postup při stanovení pohybového vektoru norma MPEG nepředepisuje. Při implementaci enkodéru se však ale jedná o jeden z~nejobtížnějších problémů. Možný postup řešení je následující: K~určení vektoru se využívá pouze jasové složky \textit{Y}, barevné informace se nevyužívá. Nechť \textit{i},\textit{j} jsou souřadnice levého dolního rohu kódovaného makrobloku v~cílovém rámci a \textit{N} nechť je velikost makrobloku (\textit{N}=16). Pohybový vektor se stanoví tak, že se v~referenčním rámci nalezne oblast velikosti \textit{N}$\times$\textit{N}, která se s~makroblokem dobře shoduje. Předpokládejme, že souřadnice levého dolního rohu kandidující oblasti jsou \textit{i}+\textit{k}, \textit{j}+\textit{l} a že \textit{Y}T(\textit{r},\textit{s}), \textit{Y}R(\textit{r},\textit{s}) označují jasovou složku cílového resp. referenčního rámce. Míru shody mezi makroblokem a kandidující oblastí lze měřit pomocí vztahu
+
+ . \eqref{GrindEQ__7_8_}
+
+\noindent Prakticky se hodnoty \textit{k},\textit{l} uvažují z~intervalu přibližně $-$7$\leq$\textit{k},\textit{l}$\leq$7 až $-$31$\leq$\textit{k},\textit{l}$\leq$31. Nízká hodnota $\epsilon$(\textit{k},\textit{l}) signalizuje dobrou shodu; vektor (\textit{k},\textit{l}) je pak v~takovém případě pohybovým vektorem. Předpokládejme, že $-$\textit{Q}$\leq$\textit{k},\textit{l}$\leq$\textit{Q}, kde \textit{Q} je zvolená konstanta. Hledání nejnižší hodnoty $\epsilon$(\textit{k},\textit{l}) systematickým prověřováním všech možných dvojic (\textit{k},\textit{l}) by vedlo k~neúnosně vysoké časové složitosti, protože vztah \eqref{GrindEQ__7_8_} by bylo nutné vyhodnocovat (2\textit{Q}+1)2-krát. Systematického prohledávání se proto prakticky nepoužívá. 
+
+\noindent 
+
+\noindent 
+
+\noindent Jedním z~postupů vykazujících přijatelnou časovou složitost je vyhledávání logaritmické. Obr. 7.7  znázorňuje jednu z~jeho možných variant. V~prvním kroku algoritmus testuje devět dvojic (\textit{k},\textit{l}). V~každém dalším kroku se testuje vždy po osmi dvojicích. Na obr. 7.7 jsou dvojice znázorněny kroužky. Vepsané číslo udává pořadové číslo kroku, v~němž je dvojice testována. Vzdálenost mezi body testovanými v~jistém kroku je vždy poloviční ve srovnání se vzdáleností bodů testovaných v~kroku předchozím. Po otestování bodů se vzdáleností 1 algoritmus končí. Při logaritmickém vyhledávání je vztah \eqref{GrindEQ__7_8_} zapotřebí vyhodnocovat méně než (9log2\textit{Q})-krát, což je podstatné urychlení. Nevýhodou ovšem je, že nalezený pohybový vektor nemusí být nejlepší možný.
+
+\noindent 
+
+\noindent Jinou možnou metodou hledání vektoru pohybu je využití postupného snižování podrobnosti obrazu. Převzorkováním referenčního i cílového obrazu vytvoříme obrazy nižší podrobnosti, které v~obou směrech obsahují pouze poloviční počet vzorků. Tento krok dále rekurzivně opakujeme, takže dostaneme obrazy, v nichž je počet vzorků v~obou směrech pouze čtvrtinový atd. Označme \textit{p} počet rekurzivních opakování uvedeného kroku (typická hodnota je \textit{p}=2). Hledání pohybového vektoru začíná stanovením odhadu vektoru v nejméně podrobném obraze. Protože v~tomto obraze je velikost makrobloku \textit{N}/2\textit{p} a velikost prohledávaného okolí je \textit{Q}/2\textit{p}, je časová složitost získání odhadu nízká. Nechť (\textit{k},\textit{l}) je odhad pohybového vektoru získaný s~využitím obrazů nejnižší podrobnosti. Tento odhad dále zpřesníme s~využitím obrazů vyšší podrobnosti tak, že prověřujeme dvojice v~jistém okolí hodnoty (2\textit{k},2\textit{l}). Dvojice, která dává nejnižší hodnotu $\epsilon$, je novým zpřesněným odhadem. Postup se dále opakuje s~obrazy vyšší podrobnosti. Poslední zpřesnění se provede s~využitím původních obrazů.
+
+\noindent 
+
+\noindent Kódování složek vektoru pohybu se provádí inkrementálně vzhledem k~předchozí hodnotě vektoru pro tentýž makroblok. Hodnoty jsou kódovány jako celá čísla s~proměnnou délkou. Poznamenejme, že je samozřejmě také možné, že vyhovující pohybový vektor nemusí být nalezen, ba dokonce vůbec ani nemusí existovat (termín vyhovující norma ovšem nijak podrobněji nespecifikuje; rozhodnutí je ponecháno na tvůrci enkodéru). Tento případ je ošetřen tak, že i v~rámcích typu P a B se mohou vyskytovat makrobloky kódované nezávisle jako makrobloky v~rámcích typu I. Poučný může být poněkud podrobnější pohled na způsob kódování makrobloku (obr. 7.9). V~poli \textit{Addr} je přenášena informace o poloze bloku v~obraze. Pokud se některé části obrazu v~čase nemění, nemusí být odpovídající makrobloky kódovány a přenášeny. Přenáší se pouze makrobloky, které se změnily. V~poli \textit{Type} se specifikuje typ makrobloku. Pokud např. nebyl nalezen pohybový vektor, může se v~tomto poli objevit příznak INTRA indikující, že je makroblok kódován nezávisle, stejně jako makrobloky v~rámcích typu I. V~poli \textit{Quant} se přenáší měřítko kvantizační matice. Pohybový vektor je přenášen v~poli \textit{Vector}. V~poli \textit{CBP} je přenášena bitová maska indikující, které bloky (z šestice \textit{Y}1,\textit{Y}2,\textit{Y}3,\textit{Y}4,\textit{Cr},\textit{Cb} bloků možných) jsou v~záznamu přenášeny. Pole \textit{b}0 až \textit{b}5 označují přenášené bloky. Na obr. 7.10 je uvedeno schéma MPEG enkodéru.
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent \textbf{7.4  MPEG komprese zvuku}
+
+\noindent Kromě kódování obrazových sekvencí řeší norma MPEG také problém komprese a kódování zvukového doprovodu. Norma MPEG-1 předpokládá použití vzorkovacích frekvencí 32, 44.1, 48 kHz a jednoho nebo dvou zvukových kanálů. Norma zavádí tři úrovně komprese: Úroveň I předpokládá cílový datový tok větší než 128 kb/s (typicky např. 192 kb/s), úroveň II předpokládá datový tok okolo 128 kb/s a úroveň III datový tok okolo 64 kb/s. Ve všech případech je zajištěna vysoká věrnost zvuku po jeho dekódování. Vyšším kompresním poměrům dosahovaným v~úrovni II a III odpovídá i vyšší složitost komprimačních postupů. Normou MPEG-2 byla zavedena další vylepšení. Jedná se např. o  podporu až pěti zvukových kanálů, doplnění podpory nižších cílových datových toků až do 8 kb/s a doplnění podpory nižších vzorovacích frekvencí 16, 22.05, 24 kHz). V~tomto textu se omezíme zejména na postupy použité v~nejjednodušší úrovni I normy MPEG-1, a to při komprimaci jediného zvukového kanálu. Všechny úrovně standardu MPEG využívají ke kompresi zvuku nedokonalosti lidského sluchu. Komprese je dosahováno tak, že nejsou přenášeny informace, které lidský sluch stejně nemůže rozlišit. Využity jsou zejména následující psychoakustické jevy: 1) proměnná citlivost lidského sluchu v~závislosti na frekvenci, 2) frekvenční maskování, 3) temporální maskování. 
+
+\noindent 
+
+\noindent 
+
+\noindent Křivka prahové citlivosti lidského sluchu v~tichu v~závislosti na frekvenci je na obr. 7.11. Lze pozorovat, že lidský sluch je nejcitlivější v oblasti 2 až 4 kHz. Směrem k~vyšším i hlubším tónům se citlivost snižuje. Současně se snižuje také schopnost lidského sluchu rozlišit intenzitu takových tónů. Při kompresi lze tohoto jevu prakticky využít tak, že jsou tóny hlubokých i vysokých kmitočtů kvantovány s~větší kvantovací chybou, kterou však lidský sluch nezaznamená. Tóny, jejichž intenzita je nižší než práh citlivosti, nejsou přenášeny vůbec.
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent Frekvenční maskovaní je ilustrováno na obr. 7.12. Je zde znázorněna situace, kdy v~prostoru zní tón o frekvenci 1 kHz a intenzitě 60 dB. Schopnost lidského sluchu vnímat jiné slabší tóny blízké frekvence a rozlišovat jejich úroveň je podstatně omezena. Obr. 7.12 ukazuje křivku citlivosti lidského sluchu za této situace. Tóny pod touto křivkou lidský sluch nevnímá - říkáme, že jsou maskovány. Praktickým využitím tohoto jevu opět je, že slabší tóny v~blízkosti tónů silných nemusí být buď přenášeny vůbec nebo mohou být kódovány se značnou kvantizační chybou. Na~obr. 7.13 jsou znázorněny oblasti, které jsou maskovány tóny o kmitočtu 250 Hz, 1, 4 a 8 kHz.
+
+\noindent 
+
+\noindent Jev temporálního maskování je ilustrován na obr. 7.14. V~čase od $-$5 do 0 ms zní tón o intenzitě 60 dB. Po doznění tónu v~čase 0 nenabude lidský sluch původní citlivosti ihned, nýbrž s~jistým časovým zpožděním, během něhož citlivost ucha postupně roste. I v~této době po doznění tónu může být kvantizační chyba vyšší. Temporálního maskování je využito pouze v úrovni II a III; v úrovni I není využito.
+
+\noindent 
+
+\noindent 
+
+\noindent Při kompresi zvukového signálu se dále bere v~úvahu citlivost sluchu na změny frekvence. Tuto vlastnost lze popsat rozdělením slyšitelného spektra do tzv. kritických pásem. I když je šířka měřená v~Hz u jednotlivých kritických pásem různá, vnímá lidský sluch změnu ze spodní na horní hraniční frekvenci v~každém kritickém pásmu jako skok stejné velikosti. Situaci ilustruje obr. 7.15. Nahoře je uvedena stupnice v~kHz, pod ní je znázorněno rozdělení do kritických pásem, která lidský sluch vnímá jako pásma stejné šířky. S~ohledem na vnímání frekvencí lidským sluchem je zavedena jednotka frekvence 1 bark. Kritická pásma mají šířku právě 1 bark.
+
+\noindent  
+
+\noindent Jednotlivé kroky MPEG komprese zvukového signálu jsou znázorněny na obr. 7.16. V~následujícím textu je popíšeme podrobněji. Základním krokem je rozdělení zvukového signálu do 32 frekvenčních pásem. Ačkoli to neodpovídá subjektivnímu vnímání frekvencí lidským sluchem, mají v~tomto případě všechna frekvenční pásma stejnou šířku (obr. 7.15). Rozdělení se realizuje digitálním polyfázovým filtrem. Filtr zpracovává vždy 512 vzorků zvukového signálu, které jsou uchovávány v zásobníku FIFO. Vždy, když se do zásobníku nasune 32 nových vzorků, provede se výpočet produkující po jednom vzorku v~každém ze 32 frekvenčních pásem. Filtr je normou MPEG předepsán vztahem 
+\begin{equation} \label{GrindEQ__7_9_} 
+s\left(i\right)=\sum _{k=0}^{63}\sum _{j=0}^{7}\cos \left[\frac{\pi \left(2i+1\right)\left(k-16\right)}{64} \right]\left[C\left(k+64j\right)x\left(k+64j\right)\right]  .  
+\end{equation} 
+
+
+\noindent V uvedeném vztahu označuje \textit{x}(\textit{k}) (\textit{k}=0,1,..., 511) hodnoty v~zásobníku vzorků vstupního signálu, \textit{C}(\textit{k}) (\textit{k}=0,1,..., 511) jsou váhové koeficienty definované normou a \textit{s}(\textit{i}) (\textit{i}=0,1,..., 31) je výstupní vzorek v~\textit{i}-tém frekvenčním pásmu. Hodnoty \textit{s}(\textit{i}) se počítají při nezměněném obsahu zásobníku vstupních vzorků. Jakmile je všech 32 hodnot \textit{s}(\textit{i}) vypočítáno, posune se obsah zásobníku o 32 pozic (nejstarších 32 hodnot je ztraceno) a do prostoru uvolněného na začátku zásobníku (indexy 0 až 31) se nasune 32 nových vzorků. Poznamenejme, že frekvenční charakteristika filtrů není ideální obdélníková, ale lichoběžníková s~mírným překrýváním jednotlivých pásem. Důsledkem této okolnosti je, že i čistě sinusový signál může být rozdělen do dvou sousedních frekvenčních pásem.
+
+\noindent 
+
+\noindent Úkolem psychoakustického modelu je analyzovat vstupní signál a stanovit, jaká velikost kvantizačního šumu v~jednotlivých frekvenčních pásmech je ještě přijatelná (lidským sluchem nepostřehnutelná). Tato informace je pak využívána enkodérem, který pro každé pásmo určuje, kolik bitů bude pro kódování vzorků pásma použito. Při realizaci psychoakustického modelu je dosti značná volnost. Ve standardu MPEG  jsou uvedeny dva příklady (model 1,2). V~tomto textu se omezíme pouze na popis modelu 1.
+
+\noindent 
+
+\noindent V~modelu je nejprve pomocí Fourierovy transformace vstupní zvukový signál transformován do frekvenční domény. Transformace se provádí nad oknem o velikosti 512 (úroveň I) nebo 1024 (úroveň II, III) vzorků. K~redukci efektů vyplývajících z~použití okna omezené velikosti se využívá Hannovy váhové funkce (ještě před provedením transformace se hodnoty vzorků touto funkcí násobí). Výsledku polyfázového filtru, tj. rozdělení signálu do 32 frekvenčních pásem model nevyužívá, protože je zde zapotřebí jemnějšího rozdělení.
+
+\noindent 
+
+\noindent Činnost modelu 1 pokračuje extrakcí tonálních a šumových komponent. Tonální komponenty jsou detekovány jako významné špičky v~energetickém spektru. Šumová komponenta je stanovována vždy pouze jedna pro každé kritické pásmo. Její intenzita se určí jako součet intenzit všech netonálních (nešpičkových) hodnot energetického spektra ve vyšetřovaném kritickém~pásmu. Se šumovou komponentou se dále zachází podobně jako s~komponentou tonální. Za frekvenci šumové komponenty je považován geometrický střed odpovídajícího kritického pásma. Pro zjednodušení dalšího výpočtu provádí model decimaci komponent. Při decimaci jsou vypuštěny všechny šumové komponenty, které mají intenzitu nižší než je práh slyšitelnosti v~tichu. Dále jsou vypuštěny všechny tonální komponenty, které se vyskytují v~blízkosti (blíže než 0.5 bark) silnější tonální komponenty. Komponenty zbylé po decimaci jsou použity k~výpočtu maskovacích úrovní.
+
+\noindent 
+
+\noindent Také v~psychoakustickém modelu jsou jednotlivé frekvence sdružovány do frekvenčních pásem. Na rozdíl od polyfázového filtru jsou zde ovšem šířky pásem navrženy tak, aby byly lidským sluchem vnímány jako stejné. Jedná se tedy o dělení odvozené od dělení na kritická pásma. Prakticky může být šířka pásma používaná v~psychoakustickém modelu např. 1/4 až 1/2 bark. S~využitím empiricky získaných křivek maskování (obr. 7.13) a empiricky získaných křivek citlivosti lidského ucha (obr. 7.11) je pro každé pásmo psychoakustického modelu stanovena maskovací úroveň (co je pod touto úrovní, člověk neslyší). Z~maskovacích úrovní stanovených pro jednotlivá frekvenční pásma psychoakustického modelu je pak stanovena maskovací úroveň pro každé ze 32 pásem polyfázového filtru. Jistou komplikací je, že se frekvenční pásma psychoakustického modelu a polyfázového filtru neshodují (obr. 7.15). V~modelu 1 se pro každé frekvenční pásmo polyfázového filtru maskovací úroveň stanovuje jako minimum z~maskovacích úrovní těch pásem psychoakustického modelu, které do vyšetřovaného frekvenčního pásma filtru padnou.
+
+\noindent 
+
+\noindent 
+
+\noindent V~úrovni I jsou vzorky kódovány v~rámcích po 384 vzorcích. Rámec obsahuje 12 vzorků od každého z 32 frekvenčních pásem polyfázového filtru. Kromě samotných vzorků obsahuje rámec ještě další doplňující informace (obr. 7.17). Všech 12 vzorků jednoho pásma je kódováno na stejném počtu bitů. V~poli \textit{bit alloc} je uvedeno celkem 32 hodnot udávajících počet bitů, které jsou použity ke kódování vzorků v~jednotlivých frekvenčních pásmech. Hodnota \textit{bit alloc} = 0 znamená, že odpovídající frekvenční pásmo není vůbec přenášeno. Pro frekvenční pásma, v~nichž je \textit{bit alloc} $\neq$ 0, je v~poli \textit{scale factors} dále uvedena hodnota, kterou se násobí všechny vzorky pásma. Vzorky jsou přenášeny v poli \textit{samples}. Pole \textit{anc. data} obsahuje případná doplňující data. Počet bitů, které jsou ke kódování vzorků v~jednotlivých frekvenčních pásmech použity, se stanoví na základě poměru (úroveň signálu v~pásmu / maskovací úroveň). Tato hodnota je pro každé pásmo vypočítávána v~psychoakustickém modelu.
+
+\noindent \textbf{7.5  Fraktální komprese}
+
+\noindent Fraktální komprese byla intenzívněji studována zejména v~posledním desetiletí. V~běžné denní praxi se zatím v masovém~měřítku neprosadila, a to pravděpodobně hlavně kvůli větší časové složitosti komprese. Provedení dekomprese je na druhé straně ovšem celkem jednoduché. Za jistých okolností je navíc možné snadno provádět zvětšování detailů obrazu (zoom). Protože se zdá, že vyhlídky fraktální komprese jsou slibné, zmíníme se o ní stručně i v~tomto textu. V~míře nezbytně nutné nejprve připomeneme matematické základy, o něž se fraktální komprese opírá.
+
+\noindent 
+
+\noindent Budeme pracovat s~jistými množinami (prostory) prvků. Nechť \textbf{X} je takový prostor. V~\textbf{X} dále zavedeme metriku. Metrika ke každým dvěma prvkům prostoru \textbf{X} přiřazuje jejich vzdálenost (reálné číslo). Nechť \textit{d} je metrika. Dvojici (\textbf{X},\textit{d}) nazveme metrickým prostorem. Posloupnost prvků \{$\varphi$\textit{n}\}$\infty$\textit{n}=1 nazveme posloupností cauchyovskou, jestliže pro jakékoli číslo $\epsilon$$>$0 existuje \textit{N}$>$0 tak, že  \textit{d}($\varphi$\textit{n},$\varphi$\textit{m})$<$$\epsilon$  pro všechny dvojice \textit{m},\textit{n}$>$\textit{N}. Řekneme, že posloupnost \{$\varphi$\textit{n}\}$\infty$\textit{n}=1 konverguje k~prvku $\phi$, jestliže pro jakékoli číslo $\epsilon$$>$0 existuje \textit{N}$>$0 tak, že \textit{d}($\varphi$\textit{n},$\phi$)$<$$\epsilon$ pro všechna \textit{n}$>$\textit{N}. Prvek $\phi$ nazveme limitou uvedené posloupnosti. Metrický prostor (\textbf{X},\textit{d}) se nazývá úplným prostorem, jestliže limita každé Cauchyovské posloupnosti v~\textbf{X} je rovněž prvkem \textbf{X}.
+
+\noindent 
+
+\noindent Operátor \textbf{O} na metrickém prostoru (\textbf{X},\textit{d}) se nazývá kontrahující, jestliže existuje konstanta 0$\leq$\textit{s}$<$1 (součinitel kontrakce) tak, že platí
+
+ \textit{d}(\textbf{O}($\varphi$),\textbf{O}($\psi$)) $\leq$ \textit{s} \textit{d}($\varphi$,$\psi$)  $\forall$$\varphi$,$\psi$$\in$\textbf{X}. \eqref{GrindEQ__7_10_}
+
+\noindent Prvek $\phi$$\in$\textbf{X}, pro který platí \textbf{O}($\phi$)=$\phi$, nazveme pevným bodem operátoru \textbf{O}. Pro akci \textbf{O}(\textbf{O}(\textbf{O}(...\textbf{O}($\varphi$)... ))), kdy je operátor \textbf{O} aplikován \textit{n}-krát, zavedeme označení \textbf{O}\textit{n}($\varphi$).
+
+\noindent 
+
+\noindent Pro fraktální kompresi má zásadní význam následující věta o pevném bodu kontrahujícího operátoru: Nechť \textbf{O} je kontrahující operátor na úplném metrickém prostoru (\textbf{X},\textit{d}). Potom \textbf{O} má právě jediný pevný bod $\phi$$\in$\textbf{X} a pro libovolný prvek $\psi$$\in$\textbf{X} posloupnost \{\textbf{O}\textit{n}($\psi$)\textbar \textit{n}=0,1,2,...\} konverguje k $\phi$. Je tedy
+
+  $\forall$$\psi$$\in$\textbf{X}. \eqref{GrindEQ__7_11_}
+
+\noindent Je dosti časté, že se výklad fraktální komprese zahajuje případem binárních obrazů. Za tím účelem se zavádí pojmy Hausdorfův prostor a Hausdorfova dimenze. My zde však učiníme výjimku a začneme ihned s~obrazy ve stupních šedi, což je případ, který je prakticky zajímavější (shodně by bylo možné postupovat též pro jednotlivé složky obrazů barevných). Předpokládejme, že obrazy ve stupních šedi jsou popsány pomocí jasové funkce, která je definována nad jistou oblastí - plochou obrazu. Nechť $\Omega$ značí tuto plochu a $\varphi$(\textit{x},\textit{y}) nechť je jasová funkce $\varphi$:$\Omega$$\rightarrow$\textit{I},  kde \textit{I} je nějaký interval reálných čísel (jasů). Prostor \textbf{X} je množina všech jasových funkcí, které mohou být nad $\Omega$ definovány. Dále zavedeme konkrétní metriku. Nechť $\varphi$,$\psi$ jsou prvky \textbf{X}. Vzdálenost \textit{d}($\varphi$,$\psi$) definujeme vztahem \textit{d}($\varphi$,$\psi$)=max\{\textbar $\varphi$ (\textit{x},\textit{y})$-$$\psi$(\textit{x},\textit{y})\textbar  \textbar  \textit{x},\textit{y}$\in$$\Omega$\} (při použití této metriky lze nejsnáze dokazovat dále uváděná tvrzení). Obecně operátor \textbf{O} zobrazuje každou jasovou funkci na jinou jasovou funkci a transformuje tak jeden obraz na obraz jiný. V~případě kontrahujícího operátoru existuje podle dříve uvedeného teorému právě jediná jasová funkce $\phi$(\textit{x},\textit{y}), která je pevným bodem uvažovaného operátoru. Fraktální komprese je založena na myšlence, že je možné k~zadané jasové funkci nalézt kontrahující operátor tak, aby jasová funkce byla jeho pevným bodem. Jasovou funkci pak není zapotřebí uchovávat, protože může být kdykoli jednoduše vypočítána podle vztahu \eqref{GrindEQ__7_11_}. Aby bylo možné metodu označit za kompresi, je samozřejmě nutné předpokládat, že popis odpovídajícího operátoru si vyžádá méně prostoru než popis samotné jasové funkce. Při řešení praktických problémů vznikajících při fraktální kompresi a dekompresi je užitečné následující tvrzení. V~případě tohoto tvrzení uvedeme i důkaz, protože se jedná o dobrou ilustraci dosud zavedených pojmů.
+
+\noindent 
+
+\noindent Nechť \textbf{O} je kontrahující operátor na úplném metrickém prostoru (\textbf{X},\textit{d}), $\phi$ nechť je jeho pevný bod, \textit{s} součinitel kontrakce a \textit{C} nechť je takové reálné číslo, že pro každou dvojici $\varphi$,$\psi$$\in$\textbf{X} platí \textit{d}($\varphi$,$\psi$)$\leq$\textit{C}  (\textit{C} není menší než největší vzdálenost v \textbf{X}). Nechť $\varphi$ je nyní libovolný prvek \textbf{X}. Pak platí
+
+ 1)  ,      2)  . \eqref{GrindEQ__7_12_}
+
+\noindent \textit{Důkaz.} Nejprve dokážeme první tvrzení. Prvek $\phi$ je pevným bodem operátoru. Pro každé \textit{i} tedy platí \textbf{O}\textit{i}($\phi$)=$\phi$. Dosazením do prvního vztahu a uplatněním definice kontrahujícího operátoru dostaneme.
+
+ .
+
+\noindent Při dokazování druhého vztahu zapíšeme pevný bod operátoru jako limitu \textbf{O}\textit{n}($\varphi$) pro \textit{n}$\rightarrow$$\infty$. Dále využijeme trojúhelníkové nerovnosti, (v tomto případě zobecněné na \textit{n} sčítanců). Podobně jako v~předchozím případě snadno dokážeme, že platí \textit{d}(\textbf{O}\textit{i}($\varphi$),\textbf{O}\textit{i}+1($\varphi$)) $\leq$ \textit{sid}($\varphi$,\textbf{O}($\varphi$)) a konečně využijeme vztahu (1+\textit{s}+\textit{s}2+\textit{s}3+...) = 1/(\textit{s}$-$1). Postupně tak dostaneme
+\[ . \cdot\] 
+Obě tvrzení uvedeného teorému mají praktický význam. Dekomprese obrazu je založena na výpočtu hodnoty \textbf{O}\textit{n}($\varphi$). Prakticky však nebude možné volit \textit{n} nekonečně velké, a hodnota \textbf{O}\textit{n}($\varphi$) proto bude pouze jistou aproximací pevného bodu. První tvrzení podává návod pro odhad vzdálenosti mezi skutečným pevným bodem a touto aproximací. Druhého tvrzení lze využít při kompresi. Nechť $\varphi$ je jasová funkce obrazu, který má být komprimován. Je zapotřebí nalézt operátor, jehož pevným bodem je funkce $\varphi$. Lze očekávat, že ani tento problém nebude v~praxi možné řešit zcela přesně. Pravděpodobně postačí nalézt takový operátor, jehož pevný bod je dostatečně blízko funkci $\varphi$. Druhé tvrzení poskytuje odhad vzdálenosti pevného bodu $\phi$ vyšetřovaného operátoru \textbf{O} od $\varphi$.
+
+\noindent 
+
+\noindent Dosud nezodpovězenou zůstává otázka, jak k~zadané jasové funkci $\varphi$ nalézt operátor \textbf{O}, pro který je funkce $\varphi$ pevným bodem. Rychlé a dostatečně přesné řešení tohoto problému je nejtěžším krokem fraktální komprese. Představme si nejprve, že bychom věděli, že se hledaný operátor vyskytuje v~nějaké konečné množině \{\textbf{O}\textit{i}\} operátorů. Alespoň teoreticky by pak nalezení operátoru bylo snadné. Operátory by bylo možné prověřovat jeden po druhém a zjišťovat vzdálenost \textit{d}($\varphi$,\textbf{O}\textit{i}($\varphi$)). Pro hledaný operátor je vzdálenost \textit{d}($\varphi$,\textbf{O}\textit{i}($\varphi$)) nulová. V~případě komprese obrazů ve stupních šedi hledáme operátor, který jasovou funkci zobrazuje na jinou jasovou funkci. Takových operátorů je zřejmě nespočetně mnoho. Aby byla úloha prakticky zvládnutelná a aby bylo možné uplatnit právě naznačenou metodu prohledávání, je nutné prostor, v~němž operátor hledáme, redukovat. Představme si, že redukovaný prostor operátorů je opět tvořen konečnou množinou \{\textbf{O}\textit{i}\} operátorů. Z~této množiny vybereme ten operátor, jehož pevný pod se nejvíce blíží zadané jasové funkci $\varphi$. Podle druhého ze vztahů \eqref{GrindEQ__7_12_} k~tomu postačí vyhodnocovat výraz \textit{d}($\varphi$,\textbf{O}\textit{i}($\varphi$))/(1$-$\textit{s}). Při redukci prověřovaného prostoru vzniká riziko, že hledaný operátor bude vynechán, a že následné řešení proto bude pouze přibližné. Samozřejmá je tak snaha, aby prověřovaný prostor zůstal co nejširší. Na druhé straně je ovšem nutné brát v~úvahu také otázku časové složitosti. V~dalším odstavci ukážeme jeden z~možných postupů redukce.
+
+\noindent 
+
+\noindent Předpokládejme, že existuje pokrytí oblasti $\Omega$ (obr.7.18). Pokrytí obsahuje konečný počet množin \textit{D}i$\subset$$\Omega$, \textit{i}=1,2,..., \textit{M}  tak, že platí
+
+    a     pro každé \textit{i}$\neq$\textit{j}. \eqref{GrindEQ__7_13_}
+
+\noindent Pro každé \textit{i} předpokládejme existenci zobrazení \textit{fi}:\textit{Di}$\rightarrow$$\Omega$ a zavedeme označení \textit{fi}(\textit{Di})=\textit{Ri}. Dále nechť \textit{vi} je kontrahující zobrazení na \textit{I} (\textit{I} je množina možných hodnot jasu) se součinitelem kontrakce 0$\leq$\textit{s}$<$1. Uvažujme operátor, který je definován předpisem
+
+ \textbf{O}($\psi$(\textit{x},\textit{y})) = \textit{vi}($\psi$(\textit{fi}(\textit{x},\textit{y})))   pro (\textit{x},\textit{y})$\in$\textit{Di}. \eqref{GrindEQ__7_14_}
+
+\noindent Nechť \textbf{X} je prostor jasových funkcí definovaných nad $\Omega$ a metrika nechť je definována vztahem \textit{d}($\varphi$,$\psi$) = max\{\textbar $\varphi$(\textit{x},\textit{y})$-$$\psi$(\textit{x},\textit{y})\textbar  \textbar  \textit{x},\textit{y}$\in$$\Omega$\}. Pak platí následující tvrzení: 1) Prostor (\textbf{X},\textit{d}) je úplný. 2) Operátor ze vztahu \eqref{GrindEQ__7_14_} je v~tomto prostoru kontrahující.
+
+\noindent 
+
+\noindent Vztah \eqref{GrindEQ__7_14_} tedy podává návod, jak konstruovat kontrahující operátor, kterého lze použít pro kompresi obrazů ve stupních šedi. Funkce \textit{vi}, \textit{fi} však stále bohužel nejsou nijak specifikovány, a proto je zatím ve volbě operátoru značná volnost. Při praktické realizaci fraktální komprese lze opět postupovat tak, že se i funkce \textit{vi}, \textit{fi} hledají na jistém dosti redukovaném prostoru. Následující příklad popisuje konkrétní řešení prezentované v (Barnsley 93).
+
+\noindent 
+
+\noindent Oblasti \textit{Di} mají tvar čtverce. Předpokládá se, že funkce \textit{fi} je afinní transformací. Třída afinních transformací je však dále zúžena, a to na transformace tvaru \textbf{x}'=2\textbf{A}\textit{i}(\textbf{x}$-$\textbf{c}\textit{i})+\textbf{t}\textit{i}, kde \textbf{x}=(\textit{x},\textit{y}), \textbf{c}\textit{i}=(\textit{ci},\textit{di}) jsou souřadnice středu oblasti \textit{Di}, \textbf{t}\textit{i}=(\textit{ti},\textit{ui}) je translační složka transformace a \textbf{A}\textit{i} je matice rozměru 2$\times$2 z~následující množiny
+\begin{equation} \label{GrindEQ__7_15_} 
+{\rm A}=\left\{\left[\begin{array}{cc} {1} & {0} \\ {0} & {1} \end{array}\right],\left[\begin{array}{cc} {-1} & {0} \\ {0} & {1} \end{array}\right],\left[\begin{array}{cc} {1} & {0} \\ {0} & {-1} \end{array}\right],\left[\begin{array}{cc} {-1} & {0} \\ {0} & {-1} \end{array}\right],\left[\begin{array}{cc} {0} & {1} \\ {1} & {0} \end{array}\right],\left[\begin{array}{cc} {0} & {1} \\ {-1} & {0} \end{array}\right],\left[\begin{array}{cc} {0} & {-1} \\ {1} & {0} \end{array}\right],\left[\begin{array}{cc} {0} & {-1} \\ {-1} & {0} \end{array}\right]\right\}.  
+\end{equation} 
+Matici \textbf{A}\textit{i} identifikujeme indexem 0$\leq$\textit{ai}$\leq$7, což je pořadí matice ve výše uvedené množině. Jednotlivé matice realizují identitu, zrcadlení kolem svislé osy oblasti, zrcadlení kolem vodorovné osy, otočení o 180$\circ$ kolem středu oblasti, zrcadlení kolem hlavní diagonály, otočení o 270$\circ$, otočení o 90$\circ$ a zrcadlení kolem vedlejší diagonály. Je zřejmé, že obrazem \textit{Ri} čtvercové oblasti \textit{Di} je oblast, která je opět čtvercová (obr. 7.18). Oproti čtverci \textit{Di} má čtverec \textit{Ri} dvojnásobné rozměry. Předpokládá se, že \textit{I}=$\langle$0,\textit{b}max $\rangle$, kde \textit{b}max je maximální hodnota jasu v obraze. Funkce \textit{vi} se hledá ve tvaru \textit{vi}(\textit{b})=\textit{pb}+\textit{qi}, kde \textit{p} je pevně zvolená konstanta 0$\leq$\textit{p$<$}1 (tak je zajištěno, že funkce \textit{vi} je kontrahující). Hodnota \textit{qi} se stanoví tak, aby střední hodnota jasové funkce $\psi$(\textit{x},\textit{y}) nad oblastí \textit{Di} byla stejná jako střední hodnota jasové funkce \textbf{O}($\psi$(\textit{x},\textit{y})).
+
+\noindent 
+
+\noindent 
+
+\noindent Po zavedení výše uvedených redukcí je operátor \textbf{O} popsán \textit{M}-ticí čtveřic [(\textit{t}1,\textit{u}1,\textit{a}1,\textit{q}1), (\textit{t}2,\textit{u}2,\textit{a}2,\textit{q}2),...,  (\textit{tM},\textit{uM},\textit{aM},\textit{qM})] a hodnotou \textit{p}, která je společná pro všechny oblasti. Je zřejmé, že čtveřice (\textit{ti},\textit{ui},\textit{ai},\textit{qi}) popisuje, jak má být operátorem \textbf{O} vytvořena obrazová funkce nad oblastí \textit{Di}. Tento dílčí operátor označíme \textbf{O}\textit{i}. Operátor \textbf{O} lze nalézt postupným probíráním všech oblastí \textit{Di}. Pro každou oblast \textit{Di} se nalezne operátor \textbf{O}\textit{i}. To lze provést tak, že se postupně probírají všechny možné hodnoty \textit{t},\textit{u}, pro které je splněna podmínka, že oblast \textit{Ri} = \textit{fi}(\textit{Di}) padne do $\Omega$. Pro každou dvojici \textit{t},\textit{u}, je stanovena hodnota \textit{q} (podle pravidla uvedeného v~předchozím odstavci je hodnota \textit{q} stanovena pro každou dvojici \textit{t},\textit{u} jednoznačně) a dále jsou prověřeny všechny možné matice \textbf{A}. Jako čtveřice (\textit{ti},\textit{ui},\textit{ai},\textit{qi}) popisující operátor \textbf{O}\textit{i} se bere ta čtveřice hodnot \textit{t},\textit{u},\textit{a},\textit{q}, která na oblasti \textit{Di} dává minimální hodnotu vzdálenosti dist($\psi$(\textit{x},\textit{y}), \textbf{O}($\psi$(\textit{x},\textit{y}))).
+

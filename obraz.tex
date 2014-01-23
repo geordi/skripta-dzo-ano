@@ -1,0 +1,856 @@
+
+% Formát pro grant ESF, Ostrava 2009
+% Verze pro obrazovku
+
+\documentclass[11pt,pdftex]{report}
+\usepackage{cmap}
+\usepackage[czech]{babel} %Musí být pøed mathtime, aby se správnì nastavilo \encodingdefault.
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+%\usepackage{times}
+%\usepackage[mtbold,mtplusscr,mtpluscal]{mathtime} %Musí být pøed amsmath, jinak znovu definované \vec a další akcenty.
+\usepackage{mathrsfs}
+\usepackage{mflogo}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{exscale} % v 11pt a 12pt funguji \bigg
+\newcommand{\hmmax}{0} %Aby se nealokovaly heavy fonty, jde to pøes 16.
+\usepackage{bm} %Musí být po amsmath; to volá amsbsy, kde je definován boldsymbol, který bm pøedefinuje.
+\usepackage{latexsym}
+\usepackage{fancyhdr}
+\usepackage{wrapfig}
+\usepackage{graphicx,color}
+\usepackage{xcolor}
+\usepackage{footnpag}
+
+\input cnv-pu
+\usepackage{hyperref}
+
+\def\pdfstringdef #1#2{% \pdfstringdef re-definition
+   \bgroup
+      \def\tmpa{\thepage}\def\tmpb{#2}%
+      \ifx\tmpa\tmpb \xdef#1{#2}%
+      \else
+         \escapechar=`\\%
+         \def\cnvtable{pu}\cnvin{#2}%
+         \xdef #1{\string\376\string\377\cnvout}%
+      \fi
+   \egroup}
+
+\usepackage[3D]{movie15}
+\usepackage[screen,panelright,gray,czech]{kubpdfscreen}
+\usepackage{nameref}
+\usepackage{subfigure}
+\usepackage{makeidx}
+
+%Acrotex
+\makeatletter
+\def\eq@drivername{3} %Kuben -chybí v eforms.sty, volba pdftex tento pøíkaz nenadefinuje. Jaká hodnota je vhodná?
+\makeatother
+\usepackage[czech]{exerquiz}
+\usepackage[ImplMulti]{dljslib}
+\useBeginQuizButton
+\useEndQuizButton
+\PTsHook{(\eqPTs\text{b.})}           % poèet bodù u otázky
+\negPointsAllowed                     % umožòuje záporný souèet bodù, i záporné procenta.
+
+\everyScoreField{\BC{\ScoreFieldColor}\F{\FPrint}}
+\everyAnswerField{\BC{\AnswerFieldColor}\F{\FPrint}}
+\everyPointsField{\BC{\PointsFieldColor}\F{\FPrint}}
+\everyPercentField{\BC{\PercentFieldColor}\F{\FPrint}}
+\everyqRadioButton{\BC{\qRadioButtonColor}\F{\FPrint}}
+\everyRespBoxMath{\BC{\RespBoxMathColor}}
+\everyBeginQuizButton{\BC{\BeginQuizButtonColor}\CA{Zacátek testu}}  %Diakritiku doplnil Kuben; proè nìkdy nefunguje è?
+\everyEndQuizButton{\BC{\EndQuizButtonColor}\CA{Konec testu}}
+\everyeqButton{\BC{\eqButtonColor}\F{\FPrint}}
+\renewcommand{\labeleqquestionnoi}{%
+    \color{labeleqquestionnoicolor}\bfseries\theeqquestionnoi.}
+
+\def\vyhodnoceni#1{%
+    \bigskip%
+    %\rowsep{\bigskipamount}%
+    \noindent%
+    \begin{tabular}{ll}%
+        \noindent Správnì zodpovìzené otázky:& \ScoreField{#1}\\%
+        \noindent Získané body:& \PointsField{#1}\\%
+        \noindent Procento úspìšnosti:& \PercentField{#1}%
+    \end{tabular}\newline%
+    \eqButton[\CA{Výsledky}]{#1}%
+    \medskip}
+    
+\let\RespBoxMathorig\RespBoxMath
+\makeatletter
+    \def\RespBoxMath{\write\@auxout{\string\expandafter\string\gdef\string\csname\space math@\thepage\string\endcsname{\string\AnswerField\string\currQuiz}}\RespBoxMathorig}
+\makeatother
+
+% Barvy testù.
+\def\BeginQuizButtonColor{0.750 0.530 0.190}
+\def\EndQuizButtonColor  {0.750 0.530 0.190}
+\def\eqButtonColor       {0.750 0.530 0.190}
+\def\ScoreFieldColor     {0.750 0.530 0.190}
+%\def\AnswerFieldColor    {0.750 0.530 0.190}
+\def\AnswerFieldColor    {0.8 0.8 0.95}   %Jako pozadí panelu, aby nebyl zpoèátku vidìt. Kuben
+\def\PointsFieldColor    {0.750 0.530 0.190}
+\def\PercentFieldColor   {0.750 0.530 0.190}
+\def\qRadioButtonColor   {0.900 0.630 0.450}
+\def\RespBoxMathColor    {0.900 0.630 0.450}
+\definecolor{labeleqquestionnoicolor}{rgb}{0.750,0.530,0.190}
+
+\usepackage{vlna} %Musí být za naèítáním exerquiz.djs, havaruje. Kuben
+
+\languageattribute{czech}{split}
+
+\shorthandoff{-}%
+\input supp-mis.tex
+\shorthandon{-}%
+
+\DeclareGraphicsRule{*}{mps}{*}{}
+
+\evensidemargin0pt\oddsidemargin0pt\topmargin0pt
+\headheight12pt
+\headsep25pt
+\advance\headheight by 1.6mm
+\footskip9.6pt
+
+\margins{.4in}{.4in}{.3in}{.4in}
+\screensize{6.25in}{8in}
+\overlay{overlay1.pdf}  %Kuben
+
+\pagestyle{fancy}
+
+\newcount\logodopanelu
+\setbox0=\vbox{\hbox to20mm{\hss\includegraphics[width=20mm]{loga/vsb.pdf}\hss }%
+                     \vskip5mm
+                     \hbox to 20mm{\hss\includegraphics[width=20mm]{loga/logo_zcu.pdf}\hss }%
+}
+\immediate\pdfxform 0
+\logodopanelu\pdflastxform
+
+% Definice ovládacího panelu
+%
+\definecolor{pozPANEL1}{rgb}{.8,.8,.95}
+
+\makeatletter
+\def\panel{%
+\colorbox{pozPANEL1}{%
+\vtop to \paperheight{%
+\hsize=\panelwidth
+\offinterlineskip
+\mdseries
+\centering
+   \normalsfcodes%
+\vspace*{28pt}\par
+\mbox{\pdfrefxform\logodopanelu}%
+\vspace{25mm}\par
+   \hyperlink{contents}{\addButton{\buttonwidth}%
+      {\DBlack\@Panelcontentsname}}
+\par\vspace*{6pt}\par
+\Acrobatmenu{GoToPage}{\addButton{\buttonwidth}%
+   {\textcolor{blue}%
+      {\textbf{\thepage}.} strana ze
+   \textcolor{black}{\ScreenLastPage}}}\\[2pt]
+\leavevmode\hbox to\buttonwidth{%
+\Acrobatmenu{FirstPage}{\addButton{.21\buttonwidth}%
+   {\FBlack\scalebox{.8}[1.4]%
+   {\rule[-1pt]{1pt}{5.5pt}\btl}}}%
+\hfill
+\Acrobatmenu{PrevPage}{\addButton{.22\buttonwidth}%
+   {\FBlack\scalebox{.8}[1.4]{\btl}}}%
+\hfill
+\Acrobatmenu{NextPage}{\addButton{.22\buttonwidth}%
+   {\LBlack\scalebox{.8}[1.4]{\rtl}}}%
+\hfill
+\Acrobatmenu{LastPage}{\addButton{.21\buttonwidth}%
+   {\LBlack\scalebox{.8}[1.4]%
+   {\rtl\rule[-1pt]{1pt}{5.5pt}}}}}\\[2pt]
+\leavevmode\hbox to\buttonwidth{%
+\Acrobatmenu{GoBack}{\addButton{.45\buttonwidth}%
+   {\LBlack\scalebox{.8}[1.4]%
+   {\btl\kern-.75pt\rule[.75pt]{3.2pt}{2pt}}}}%
+\hfill
+\Acrobatmenu{GoForward}{\addButton{.45\buttonwidth}%
+   {\LBlack\scalebox{.8}[1.4]%
+   {\rule[.75pt]{3.2pt}{2pt}\kern-.75pt\rtl}}}}\\
+\par\vspace*{12pt}\par
+     \if@paneltoc%
+      \@panel@toc\par\vfill\else\relax\fi%
+       \color{blue}%
+%\vspace{25mm}\par
+\vfill\par
+\mbox{\def\RBW{.8\panelwidth}\csname math@\thepage\endcsname} %Políèko, kde se zobrazí výsledky úloh
+\vfill\par
+\Acrobatmenu{Close}{\addButton{\buttonwidth}%
+   {Zavøít dokument}}\\[2pt]
+     \Acrobatmenu{Quit}{\addButton{\buttonwidth}%
+        {\@Panelquitname}}\\[6pt]
+\vss
+   \Acrobatmenu{FullScreen}%
+      {\addButton{.9\panelwidth}%
+      {Celá obrazovka$\big/$Okno}}%
+\iffalse   % V AR 9 nefunguje
+   \vspace{3mm}\par
+   {\rmfamily\upshape\mdseries\normalsize V oknì:}\\[4pt]%Kuben
+   \Acrobatmenu{ShowHideToolBar}%
+      {\addButton{.9\panelwidth}%
+      {Zobrazit$\big/$Skrýt ikony}}\\[2pt]
+   \Acrobatmenu{ShowHideMenuBar}%
+      {\addButton{.9\panelwidth}%
+      {Zobrazit$\big/$Skrýt menu}}%
+   \vspace*{3mm}%
+\fi
+\vspace*{10mm}
+}}}%
+\makeatother%
+%% Konec definice ovládacího panelu
+
+\makeatletter
+
+\def\chaptermark#1{%
+      \markboth {#1}{}}
+%\def\sectionmark#1{%
+%      \markright {%
+%        \ifnum \c@secnumdepth >\z@
+%          \thesection \ %
+%        \fi
+%        #1}}
+
+\def\@makechapterhead#1{%
+  \vspace*{\kolik\p@}%
+  {\parindent \z@ \raggedright \normalfont
+    \ifnum \c@secnumdepth >\m@ne
+        \color{section0}% Kuben
+        \huge\bfseries \@chapapp\space \thechapter
+        \par\nobreak
+        \vskip 20\p@
+    \fi
+        \color{section0}% Kuben
+    \interlinepenalty\@M
+    \Huge \bfseries #1\par\nobreak
+    \vskip 40\p@
+  }}
+
+%V obsahu utíkal jeden øádek
+\def\kolik{50}
+\def\@makeschapterhead#1{%
+  \vspace*{\kolik\p@}%
+  {\parindent \z@ \raggedright
+    \normalfont
+     \color{section0}% Kuben
+    \interlinepenalty\@M
+    \Huge \bfseries  #1\par\nobreak
+    \vskip 40\p@
+  }}
+
+\definecolor{section0}{rgb}{0,0,1} %Kuben
+\definecolor{section1}{rgb}{0,0,1} %Kuben
+\definecolor{section2}{rgb}{0,0,1} %Kuben
+
+\renewcommand\tableofcontents{%
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+     \pdfbookmark{Obsah}{obsah}               %doplnìno
+%    \def\kolik{30}%                                     %doplnìno, aby se vešlo o øádek víc
+    \chapter*{\contentsname        \@mkboth{%
+           \MakeUppercase\contentsname}{\MakeUppercase\contentsname}}%
+    \def\kolik{50}%
+    \@starttoc{toc}%
+    \if@restonecol\twocolumn\fi
+    }
+
+\renewenvironment{theindex}
+               {\if@twocolumn
+                  \@restonecolfalse
+                \else
+                  \@restonecoltrue
+                \fi
+                \columnseprule \z@
+                \columnsep 35\p@
+                \expandafter\def\csname @currentHref\endcsname{rejstrik.0}%
+                \twocolumn[\pdfbookmark{Rejstøík}{rejstrik}% Musí být - záložka rejstøík neskáèe.
+                                 \@makeschapterhead{\indexname}]%
+                \@mkboth{\indexname}%
+                        {\indexname}%
+                \addcontentsline{toc}{chapter}{\indexname}%
+                \thispagestyle{plain}\parindent\z@
+                \parskip\z@ \@plus .3\p@\relax
+                \let\item\@idxitem}
+               {\if@restonecol\onecolumn\else\clearpage\fi}
+
+\renewenvironment{thebibliography}[1]
+      {\chapter*{\bibname
+        \@mkboth{\bibname}{\bibname}}%
+        \thispagestyle{plain}% Pøidal Kuben
+      \addcontentsline{toc}{chapter}{\bibname}
+      \list{\@biblabel{\@arabic\c@enumiv}}%
+           {\settowidth\labelwidth{\@biblabel{#1}}%
+            \leftmargin\labelwidth
+            \advance\leftmargin\labelsep
+            \@openbib@code
+            \usecounter{enumiv}%
+            \let\p@enumiv\@empty
+            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+      \sloppy
+      \clubpenalty4000
+      \@clubpenalty \clubpenalty
+      \widowpenalty4000%
+      \sfcode`\.\@m}
+     {\def\@noitemerr
+       {\@latex@warning{Empty `thebibliography' environment}}%
+      \endlist}
+
+\renewcommand{\@thesubfigure}{\subcaplabelfont\alph{subfigure})}
+\renewcommand{\thesubfigure}{\protect~\alph{subfigure})}
+\let\p@subfigure\thefigure
+
+\def\toclevel@subfigure{1} % Aby hyperref.sty nedával varování
+
+%Úprava popisu pod obrázkem
+\long\def\@makecaption#1#2{%
+  \vskip\abovecaptionskip
+%  \sbox\@tempboxa{#1\kern1pt:\protect~#2}%
+   \sbox\@tempboxa{#1#2}%
+  \ifdim \wd\@tempboxa >\hsize
+%    #1\kern1pt:\protect~#2\par     %V report.cls je #1: #2\par
+      #1#2\par
+  \else
+    \global \@minipagefalse
+    \hb@xt@\hsize{\hfil\box\@tempboxa\hfil }%
+  \fi
+  \vskip\belowcaptionskip}
+
+%Z pdfscreen.sty, upravena mezera
+\def\@seccntformat#1{\protect\textcolor{section\thesection@level}%
+   {\expandafter\upshape\@nameuse{the#1}.}\hspace{.5em}}%
+
+\makeatother
+
+\newcommand{\dvojt}{\kern1pt:\protect~}
+
+%Jen s Math Timesy
+\iffalse
+\DeclareFontFamily{U}{mtgu}{}
+\DeclareFontShape{U}{mtgu}{m}{n}{<->mtgu}{}
+\DeclareFontShape{U}{mtgu}{b}{n}{<->mtgub}{}
+\DeclareSymbolFont{uprgreek}{U}{mtgu}{m}{n}
+\SetSymbolFont{uprgreek}{bold}{U}{mtgu}{b}{n}
+\SetSymbolFont{uprgreek}{heavy}{U}{mtgu}{b}{n}
+\DeclareMathSymbol\newpi{\mathord}{uprgreek}{'160}
+\let\oldpi\pi
+\let\pi\newpi
+\fi
+
+\makeatletter
+\def\@thm#1#2#3{%
+  \ifhmode\unskip\unskip\par\fi
+  \normalfont
+  \trivlist
+  \let\thmheadnl\relax
+  \let\thm@swap\@gobble
+  \thm@notefont{\fontseries\bfdefault\upshape}%
+  \thm@headpunct{.}% add period after heading
+  \thm@headsep 5\p@ plus\p@ minus\p@\relax
+  \thm@space@setup
+  #1% style overrides
+  \@topsep \thm@preskip               % used by thm head
+  \@topsepadd \thm@postskip           % used by \@endparenv
+  \def\@tempa{#2}\ifx\@empty\@tempa
+    \def\@tempa{\@oparg{\@begintheorem{#3}{}}[]}%
+  \else
+    \refstepcounter{#2}%
+    \def\@tempa{\@oparg{\@begintheorem{#3}{\csname the#2\endcsname}}[]}%
+  \fi
+  \@tempa
+}
+\makeatother
+
+\newtheorem{rveta}{Vìta}[chapter]
+\newtheorem{lema}[rveta]{Lemma}
+\newtheorem{dusl}[rveta]{Dùsledek}
+\theoremstyle{definition}
+\newtheorem{rdfn}[rveta]{Definice}
+\newtheorem{prik}[rveta]{Pøíklad}
+\newtheorem{pozn}[rveta]{Poznámka}
+
+\newlength{\sirka}
+\setlength{\sirka}{\textwidth }
+\addtolength{\sirka}{-2\fboxsep }
+
+\newsavebox{\pomocny}
+\newenvironment{veta}[1][]%
+{\begin{lrbox}{\pomocny}\begin{minipage}{\sirka}\color{textvety}\begin{rveta}[#1]}%
+{\end{rveta}\end{minipage}\end{lrbox}%
+\bigskip\par\noindent\colorbox{pozadivety}{\usebox{\pomocny}}\bigskip\ignorespaces\par }
+
+\newenvironment{dfn}%
+{\begin{lrbox}{\pomocny}\begin{minipage}{\sirka}\color{textdefinice}\begin{rdfn}}%
+{\end{rdfn}\end{minipage}\end{lrbox}%
+\bigskip\par\noindent\colorbox{pozadidefinice}{\usebox{\pomocny}}\bigskip\ignorespaces\par }
+
+\definecolor{pozadidefinice}{cmyk}{0,0.1,0.5,0}
+\definecolor{pozadivety}{cmyk}{0,.2,.8,0}
+\definecolor{textdefinice}{cmyk}{0.98,0.13,0,0.8}
+\definecolor{textvety}{cmyk}{0,1,1,0.9}
+\definecolor{pozadiramecku}{cmyk}{0,0.12,0.22,0}
+\definecolor{textvramecku}{cmyk}{1,1,1,1}  %CadetBlue
+
+\newenvironment{ramecek}%
+{\begin{lrbox}{\pomocny}\begin{minipage}{\sirka}\noindent\color{textvramecku}\ignorespaces }%
+{\end{minipage}\end{lrbox}%
+\bigskip\par\noindent\colorbox{pozadiramecku}{\usebox{\pomocny}}\bigskip\par }
+
+\def\nastavtroj{\def\qedsymbol{\blacktroj}}
+\def\nastavctver{\def\qedsymbol{\openbox}}
+\def\posuntroj#1{\def\qedsymbol{\raisebox{#1}[0mm][0mm]{\blacktroj}}}
+\def\posunctver#1{\def\qedsymbol{\raisebox{#1}[0mm][0mm]{\openbox}}}
+
+\makeatletter
+
+%Z amsthm.sty
+\renewenvironment{proof}[1][\proofname]{\par\nastavctver
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep
+        \itshape
+    #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse
+}
+
+%Podle okolí proof z amsthm.sty.
+\newenvironment{reseni}[1][Øešení]{\par\nastavtroj
+  \pushQED{\qed}%
+  \normalfont \topsep6\p@\@plus6\p@\relax
+  \trivlist
+  \item[\hskip\labelsep
+        \itshape
+    #1\@addpunct{.}]\ignorespaces
+}{%
+  \popQED\endtrivlist\@endpefalse%\nastavctver
+}
+
+\newenvironment{Reseni}{\smallskip\par\nastavtroj\pushQED{\qed}%
+     \noindent\normalfont\textit{Øešení\@addpunct{.}\ignorespaces }}
+{\popQED\smallskip\par }
+
+\newenvironment{Proof}{\smallskip\par\nastavtroj\pushQED{\qed}%
+     \noindent\normalfont\textit{Dùkaz\@addpunct{.}\ignorespaces }}
+{\popQED\smallskip\par }
+
+\makeatother
+
+\newcommand{\lra}{\ \ \ \Longrightarrow \ \ \ }
+
+%Nefunguje kvùli zmìnìným mathkódùm - apod.
+%\DeclareMathOperator{\tg}{tg}
+%\DeclareMathOperator{\cotg}{cotg}
+%\DeclareMathOperator{\arctg}{arctg}
+%\DeclareMathOperator{\sgn}{sgn}
+%\DeclareMathOperator{\Int}{int}
+
+%Z amsopn.sty.
+\newcommand\tg{\qopname\relax o{tg}}
+\newcommand\cotg{\qopname\relax o{cotg}}
+\newcommand\arctg{\qopname\relax o{arctg}}
+\newcommand\arccotg{\qopname\relax o{arccotg}}
+\newcommand\sgn{\qopname\relax o{sgn}}
+\newcommand\Int{\qopname\relax o{int}}
+\newcommand\grad{\qopname\relax o{grad}}
+\newcommand\opt{\qopname\relax o{ext}}
+
+\let\oldlim\lim
+\renewcommand{\lim }{\oldlim\limits }
+\let\oldsum\sum
+\renewcommand{\sum }{\oldsum\limits }
+\let\oldmin\min
+\renewcommand{\min }{\oldmin\limits }
+\let\oldmax\max
+\renewcommand{\max }{\oldmax\limits }
+\let\oldsup\sup
+\newcommand{\newsup}{\oldsup\limits }
+\let\sup\newsup
+\let\oldinf\inf
+\newcommand{\newinf}{\oldinf\limits }
+\let\inf\newinf
+\let\oldlimsup\limsup
+\newcommand{\newlimsup}{\oldlimsup\limits }
+\let\limsup\newlimsup
+\let\oldliminf\liminf
+\newcommand{\newliminf}{\oldliminf\limits }
+\let\liminf\newliminf
+
+\newcommand{\dif}{\mathrm{d}}
+\newcommand{\dx}{\mathrm{d}\mkern.5mu x}
+\newcommand{\dy}{\mathrm{d}y}
+\newcommand{\dz}{\mathrm{d}z}
+\newcommand{\dt}{\mathrm{d}\mkern.5mu t}
+\newcommand{\dhh}{\mathrm{d}\mkern1mu h}
+\newcommand{\dr}{\mathrm{d}\mkern1mu r}
+\newcommand{\du}{\mathrm{d}\mkern1mu u}
+\newcommand{\dv}{\mathrm{d}\mkern1mu v}
+\newcommand{\dss}{\mathrm{d}\mkern1mu s}
+
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+\newcommand{\Ok}{\ensuremath{\mathscr{O}}}
+
+\DeclareMathSymbol{\smallsetminus}{\mathbin}{AMSb}{"72}
+\let\ssm\smallsetminus
+\DeclareMathSymbol{\leqq}{\mathrel}{AMSa}{"35}
+\DeclareMathSymbol{\geqq}{\mathrel}{AMSa}{"3D}
+\DeclareMathSymbol{\varkappa}{\mathord}{AMSb}{"7B}
+\DeclareMathSymbol{\blacktriangle}{\mathord}{AMSa}{"4E}
+\DeclareMathSymbol{\sphericalangle} {\mathord}{AMSa}{"5E}
+\newcommand{\blacktroj}{$\blacktriangle$}
+\newcommand{\uu}{\mathgr{u}}
+\newcommand{\vv}{\mathgr{v}}
+\newcommand{\aA}{\mathgr{a}}
+\newcommand{\bb}{\mathgr{b}}
+\newcommand{\cc}{\mathgr{c}}
+\newcommand{\qq}{\mathgr{q}}
+\newcommand{\nn}{\mathgr{n}}
+\newcommand{\nulv}{\mathgr{0}}
+\newcommand{\aaA}{\bm{a}}
+\newcommand{\rr}{\bm{r}}
+\newcommand{\x}{\bm{x}}
+\newcommand{\y}{\bm{y}}
+\newcommand{\z}{\bm{z}}
+\newcommand{\hH}{\bm{h}}
+\newcommand{\f}{\bm{f}}
+\newcommand{\LL}{\mathscr{L}}
+
+% Rùzná okolí.
+
+% Okolí mohou být vnoøena do úrovnì 4.
+\makeatletter
+
+\newcount\@okolidepth \@okolidepth = 0
+
+\@definecounter{okoli}
+\@definecounter{okolii}
+\@definecounter{okoliii}
+\@definecounter{okoliv}
+
+% #1    zpùsob výpisu èítaèe (nepovinný) (arabic, roman, Roman, alph, Alph, fnsymbol)
+% #2    nejširší label
+% #3    co se dá vlevo pøed èíslo èíslo (tøeba ( )
+% #4    co se dá vpravo za èíslo (tøeba ).)
+% #5    velikost topsep
+% #6    velikost itemsep (a lze vložit nìco jako skip\parsep=skip; je totiž poslední)
+% #7    co se dá vlevo do \makelabel (\hfill; lze taky tøeba \itshape - ovlivní jen label vložený do [])
+% #8    co se dá vpravo do \makelabel (\hfill)
+% #9    co se dá pøed a za èítaè pro odkazy a jak hluboko bude odkaz (tøi údaje oddìlené èárkami);
+%         je-li tøetí údaj 0, bude odkaz jen na èítaè okamžité úrovnì, je-li 1, bude i na vyšší èítaèe.
+
+\newcommand\okoli[9][arabic]{%
+  \ifnum \@okolidepth >\thr@@\@toodeep\else
+    \nast@proodk#9,
+    \advance\@okolidepth\@ne
+    \edef\@okolictr{okol\romannumeral\the\@okolidepth}%
+      \ifnum 0=\@@jak
+          \edef\@udelej{\noexpand\expandafter\noexpand\def
+                              \noexpand\csname the\@okolictr\noexpand\endcsname
+                              {\@@pred\noexpand\csname #1\noexpand\endcsname{\@okolictr}\@@za}}%
+          \@udelej
+      \else
+        \ifcase\@okolidepth\or
+          \edef\@udelej{\noexpand\def\noexpand\theokoli{\@@pred
+                              \noexpand\csname #1\noexpand\endcsname{okoli}\@@za}}%
+          \@udelej\or
+          \edef\@udelej{\noexpand\def\noexpand\theokolii{\noexpand\theokoli \@@pred
+                              \noexpand\csname #1\noexpand\endcsname{okolii}\@@za}}%
+          \@udelej\or
+          \edef\@udelej{\noexpand\def\noexpand\theokoliii{\noexpand\theokolii \@@pred
+                              \noexpand\csname #1\noexpand\endcsname{okoliii}\@@za}}%
+          \@udelej\or
+          \edef\@udelej{\noexpand\def\noexpand\theokoliv{\noexpand\theokoliii \@@pred
+                              \noexpand\csname #1\noexpand\endcsname{okoliv}\@@za}}%
+          \@udelej
+        \fi
+      \fi
+    \list{\rmfamily\upshape #3\csname #1\endcsname\@okolictr #4}%
+    {\usecounter\@okolictr\topsep=#5\partopsep=0pt\parsep=0pt\itemsep=#6%
+    \settowidth{\labelwidth }{\rmfamily\upshape #2}\labelsep=1.5mm
+    \leftmargin=\labelwidth\advance\leftmargin\labelsep
+    \renewcommand{\makelabel }[1]{\rmfamily\upshape #7##1#8}}%
+  \fi }
+\let\endokoli =\endlist
+
+% Rozdìlí devátý parametr do tøí.
+\def\nast@proodk #1,#2,#3,{\def\@@pred{#1}\def\@@za{#2}\def\@@jak{#3}}
+
+% Uloží a zase vrátí hodnotu èítaèe (podle úrovnì vnoøení), pokud potøebujeme
+% okolí pøerušit a zase pokraèovat následujícím èíslem.
+% Nastaví se poèáteèní hodnota, aby se dalo použít jako v okolí rok, tj. zaèít pøíkazem \vratcit.
+\newcommand\ulozcit{\xdef\@kolik{\arabic\@okolictr}}
+\gdef\@kolik{0}
+\newcommand\vratcit{\setcounter\@okolictr{\@kolik}}
+
+% Odkaz na \item, který má nepovinný parametr.
+\@definecounter{@dkaz}
+\def\odkaz#1{\c@@dkaz=\@okolidepth \advance\c@@dkaz-\tw@ %\refstepcounter to zvìtší pøed použitím
+\def\the@dkaz{\ifnum\@okolidepth=\@ne\else                          % \the@odkaz o jednièku
+\csname theokol\romannumeral\the\c@@dkaz\endcsname\fi #1}%
+\refstepcounter{@dkaz}\ignorespaces }
+
+\makeatother
+
+\newenvironment{aokz}[2][arabic]{\begin{okoli}[#1]{#2}{}{)}{\smallskipamount}
+                                              {\smallskipamount}{\hfill }{}{,),1}}{\end{okoli}}
+
+\newenvironment{aokzz}[2][arabic]{\begin{okoli}[#1]{#2}{(}{)}{\smallskipamount}
+                                              {\smallskipamount}{\hfill }{}{,),1}}{\end{okoli}}
+
+\newenvironment{aokt}[2][arabic]{\begin{okoli}[#1]{#2}{}{.}{\smallskipamount}
+                                              {\smallskipamount}{\hfill }{}{,,1}}{\end{okoli}}
+
+\newenvironment{rokz}[2][roman]{\begin{okoli}[#1]{#2}{}{)}{4pt}
+                                              {0pt}{\hfill }{}{,,1}}{\end{okoli}}
+
+\newenvironment{cvic}[2][arabic]{\begin{okoli}[#1]{#2}{}{.}{9pt}{9pt\parsep=\smallskipamount}
+                                               {\hfill }{}{,,1}}{\end{okoli}}
+
+\newenvironment{vysled}[2][arabic]{\begin{okoli}[#1]{#2}{}{.}{9pt}{9pt}{\hfill }{}{,,1}}{\end{okoli}}
+
+\newenvironment{punt}[1][]{\begin{list}{#1\textbullet}%
+{\topsep=7pt\partopsep=0pt\itemsep=5pt\parsep=0pt%
+\settowidth{\labelwidth }{\rmfamily\upshape#1\textbullet}\labelsep=1.5mm
+\leftmargin=\labelwidth\advance\leftmargin\labelsep
+\renewcommand{\makelabel }[1]{\hfill\rmfamily\upshape ##1}}}%
+{\end{list}}
+
+% Nová okolí
+
+\newenvironment{cile}[1]{\subsection*{Cíle}#1
+\begin{list}{\textbullet}%
+{\topsep=4pt\partopsep=0pt\itemsep=3pt\parsep=0pt%
+\settowidth{\labelwidth }{\rmfamily\upshape\indent \textbullet}\labelsep=1.5mm
+\leftmargin=\labelwidth\advance\leftmargin\labelsep\rightmargin\leftmargin
+\renewcommand{\makelabel }[1]{\hfill\rmfamily\upshape ##1}}}%
+{\end{list}}
+
+\newenvironment{shrnuti}{\subsection*{Pojmy k zapamatování}
+\begin{list}{---}%
+{\topsep=4pt\partopsep=0pt\itemsep=3pt\parsep=0pt%
+\settowidth{\labelwidth }{\rmfamily\upshape\indent ---}\labelsep=1.5mm
+\leftmargin=\labelwidth\advance\leftmargin\labelsep\rightmargin\leftmargin
+\renewcommand{\makelabel }[1]{\hfill\rmfamily\upshape ##1}}}%
+{\end{list}}
+
+\newcommand{\Cviceni}{%
+\subsection*{Cvièení}
+\addcontentsline{toc}{subsection}{Cvièení} \markright{Cvièení}}
+
+\newenvironment{konot}[1][1.]{\subsection*{Kontrolní otázky}
+\begin{aokt}{\indent#1}}%
+{\end{aokt}}
+
+\newenvironment{priklady}[1][1.]{\subsection*{Pøíklady k procvièení}\small
+\addcontentsline{toc}{subsection}{Pøíklady k procvièení}%
+\markright{Pøíklady k procvièení}%
+%\everymath={\displaystyle }%
+\begin{cvic}{#1}}%
+{\end{cvic}}
+
+\newenvironment{vysledky}[2][1.]{\subsection*{Klíè k pøíkladùm k procvièení}\small
+\addcontentsline{toc}{subsection}{Klíè k pøíkladùm k procvièení}%
+#2%
+%\everymath={\displaystyle }%
+\begin{vysled}{#1}}
+{\end{vysled}}
+
+\newcounter{autotest}
+\newenvironment{autotest}[2][1.]{%
+\refstepcounter{autotest}
+\subsection*{Autotest~\theautotest}\small
+\addcontentsline{toc}{section}{Autotest~\theautotest}
+\markright{Autotest~\theautotest}
+#2
+\begin{aokt}{#1}}%
+{\end{aokt}}
+
+\newcounter{klicautotest}
+\newcommand{\klickautotestu}{%
+\subsection*{\refstepcounter{klicautotest}Klíè k autotestu~\theklicautotest}%
+\addcontentsline{toc}{section}{Klíè k~autotestu~\theklicautotest}%
+\markright{Klíè k~autotestu~\theklicautotest}%
+}
+
+\newenvironment{pruvodce}{\subsection*{Prùvodce studiem}
+\sffamily\slshape }
+{}
+
+\newenvironment{detaily}{\subsection*{Pro zájemce}
+\small }
+{\bigskip\par }
+
+\newcolumntype{L}{>{$}l<{$}}
+\newcolumntype{R}{>{$}r<{$}}
+\newcolumntype{C}{>{$}c<{$}}
+\newcolumntype{x}{>{$}X<{$}}
+\newcolumntype{S}{!{\extracolsep{\fill }}r!{\extracolsep{0pt}}L}
+\newcolumntype{s}{@{}rL}
+\newcolumntype{Z}{@{\extracolsep{\fill }\hspace{\tabcolsep }}r@{\extracolsep{0pt}\hspace{\tabcolsep }}L}
+\newcolumntype{z}{@{}r@{\hspace{\tabcolsep }}L}
+
+\mathcode`\e="0065
+\mathchardef\ecko="7165
+
+% Použito pro vyhledání e.
+%\mathchardef\eckocervene="0065
+%{\let\xxx\expandafter \let\ddd\gdef \let\nox\noexpand
+%{\catcode`\e=\active \xxx }\xxx\ddd\nox e{\textcolor{red}{\eckocervene}}}
+%\mathcode`\e="8000
+
+%Odkazy na stránky.
+\newcounter{strana}
+\newcommand{\strana}[1]{\refstepcounter{strana}\label{str#1}}
+
+%Odkaz na cvièení.
+\newcounter{cviceni}
+\newcommand{\cviceni}[1]{\setcounter{cviceni}{#1}\addtocounter{cviceni}{\minus 1}%
+\refstepcounter{cviceni}\label{cviceni#1}}
+
+%Odkazy na obrázky - pøed obrázek (nìkde skákalo moc dolù).
+\newcounter{obraz}[chapter]
+\renewcommand{\theobraz}{\thechapter.\arabic{obraz}}
+\renewcommand{\theHobraz}{\thechapter.\arabic{obraz}}
+\newcommand{\obr}[1]{\setcounter{obraz}{\value{figure}}
+\refstepcounter{obraz}\label{#1}\ignorespaces }
+
+%Odkazy na obrázky - \subfigure
+\newcommand{\obrs}[2]{\setcounter{obraz}{\value{figure}}%
+{\renewcommand{\theobraz}{\thechapter.\arabic{obraz}~#2)}%
+\renewcommand{\theHobraz}{\thechapter.\arabic{obraz}#2}%
+\refstepcounter{obraz}\label{#1}}\ignorespaces }
+
+%Odkazy na obtékané obrázky - na zaèátek obtékaného textu (skáèe úplnì špatnì, dolù na stránku)
+\newcommand{\obro}[1]{\setcounter{obraz}{\value{figure}}\addtocounter{obraz}{-1}% obtékaný
+\refstepcounter{obraz}\label{#1}\ignorespaces }
+
+\newcommand{\upref}[1]{\textup{\ref{#1}}}
+\addto\captionsczech{\renewcommand{\figurename}{Obr.}\renewcommand{\tablename}{Tab.}\renewcommand{\proofname}{Dùkaz}}
+
+%Tesaøíkova patch \cline pro babel s czech a slovak
+\makeatletter
+\begingroup
+  \catcode`\-=\active
+  \def\x{\endgroup
+  \let\cs@cline\@cline
+  \expandafter\def\expandafter\@cline
+    \expandafter##\expandafter1\expandafter
+      -\expandafter##\expandafter2\expandafter\@nil\expandafter
+        {\expandafter\cs@cline\expandafter##\expandafter1\minus##2\@nil}
+}\x
+\makeatother
+
+%Podle Tesaøíkova czech.ldf
+\makeatletter
+\def\Deleni{%
+  \ifx\protect\@typeset@protect
+    \ifhmode
+      \ifinner
+        \bbl@afterelse\bbl@afterelse\bbl@afterelse\cs@hyphen
+      \else
+        \bbl@afterfi\bbl@afterelse\bbl@afterelse\cs@firsthyphen
+      \fi
+    \else
+      \bbl@afterfi\bbl@afterelse\cs@hyphen
+    \fi
+  \else
+    \bbl@afterfi\cs@hyphen
+  \fi }
+\makeatother
+
+%Opakování symbolù binárních operací a relací pøi zalomení øádku
+%Autor: Josef Tkadlec tkadlec@fel.cvut.cz
+
+\relpenalty     =10000      % aby se nelámalo v jiných než ošetøených
+\binoppenalty   =10000
+\exhyphenpenalty=1000       % aby spíše nouzovì (implicitnì je 50)
+                            % "lokálnì" lze zakázat {...}
+
+\def\neq {\mathrel{\not=}}  % aby nedocházelo k lámání \not=/=
+\let\ne=\neq
+
+\def\OpakujPrikaz #1#2{\let #2=#1
+  \def #1{#2\nobreak\discretionary{}{\hbox{$#2$}}{}}}
+\def\OpakujZnak #1#2{\mathchardef #2=\mathcode`#1
+  \activedef #1{#2\nobreak\discretionary{}{\hbox{$#2$}}{}}
+  \uccode`\~=0 \mathcode`#1="8000 }
+%Doplnil Kuben pro nový czech.ldf \expandafter možná nemusí být
+\def\OpakujZnakMinus #1#2{\mathchardef #2=\mathcode`#1
+  \activedef #1{\ifmmode#2\nobreak\discretionary{}{\hbox{$#2$}}{}\else\expandafter\Deleni\fi }
+  \uccode`\~=0 \mathcode`#1="8000 }
+\def\activedef #1{\uccode`\~=`#1 \uppercase{\def~}}
+
+\OpakujPrikaz {\neq }{\neqORI}  \let \ne=\neq
+%\OpakujPrikaz {\leq }{\leqORI}  \let \le=\leq
+%\OpakujPrikaz {\geq }{\geqORI}  \let \ge=\geq
+\OpakujPrikaz {\leqq}{\leqqORI}  \let\leORI\le \let \le=\leqq \let \leq=\leqq
+\OpakujPrikaz {\geqq}{\geqqORI}  \let\geORI\ge \let \ge=\geqq \let \geq=\geqq
+\OpakujPrikaz {\cup }{\cupORI}
+\OpakujPrikaz {\cap }{\capORI}
+\OpakujPrikaz {\times }{\timesORI}
+\OpakujZnak <{\lessORI}
+\OpakujZnak >{\greaterORI}
+\OpakujZnak +{\plusORI}
+\AtBeginDocument {\OpakujZnak ={\eqORI} \OpakujZnakMinus -{\minusORI}}
+
+%Z TUGboat, Volume 22 (2001),  No. 4, str. 350
+\def\clap#1{\hbox to 0pt{\hss#1\hss }}
+\def\mathllap{\mathpalette\mathllapinternal}
+\def\mathrlap{\mathpalette\mathrlapinternal}
+\def\mathclap{\mathpalette\mathclapinternal}
+\def\mathllapinternal#1#2{\llap{$\mathsurround=0pt#1{#2}$}}
+\def\mathrlapinternal#1#2{\rlap{$\mathsurround=0pt#1{#2}$}}
+\def\mathclapinternal#1#2{\clap{$\mathsurround=0pt#1{#2}$}}
+
+\hypersetup{colorlinks,hyperindex,plainpages=false,urlcolor=cyan,
+pdfstartview={FitH 714 },pdftitle={Název skript},pdfsubject={Skripta},
+pdfauthor={Autor skript}
+%,linkcolor=black,citecolor=black,urlcolor=black,pagecolor=black
+}
+
+% Bøezina
+\def\az{\leavevmode
+\null
+\nobreak\ \skip0=\lastskip
+\discretionary{až}{}{}%
+\nobreak\hskip\minus\skip0
+\setbox0=\hbox{--}%
+\cleaders\copy0\hskip\wd0
+\null }
+
+%Kuben podle \az
+\def\azz{\leavevmode
+\null
+\nobreak\ \skip0=\lastskip
+\discretionary{až}{}{}%
+\nobreak\hskip\minus\skip0
+\setbox0=\hbox{, \dots, }%
+\cleaders\copy0\hskip\wd0
+\null }
+
+%Babel pøedefinuje \contentsname z pdfscreen - Kuben
+\makeatletter
+\AtBeginDocument{%
+    \def\contentsname{\protect\hypertarget{contents}{\@Panelcontentsname}
+      \immediate\write\@auxout{\string\gdef\string\ContPage{\thepage}}}
+}
+\makeatother
+
+%\def\moviebackgroundcolor{0.900 0.860 0.810}
+\def\moviebackgroundcolor{1 0.974 0.863}
+
+\endinput
+

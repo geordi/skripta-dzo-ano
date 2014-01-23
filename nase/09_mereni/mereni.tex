@@ -1,0 +1,232 @@
+
+\noindent \textbf{9  Měření objektů pro příznakové rozpoznání}
+
+\noindent V této kapitole předpokládáme, že obraz byl segmentován a že objekty, které mají být rozpoznány, byly úspěšně separovány. Příznakové metody rozpoznání jsou založeny na tom, že každý objekt, který má být rozpoznán, je popsán pomocí vhodných číselných hodnot, tzv. příznaků. Zpravidla je zapotřebí použít více příznaků, které vytvářejí vektor příznaků. Vektor příznaků vypočítaný pro rozpoznávaný objekt nese všechny podstatné informace o objektu a je jedinou informací pro jeho následné rozpoznání (při rozpoznání pak již nepracujeme s obrazy objektů, ale pouze s jejich vektory příznaků). Rozhodnout o tom, jaké veličiny by měly být použity jako příznaky vedoucí k rozpoznání, je obtížné. Neexistuje jednoznačný návod, jak tento problém řešit. Nejobecnějším pravidlem je, že počet příznaků a příznaky samotné by měly být voleny tak, aby od sebe spolehlivě dokázaly odlišit objekty jednotlivých tříd (kapitola 10). Na druhé straně by počet příznaků měl být rozumný, tedy ne příliš velký (za prakticky přijatelnou hodnotu lze považovat počet nepřekračující 10-20 příznaků). Je pravidlem, že při řešení jednotlivých problémů je zapotřebí provést teoretický návrh i experimentální ověření zvolené množiny příznaků. Obecně lze říci, že příznak je pro rozpoznání užitečný, jestliže splňuje následující vlastnosti: Hodnoty příznaku by měly vycházet podobné pro objekty jedné třídy a naopak dosti odlišné pro objekty různých tříd. Hodnoty příznaku by měly být pokud možno nezávislé na hodnotách jiných příznaků, které jsou pro rozpoznání také použity. V následujících podkapitolách uvedeme několik typických příkladů, jakých příznaků lze pro rozpoznání použít.
+
+\noindent \textbf{9.1 Momenty}
+
+\noindent Momenty různého stupně patří k příznakům, které jsou používány dosti často. Důvodem je, že jejich schopnost rozlišit od sebe objekty různých tříd často vyhovuje a jejich výpočet je snadný. Moment vztažený k souřadné soustavě obrazu je definován vztahem
+\begin{equation} \label{GrindEQ__9_1_} 
+m_{p,q} =\iint \nolimits _{\Omega }x^{p} y^{q} f\left(x,y\right){\rm d}x{\rm d}y ,  
+\end{equation} 
+kde \textit{f}(\textit{x},\textit{y}) je obrazová funkce, \textit{p},\textit{q} udávají stupeň momentu a $\Omega$ je ta část obrazu, kterou považujeme za rozpoznávaný objekt. (Poznamenejme, že zde uvádíme vztahy platné pro spojitou obrazovou funkci. Zápis vztahů platných pro funkci diskrétní jistě nebude čtenáři činit potíže - integraci postačí nahradit sumací.)  Hodnoty \textit{p},\textit{q} lze volit \textit{p}$\geq$0, \textit{q}$\geq$0. Moment \textit{m}0,0 je plocha objektu vážená hodnotou jasu. V úlohách, kde je plocha objektu významná, může být i moment \textit{m}0,0 použit jako jeden z příznaků pro rozpoznání. Protože zbývající momenty \textit{mp},\textit{q} jsou závislé na umístění rozpoznávaného objektu v obraze, dává se zpravidla přednost výpočtu momentů vzhledem k osám procházejícím těžištěm objektu. K výpočtu polohy (\textit{xt},\textit{yt}) těžiště objektu lze použít  momentů \textit{m}0,0 \textit{m}1,0 \textit{m}0,1. Máme 
+\begin{equation} \label{GrindEQ__9_2_} 
+x_{t} =\frac{m_{1,0} }{m_{0,0} } ,     y_{t} =\frac{m_{0,1} }{m_{0,0} } .  
+\end{equation} 
+Také poloha objektu (reprezentovaná polohou těžiště) může být v některých úlohách významná, a proto i hodnoty \textit{xt},\textit{yt} někdy mohou být použity jako příznaky pro rozpoznání. Moment $\mu$\textit{p},\textit{q} vzhledem k osám procházejícím těžištěm objektu je definován vztahem
+\begin{equation} \label{GrindEQ__9_3_} 
+\mu _{p,q} =\iint \nolimits _{\Omega }\left(x-x_{t} \right)^{p} \left(y-y_{t} \right)^{q} f\left(x,y\right){\rm d}x{\rm d}y .  
+\end{equation} 
+Momenty $\mu$\textit{p},\textit{q} k těžištním osám sice nezávisí na poloze objektu v obraze, avšak závisí na velikosti objektu i na jeho orientaci (natočení). Tam, kde jsou velikost objektu a jeho natočení významné, lze k rozpoznání použít přímo momentů $\mu$\textit{p},\textit{q}. Pokud není pro rozpoznání rozhodující velikost objektu, je možné použít normalizovaných momentů $\upsilon$\textit{p},\textit{q}  
+
+ $\upsilon _{p,q} =\frac{\mu _{p,q} }{\left(m_{0,0} \right)^{\gamma } } $,   kde   $\gamma =\left(\frac{p+q}{2} \right)+1$. \eqref{GrindEQ__9_4_}
+
+\noindent Jestliže při rozpoznání objektu nemá záležet ani na jeho orientaci (natočení), pak je nutné momenty počítat k hlavním osám objektu. Hlavní osy vytvářejí souřadnou soustavu, která má počátek v těžišti rozpoznávaného objektu a vzhledem k souřadné soustavě obrazu je pootočena o úhel $\theta$. Pootočení $\theta$ je dáno podmínkou, aby momenty $\mu$'2,0, $\mu$'0,2 vypočtené k hlavním osám nabyly extrémních hodnot. Ukážeme, jak lze úhel $\theta$ stanovit. Rovnici přímky, která je první hlavní osou, hledáme ve tvaru  
+\begin{equation} \label{GrindEQ__9_5_} 
+x\sin \theta -y\cos \theta +\rho =0.  
+\end{equation} 
+Hodnotami \textit{x}, \textit{y} při tom rozumíme souřadnice měřené v souřadné soustavě obrazu. Vzdálenost \textit{r} bodu o souřadnicích \textit{x}, \textit{y} od první hlavní osy je 
+\begin{equation} \label{GrindEQ__9_6_} 
+r=x\sin \theta -y\cos \theta +\rho .  
+\end{equation} 
+Pro moment setrvačnosti k této ose pak vychází
+\begin{equation} \label{GrindEQ__9_7_} 
+\mu '_{0,2} =\iint \nolimits _{\Omega }r^{2} f\left(x,y\right){\rm d}x{\rm d}y .  
+\end{equation} 
+Po úpravě máme $\mu '_{0,2} =\iint \nolimits _{\Omega }\left(x\sin \theta -y\cos \theta +\rho \right)^{2} f\left(x,y\right){\rm d}x{\rm d}y $. \eqref{GrindEQ__9_8_}
+
+\noindent Zaveďme následující substituci (souřadnice s vlnovkou jsou měřeny vzhledem k soustavě, jejíž počátek je posunut do těžiště objektu):
+
+ $\tilde{x}=x-x_{t} $,   $\tilde{y}=y-y_{t} $,    a tedy    $x=\tilde{x}+x_{t} $,   $y=\tilde{y}+y_{t} $. \eqref{GrindEQ__9_9_}
+
+\noindent Z rovnice \eqref{GrindEQ__9_8_} pak máme $\mu '_{0,2} =\iint \nolimits _{\Omega }\left(\tilde{x}\sin \theta -\tilde{y}\cos \theta \right)^{2} f\left(x,y\right){\rm d}x{\rm d}y $. \eqref{GrindEQ__9_10_}
+
+\noindent Položením $\partial$$\mu$'0,2 / $\partial$$\theta$ = 0 obdržíme ${\rm tg}2\theta =\frac{2\mu _{1,1} }{\mu _{2,0} -\mu _{0,2} } $, \eqref{GrindEQ__9_11_}
+
+\noindent kde $\mu _{2,0} =\iint \nolimits _{\Omega }\tilde{x}^{2} f\left(x,y\right){\rm d}x{\rm d}y $,     $\mu _{1,1} =\iint \nolimits _{\Omega }\tilde{x}\tilde{y}f\left(x,y\right){\rm d}x{\rm d}y $,     $\mu _{0,2} =\iint \nolimits _{\Omega }\tilde{y}^{2} f\left(x,y\right){\rm d}x{\rm d}y $. \eqref{GrindEQ__9_12_}
+
+\noindent Jak je patrné z rovnice \eqref{GrindEQ__9_11_}, lze alternativně definovat hlavní osy objektu jako osy, ke kterým je moment $\mu$1,1 (tzv. deviační moment) roven nule. Vztah \eqref{GrindEQ__9_11_} je užitečný i tehdy, když je natočení objektu pro rozpoznání významné. Úhel $\theta$ lze totiž chápat jako úhel popisující natočení objektu v obraze a lze jej použít jako jeden z příznaků. Na závěr tohoto odstavce o momentech poznamenejme, že kromě přímého použití momentů různého stupně lze jako příznaků pro rozpoznání použít též různých hodnot z momentů odvozených. Jako příklad uveďme podíl $\mu$'2,0 / $\mu$'0,2, který charakterizuje podlouhlost. 
+
+\noindent \textbf{9.2  Pravoúhlost a podlouhlost}
+
+\noindent Hranici vyšetřovaného objektu postupně rotujeme v rozsahu 0-90$\circ$. Krok úhlu rotace volíme v jednotkách stupňů (např. 5$\circ$). Po provedení rotace opíšeme kolem hranice objektu pravoúhelník, jehož strany jsou rovnoběžné se stranami obrazu (to je jednoduché - po provedení rotace stačí nalézt extrémní souřadnice hranice). Ze všech pravoúhelníků vybereme ten, který má nejmenší plochu. Plochu objektu označme \textit{AO}, plochu nejmenšího pravoúhelníka a délky jeho stran označme postupně \textit{AR}, \textit{a}, \textit{b}. Pravoúhlost (\textit{R}) a podlouhlost (\textit{S}) jsou pak definovány vztahy  
+\begin{equation} \label{GrindEQ__9_13_} 
+R=\frac{A_{O} }{A_{R} } ,     S=\frac{a}{b} .  
+\end{equation} 
+\textbf{9.3  Kruhovost}
+
+\noindent Nechť \textit{P}, \textit{A} označují délku hranice objektu a jeho plochu. Kruhovost je pak definována vztahem
+\begin{equation} \label{GrindEQ__9_14_} 
+C=\frac{P^{2} }{A} .  
+\end{equation} 
+Pro kruh vychází hodnota kruhovosti \textit{C}=4$\pi$, pro čtverec je \textit{C}=16, pro objekty nepravidelného tvaru jsou hodnoty vyšší. Poznamenejme, že hodnota 4$\pi$ pro kruh vychází z teoretické délky hranice. V závislosti na výpočetním postupu se může skutečná délka hranice zjištěná v digitalizovaném obraze od délky teoretické lišit. Např. na obr. 9.1 je teoretická délka čtvrtoblouku 5$\pi$. Prakticky zjištěná délka jeho digitalizovaného obrazu je však 20. Pokud by popsaný jev byl při rozpoznávání na závadu, lze mu čelit vyhlazením tvaru hranice. Je například možné jistým počtem pixelů hranice proložit křivku. Délku této křivky lze pak chápat jako délku odpovídající části hranice.
+
+\noindent 
+
+\noindent \textbf{9.4  Energie hranice}
+
+\noindent Předpokládejme, že známe průběh křivosti \textit{k}(\textit{s}) hranice objektu. Délka obvodu objektu nechť je \textit{P}. Příznak „energie hranice`` koncentruje informaci o průběhu funkce \textit{k}(\textit{s}) do jediné hodnoty
+
+\noindent 
+\begin{equation} \label{GrindEQ__9_15_} 
+E=\frac{1}{P} \int _{0}^{P}\left[k\left(s\right)\right]^{2} {\rm d}s .  
+\end{equation} 
+Uvažujeme-li různé objekty se stejnou plochou, pak nejmenší energie hranice vychází pro kruh, a to \textit{E} = (1/\textit{R})2. Pro složitější tvary hranice jsou hodnoty energie vyšší.
+
+\noindent \textbf{9.5  Průměrná vzdálenost pixelu od hranice}
+
+\noindent 
+
+\noindent Nechť \textit{di} označuje vzdálenost \textit{i}-tého pixelu objektu od hranice objektu, jehož plocha je \textit{A}. Protože by bylo zdlouhavé pro každý pixel objektu vypočítávat vzdálenost euklidovskou, rozumíme zde vzdáleností počet řad pixelů, které leží mezi hranicí a uvažovaným pixelem (obr. 9.2). Průměrnou vzdáleností $\mu$\textit{d} pixelu od hranice pak rozumíme hodnotu
+\begin{equation} \label{GrindEQ__9_16_} 
+\mu _{d} =\frac{1}{N} \sum _{i=1}^{N}d_{i}  ,  
+\end{equation} 
+kde \textit{N} je celkový počet pixelů v objektu. Koncentrovanou informaci o tvaru objektu nese pak např. příznak
+\begin{equation} \label{GrindEQ__9_17_} 
+S=\frac{A}{\mu _{d}^{2} } .  
+\end{equation} 
+   
+
+\noindent \textbf{9.6  Popis tvaru objektu pomocí průběhu křivosti jeho hranice}
+
+\noindent 
+
+\noindent Z elementární teorie křivek je známo, že průběh \textit{k}(\textit{s}) křivosti křivku jednoznačně určuje až na její polohu (uvažujeme zde křivky rovinné a pod pojmem křivost máme na mysli první křivost). Nabízí se možnost využít této skutečnosti tak, že pro rozpoznávání objektů využijeme příznaků odvozených z průběhu křivosti jejich hranice. Obr. 9.3 ukazuje křivku (hranici objektu) a odpovídající průběh \textit{k}(\textit{s}) křivosti. Je zřejmé, že funkce \textit{k}(\textit{s}) je periodická s periodou \textit{P}, což je délka křivky. Funkci \textit{k}(\textit{s}) lze proto rozvinout ve Fourierovu řadu 
+\begin{equation} \label{GrindEQ__9_18_} 
+k\left(s\right)=\sum _{-\infty }^{\infty }c_{n} \exp \left[j2\pi n\frac{s}{P} \right] ,  
+\end{equation} 
+kde $c_{n} =\frac{1}{P} \int _{0}^{P}k\left(s\right)\exp \left[-j2\pi n\frac{s}{P} \right]{\rm d}s $. \eqref{GrindEQ__9_19_}
+
+\noindent Zpravidla lze hlavní tvary objektu popsat pomocí amplitud jistého počtu nejnižších frekvenčních složek. Vyšší složky popisují pro rozpoznání zpravidla méně významné tvarové detaily; může se též jednat o šumy. Prakticky lze průběh křivosti hranice získat např. tak, že skupinami po sobě jdoucích pixelů tvořících hranici prokládáme kruhové oblouky nebo jinou vhodnou křivku. V případě kruhového oblouku platí mezi jeho poloměrem a křivostí jednoduchý vztah \textit{k}=1/\textit{r}. V~případě aproximace hranice objektu množinou kruhových oblouků má pak funkce \textit{k}(\textit{s}) po částech konstantní průběh. Prokládáme-li obecnější křivku s parametrickou rovnicí \textbf{x}=\textbf{x}(\textit{s}), pak pro křivost máme \textit{k}(\textit{s})= $\mid$\textbf{x}"(\textit{s})$\mid$ (z~diferenciální geometrie křivek je známo, že uvedený vztah platí pro takovou parametrizaci křivky, kde parametr \textit{s}~měří délku křivky). Poznamenejme, že kromě prokládání kruhových oblouků nebo křivek, byla navržena také řešení, kde je informace o průběhu křivosti získávána analýzou řetězce popisujícího tvar hranice ve Freemanově kódu (kap. 8.2.1, obr. 8.18).
+
+\noindent \textbf{9.7  Eulerovo číslo}
+
+\noindent 
+
+\noindent Nechť \textit{C} je počet navzájem nesouvislých částí rozpoznávaného objektu a \textit{H} nechť je počet děr v objektu (obr.9.4). Eulerovo číslo je rozdíl \textit{C}$-$\textit{H}. Obvyklé metody segmentace zpravidla neumožňují detekovat objekt s více než jednou částí jako objekt jediný, ale každou část detekují jako objekt samostatný (na rozdíl od obr. 9.4). Eulerovo číslo je proto v tomto případě 1$-$\textit{H}. Je samozřejmé, že užitečným příznakem pro rozpoznání může být také jednoduše pouze počet děr v rozpoznávaném objektu, který s Eulerovým číslem úzce souvisí.
+
+\noindent \textbf{}
+
+\noindent \textbf{9.8  Atributy odvozené z~histogramu jasu}
+
+\noindent Jestliže máme rozpoznávat objekty, pro něž je charakteristické jisté rozložení jasu po ploše objektu, nebo objekty, které jsou pokryty texturou, pak může být užitečné zvolit jako příznaky sloužící k rozpoznání také hodnoty odvozené z jasu~rozpoznávaného objektu. Připomeňme, že rozložení jasu po ploše objektu bylo jistým způsobem vzato v úvahu již při výpočtu momentů. V tomto odstavci ukážeme další možnosti. Označme \textit{b}$\in$\{0,1,2,..., \textit{m}\} jas pixelu (\textit{m} je maximální možný jas). Pro rozpoznávaný objekt vypočítejme histogram zastoupení jednotlivých hodnot jasů v objektu. Označme \textit{N} celkový počet pixelů rozpoznávaného objektu a \textit{N}(\textit{b}) počet pixelů v objektu, které mají jas právě \textit{b}. Proveďme normalizaci histogramu takto: \textit{p}(\textit{b})=\textit{N}(\textit{b})/\textit{N}. Hodnotu \textit{p}(\textit{b}) lze interpretovat jako pravděpodobnost jevu, že pixel objektu má jas právě \textit{b}. Funkce \textit{p}(\textit{b}) podrobně charakterizuje zastoupení jednotlivých jasů v objektu. Informaci obsaženou ve funkci \textit{p}(\textit{b}) je žádoucí koncentrovat do pokud možno malého množství příznaků, které mohou být použity k rozpoznání. Interpretace funkce \textit{p}(\textit{b}) jako hustoty pravděpodobnosti umožňuje využít postupů známých z teorie pravděpodobnosti: Jako příznaků vedoucích k rozpoznání lze použít zejména střední hodnoty a momentů různého stupně. Nejběžněji používané příznaky uvádíme v následujícím přehledu.
+
+\noindent Střední hodnota jasu: $\mu _{b} =\sum _{b=0}^{m}bp\left(b\right) $. \eqref{GrindEQ__9_20_}
+
+\noindent Variance: $\sigma _{b}^{2} =\sum _{b=0}^{m}\left(b-\mu _{b} \right)^{2} p\left(b\right) $. \eqref{GrindEQ__9_21_} Šikmost: $s_{b} =\frac{1}{\sigma _{b}^{3} } \sum _{b=0}^{m}\left(b-\mu _{b} \right)^{3} p\left(b\right) .$ \eqref{GrindEQ__9_22_}
+
+\noindent Energie: $E_{b} =\sum _{b=0}^{m}p^{2} \left(b\right) $. \eqref{GrindEQ__9_23_} Entropie: $T_{b} =\sum _{b=0}^{m}p\left(b\right)\log \left(p\left(b\right)\right) $. \eqref{GrindEQ__9_24_}
+
+\noindent Poznamenejme, že z provedených výzkumů vyplývá, že lidské oko jen s obtížemi rozlišuje textury, které se shodují v momentech do druhého řádu včetně a liší se pouze v momentech vyšších řádů. To však neznamená, že by uvedené charakteristiky nemohly být využity pro rozpoznání počítačové, pokud jsou diference v momentech vyšších řádů skutečně významné.
+
+\noindent 
+
+\noindent \textbf{9.9  Atributy odvozené z frekvenčního spektra jasu}
+
+\noindent Pro rozpoznání objektů s texturou lze též využít příznaků odvozených z frekvenčního spektra jasu rozpoznávaného objektu. Provedeme Fourierovu transformaci obrazové funkce nad oblastí, kterou rozpoznávaný objekt zaujímá. Jistou komplikací je, že rozpoznávaný objekt může mít libovolný tvar. Jednoduchý postup, který umožňuje aplikovat běžné algoritmy Fourierovy transformace (zejména rychlé), spočívá v tom, že do rozpoznávaného objektu vepíšeme obdélník nebo čtverec vhodných rozměrů a provedeme Fourierovu transformaci obrazové funkce nad tímto obdélníkem (alternativně by bylo možné vepsat obdélníků více tak, aby pokryly pokud možno celý rozpoznávaný objekt a jednotlivá získaná frekvenční spektra jistým způsobem průměrovat). Vepsáním obdélníku jsme získali vzorek textury, kterou je objekt pokryt. Víme, že Fourierův obraz nese všechny informace obsažené ve vzoru. Pro účely rozpoznání je žádoucí informaci obsaženou ve Fourierově obrazu opět nějakým způsobem koncentrovat do pokud možno malého počtu příznaků. Lze to provést např. takto: Nechť \textit{f}(\textit{x},\textit{y}) je obrazová funkce nad obdélníkem vepsaným do rozpoznávaného objektu a \textit{F}(\textit{u},\textit{v}) nechť je její Fourierův obraz. Jako příznaky lze použít např. následující veličiny
+\begin{equation} \label{GrindEQ__9_25_} 
+U_{p,q} =\int _{-\infty }^{\infty }\int _{p}^{q}F\left(u,v\right){\rm d}u {\rm d}v ,     V_{p,q} =\int _{p}^{q}\int _{-\infty }^{\infty }F\left(u,v\right){\rm d}u {\rm d}v ,  
+\end{equation} 
+kde \textit{p},\textit{q} jsou zvolené reálné hodnoty. Je zřejmé, že hodnoty \textit{Up},\textit{q}, \textit{Vp},\textit{q} vyjadřují, jak jsou zastoupeny frekvence v pásech širokých $\mid$\textit{p}$-$\textit{q}$\mid$ rovnoběžných s osami \textit{v},\textit{u}. Pro rozpoznání lze samozřejmě zvolit libovolný počet takových pásů. Alternativně lze hodnotu \textit{F}(\textit{u},\textit{v}) samozřejmě také integrovat nad jinou vhodnou oblastí - např. nad obdélníkovou oblastí konečných rozměrů. Vyjádřeme dále \textit{u},\textit{v} v polárních souřadnicích takto: \textit{u} = $\rho$ cos $\varphi$, \textit{v} = $\rho$ sin $\varphi$. Nechť \textit{F}($\rho$,$\varphi$) je Fourierův obraz popsaný v těchto polárních souřadnicích. Jako příznaky lze v~tomto případě použít následujících hodnot
+\begin{equation} \label{GrindEQ__9_26_} 
+A_{p,q} =\int _{p}^{q}\int _{0}^{2\pi }F\left(\rho ,\varphi \right){\rm d}\varphi  {\rm d}\rho  ,     B_{s,t} =\int _{0}^{\infty }\int _{s}^{t}F\left(\rho ,\varphi \right){\rm d}\varphi  {\rm d}\rho  .  
+\end{equation} 
+Hodnota \textit{Ap},\textit{q} vyjadřuje zastoupení frekvencí v mezikruží o šířce  $\mid$\textit{p}$-$\textit{q}$\mid$.  Příznaku \textit{Ap},\textit{q} je na místě použít tehdy, jestliže chceme rozpoznávat objekty pokryté texturou, která může být vzhledem ke stranám obrazu libovolně natočena. Je-li naopak natočení textury významné a měla-li by velikost natočení sloužit k rozpoznání, pak je na místě použít příznaku \textit{Bs},\textit{t}, který vyjadřuje zastoupení frekvencí v~klínu o šířce $\mid$\textit{t}$-$\textit{s}$\mid$ úhlových jednotek.
+
+\noindent \textbf{9.10  Algoritmus výpočtu plochy, obvodu a Eulerova čísla}
+
+\noindent Ačkoli podrobná implementace výpočtu dosud uvedených příznaků není příliš obtížná, popíšeme v tomto odstavci jednoduchý postup, kterého lze použít při výpočtu plochy, obvodu a Eulerova čísla. Předností postupu je, že nevyžaduje explicitní určení hranice, a je proto výhodný tehdy, jestliže byly segmentací určeny přímo plochy náležící jednotlivým objektům (např. bylo-li použito prahování). Postup spočívá v tom, že zjišťujeme, kolikrát je možné do různých míst objektu umístit matice obsažené v dále uvedených množinách \textit{Q}1, \textit{Q}2, \textit{Q}3, \textit{Q}4, \textit{QD}:
+\[Q_{1} =\left\{\left[\begin{array}{cc} {1} & {0} \\ {0} & {0} \end{array}\right],\left[\begin{array}{cc} {0} & {1} \\ {0} & {0} \end{array}\right],\left[\begin{array}{cc} {0} & {0} \\ {0} & {1} \end{array}\right],\left[\begin{array}{cc} {0} & {0} \\ {1} & {0} \end{array}\right]\right\},   Q_{2} =\left\{\left[\begin{array}{cc} {1} & {1} \\ {0} & {0} \end{array}\right],\left[\begin{array}{cc} {0} & {1} \\ {0} & {1} \end{array}\right],\left[\begin{array}{cc} {0} & {0} \\ {1} & {1} \end{array}\right],\left[\begin{array}{cc} {1} & {0} \\ {1} & {0} \end{array}\right]\right\}, (9.27, 28)\] 
+
+\[Q_{3} =\left\{\left[\begin{array}{cc} {1} & {1} \\ {0} & {1} \end{array}\right],\left[\begin{array}{cc} {0} & {1} \\ {1} & {1} \end{array}\right],\left[\begin{array}{cc} {1} & {0} \\ {1} & {1} \end{array}\right],\left[\begin{array}{cc} {1} & {1} \\ {1} & {0} \end{array}\right]\right\},   Q_{4} =\left\{\left[\begin{array}{cc} {1} & {1} \\ {1} & {1} \end{array}\right]\right\},   Q_{D} =\left\{\left[\begin{array}{cc} {1} & {0} \\ {0} & {1} \end{array}\right],\left[\begin{array}{cc} {0} & {1} \\ {1} & {0} \end{array}\right]\right\}. (9.29, 30, 31)\] 
+Prakticky můžeme výpočet provést tak, že začneme v některém rohu obrazu a dále systematicky prověřujeme po řádcích a po sloupcích všechny možné pozice v~obraze tak, že do nich umisťujeme matice z~množin \textit{Q}1, \textit{Q}2, \textit{Q}3, \textit{Q}4, \textit{QD}. Za výskyt matice v objektu považujeme situaci, kdy se pixely objektu vyskytují právě na místech jedniček v uvažované matici. Nechť \textit{n}(\textit{Q}1), \textit{n}(\textit{Q}2), \textit{n}(\textit{Q}3), \textit{n}(\textit{Q}4), \textit{n}(\textit{QD}) označují počty výskytů matic z množin \textit{Q}1, \textit{Q}2, \textit{Q}3, \textit{Q}4, \textit{QD} v objektu. Pro plochu, obvod a Eulerovo číslo objektu pak platí následující vztahy:
+\begin{equation} \label{GrindEQ__9_32_} 
+A=\frac{1}{4} \left[n\left(Q_{1} \right)+2n\left(Q_{2} \right)+3n\left(Q_{3} \right)+4n\left(Q_{4} \right)+2n\left(Q_{D} \right)\right],  
+\end{equation} 
+\begin{equation} \label{GrindEQ__9_33_} 
+P=n\left(Q_{1} \right)+n\left(Q_{2} \right)+n\left(Q_{3} \right)+2n\left(Q_{D} \right),  
+\end{equation} 
+
+ $E=\frac{1}{4} \left[n\left(Q_{1} \right)-n\left(Q_{3} \right)+2n\left(Q_{D} \right)\right]$   (pro čtyřsousednost), \eqref{GrindEQ__9_34_}
+
+ $E=\frac{1}{4} \left[n\left(Q_{1} \right)-n\left(Q_{3} \right)-2n\left(Q_{D} \right)\right]$   (pro osmisousednost). \eqref{GrindEQ__9_35_}
+
+\noindent Popsaný postup je ilustrován na obr. 9.5. Čárkovanou čarou je znázorněna počáteční poloha matice 2$\times$2 v levém horním rohu obrazu. Šipka znázorňuje posouvání polohy po sloupcích a po řádcích. Poznamenáváme, že délka obvodu zahrnuje také délku obvodu případných děr.
+
+\noindent    
+
+\noindent Jestliže objekty, které mají být rozpoznány, byly původně hladké, pak zkreslení velikosti plochy a obvodu, které bylo způsobeno digitalizací, lze do jisté míry kompenzovat použitím modifikovaných vztahů pro plochu a obvod
+\begin{equation} \label{GrindEQ__9_36_} 
+A=\frac{1}{4} n\left(Q_{1} \right)+\frac{1}{2} n\left(Q_{2} \right)+\frac{7}{8} n\left(Q_{3} \right)+n\left(Q_{4} \right)+\frac{3}{4} n\left(Q_{D} \right),  
+\end{equation} 
+\begin{equation} \label{GrindEQ__9_37_} 
+P=n\left(Q_{2} \right)+\frac{1}{\sqrt{2} } \left[n\left(Q_{1} \right)+n\left(Q_{3} \right)+2n\left(Q_{D} \right)\right].  
+\end{equation} 
+\textbf{9.11  Algoritmus určení hranice}
+
+\noindent 
+
+\noindent Jestliže byly segmentací určeny přímo plochy náležící jednotlivým objektům (např. bylo-li použito prahování), pak může být pro výpočet příznaků někdy zapotřebí explicitně určit také hranice objektů. Ne vždy totiž vystačíme pouze s délkou hranice, kterou lze postupem podle předchozího odstavce stanovit i bez jejího explicitního určení. Určení hranice lze provést sledováním pomocí následujícího algoritmu: 1) Procházej pixely obrazu po řádcích a po sloupcích tak dlouho, až narazíš na první pixel objektu (tento pixel je nutně pixelem ležícím na hranici objektu). 2) Sleduj dále hranici objektu podle následujícího pravidla: 2a) Nacházíš-li se uvnitř objektu, otoč se doleva a posuň se o jeden pixel. 2b) Nacházíš-li se vně objektu, pak se otoč doprava a posuň se o jeden pixel. Počáteční směr v prvním nalezeném pixelu objektu je zleva doprava. Během činnosti algoritmu jsou procházeny body ležící na hranici objektu (obr. 9.6a). Algoritmus končí nalezením uzavřené hranice. Poznamenejme, že právě popsaný algoritmus nalezení hranice je sice jednoduchý, avšak ne vždy je získaný výsledek zcela uspokojující. Jisté problémy může způsobit skutečnost, že algoritmus prochází některé pixely hranice dvakrát. Obsahuje-li hranice pixely sousedící pouze rohem (což může nastat, jestliže uvažujeme osmisousednost), pak navíc může dojít k chybnému procházení a ztrátě jisté části hranice. Situaci ilustruje obr. 9.6. Na obr. 9.6c je správně nalezena celá hranice, zatímco na obr. 9.6b byla při procházení část hranice vynechána. Uvedeným potížím lze sice čelit pečlivým ošetřením speciálních případů, ale algoritmus se tak ovšem bohužel komplikuje.
+
+\noindent 
+
+\noindent \textbf{9.12  Hodnocení vhodnosti zvolené množiny příznaků}
+
+\noindent Na závěr této kapitoly se pokusíme o diskusi, jak lze hodnotit vhodnost volby příznaků pro rozpoznání. Pro jednoduchost předpokládejme, že máme pouze dva příznaky, které zde označíme \textit{x}, \textit{y}. Předpokládejme dále, že máme k dispozici vhodnou trénovací množinu. Můžeme proto vypočítat střední hodnoty a variance obou příznaků v jednotlivých třídách (v následujících výrazech je \textit{i} indexem třídy, stříškou vyznačujeme, že se jedná o odhad vypočítaný na základě trénovací množiny, \textit{Ni} je počet hodnot získaných v~jednotlivých třídách; podrobnější výklad pojmu třída lze nalézt v~následující kapitole)  
+\begin{equation} \label{GrindEQ__9_38_} 
+\hat{\mu }_{x,i} =\frac{1}{N_{i} } \sum _{j=1}^{N_{i} }x_{i,j}  , \hat{\mu }_{y,i} =\frac{1}{N_{i} } \sum _{j=1}^{N_{i} }y_{i,j}  ,  
+\end{equation} 
+\begin{equation} \label{GrindEQ__9_39_} 
+\hat{\sigma }_{x,i}^{2} =\frac{1}{N_{i} } \sum _{j=1}^{N_{i} }\left(x_{i,j} -\hat{\mu }_{x,i} \right)^{2}  , \hat{\sigma }_{y,i}^{2} =\frac{1}{N_{i} } \sum _{j=1}^{N_{i} }\left(y_{i,j} -\hat{\mu }_{y,i} \right)^{2}  .  
+\end{equation} 
+Jak jsme již uvedli v úvodu této kapitoly, měly by být hodnoty příznaků pro objekty patřící stejným třídám podobné. Hodnoty variancí ve vztazích \eqref{GrindEQ__9_39_} by proto měly být co nejmenší. Zvolené příznaky by dále měly být pokud možno nezávislé. Závislost či nezávislost příznaků lze popsat pomocí kovariance. Normalizovaná kovariance je definována vztahem 
+\begin{equation} \label{GrindEQ__9_40_} 
+\hat{\sigma }_{xy,i}^{2} =\frac{1}{N_{i} \hat{\sigma }_{x,i} \hat{\sigma }_{y,i} } \sum _{j=1}^{N_{i} }\left(x_{i,j} -\hat{\mu }_{x,i} \right)\left(y_{i,j} -\hat{\mu }_{y,i} \right) .  
+\end{equation} 
+Hodnoty normalizované kovariance vycházejí z intervalu $\langle$$-$1,1$\rangle$. Hodnota 0 vyjadřuje, že příznaky jsou nezávislé. Jiné hodnoty vyjadřují závislost. Čím větší je absolutní hodnota kovariance, tím větší je závislost. Hodnota 1 např. vyjadřuje fakt, že se jedná o příznaky zcela závislé. V~takovém případě je ovšem použití obou příznaků nadbytečné - bez újmy na kvalitě rozpoznání by bylo možné jeden z~příznaků vypustit. (Také v případě hodnoty $-$1 se jedná o naprostou závislost příznaků. Odchylky hodnot příznaků od jejich střední hodnoty však mají opačné znaménko.) Schopnost příznaků rozlišovat (separovat) mezi jednotlivými třídami lze hodnotit pomocí normalizované vzdálenosti mezi třídami, kterou lze vyjádřit následujícími vztahy:
+\begin{equation} \label{GrindEQ__9_41_} 
+\hat{D}_{x,i,j} =\frac{\left|\hat{\mu }_{x,i} -\hat{\mu }_{x,j} \right|}{\sqrt{\hat{\sigma }_{x,i}^{2} +\hat{\sigma }_{x,j}^{2} } } ,     \hat{D}_{y,i,j} =\frac{\left|\hat{\mu }_{y,i} -\hat{\mu }_{y,j} \right|}{\sqrt{\hat{\sigma }_{y,i}^{2} +\hat{\sigma }_{y,j}^{2} } } .  
+\end{equation} 
+K úspěšnému rozpoznání je důležité, aby uvedené hodnoty separačních vzdáleností mezi třídami byly pokud možno co největší.
+
+\noindent \textbf{}
+
+\noindent \textbf{9.13 Karhunen-Loéveho transformace}
+
+\noindent Karhunen-Loéveho transformace podává návod, jak získat množinu příznaků, které jsou navzájem nezávislé.\textbf{ }Předpokládejme, že \textbf{x} je náhodný vektor dimenze \textit{n} (tedy sloupcový vektor obsahující \textit{n} náhodných proměnných). Nechť \textbf{$\mu$}x je vektor středních hodnot a \textbf{C}x matice kovariance pro tento náhodný vektor. 
+
+\noindent Je tedy ,     . \eqref{GrindEQ__9_42_}
+
+\noindent Nyní vytvořme náhodný vektor \textbf{y} lineární transformací
+
+ , \eqref{GrindEQ__9_43_}
+
+\noindent kde \textbf{A} je matice, která ve svých řádcích obsahuje vlastní vektory\textbf{ v}\textit{i} matice \textbf{C}x. Pro další výklad bude užitečné, budeme-li předpokládat, že vlastní vektory jsou do řádků matice zapsány v~pořadí podle klesající hodnoty odpovídajícího vlastního čísla $\lambda$\textit{i}. Pro vektor \textbf{y} nyní vypočítáme vektor středních hodnot \textbf{$\mu$}y a matici kovariance \textbf{C}y. Dostaneme
+
+ , \eqref{GrindEQ__9_44_}
+
+ . \eqref{GrindEQ__9_45_}
+
+\noindent Protože jednotlivé řádky matice \textbf{A} jsou vlastními vektory \textbf{v}\textit{i} matice \textbf{C}x, protože platí \textbf{C}x\textbf{v}\textit{i} =$\lambda$\textit{i}\textbf{v}\textit{i} a konečně protože vlastní vektory tvoří ortonormální bázi (to platí v~případě, že vlastní čísla jsou různá, v případě vícenásobných vlastních čísel můžeme však provést ortonormalizaci), vychází
+
+ . \eqref{GrindEQ__9_46_}
+
+\noindent Zopakujme, že \textbf{C}y je kovarianční matice náhodného vektoru \textbf{y}. Připomeňme, že diagonální prvky kovarianční matice obsahují variance jednotlivých složek vektoru a nediagonální prvky pak kovariance dvou různých složek. Dále připomeňme, že nulová hodnota kovariance dvou náhodných proměnných signalizuje jejich vzájemnou nekorelovanost. Výsledek, ke kterému jsme dospěli ve vztahu \eqref{GrindEQ__9_46_}, tedy ukazuje, že lineární transformace \eqref{GrindEQ__9_43_} má za následek, že jednotlivé složky vektoru \textbf{y} jsou nekorelované. Transformace tedy odstraňuje korelaci mezi jednotlivými složkami vektoru \textbf{x}, vlastní čísla $\lambda$\textit{i} matice \textbf{C}x navíc udávají varianci jednotlivých složek transformovaného náhodného vektoru \textbf{y}. Poznamenejme, že k~transformaci \eqref{GrindEQ__9_43_} je též možné realizovat inverzní transformaci (platnost druhé rovnosti v~následujícím vztahu vyplývá z~faktu, že \textbf{A} je ortonormální)
+
+ . \eqref{GrindEQ__9_47_}
+
+\noindent Až doposud jsme se zabývali případem, kdy se při transformaci neměnil počet složek transformovaného vektoru. Vytvořme nyní matici \textbf{B} rozměru \textit{m}$\times$\textit{n} (\textit{m}$<$\textit{n}) tak, že jejích \textit{m} řádků bude obsahovat vlastní vektory matice \textbf{C}x. Vybereme při tom ty vektory, které odpovídají největším vlastním číslům. Předpokládejme nyní pro jednoduchost, že \textbf{$\mu$}x=\textbf{0}. Opět můžeme zřejmě provést lineární transformaci
+
+ . \eqref{GrindEQ__9_48_}
+
+\noindent Analogicky ke vztahu \eqref{GrindEQ__9_47_} můžeme vypočítat
+
+ . \eqref{GrindEQ__9_49_}
+
+\noindent Vztah \eqref{GrindEQ__9_48_} ukazuje, že je možné vektor \textbf{x} reprezentovat pomocí vektoru o menším počtu složek. Vztah \eqref{GrindEQ__9_49_} naznačuje, že na základě této reprezentace bude možné původní vektor opět zrekonstruovat. Samozřejmou podmínkou je, aby původní (\textbf{x}) a zrekonstruovaná  hodnota si byly co nejbližší. Lze ukázat, že pro střední kvadratickou chybu (\textit{MSE}) uvedené aproximace platí
+
+ . \eqref{GrindEQ__9_50_}
+
+\noindent Podle uvedeného vztahu je chyba reprezentace rovna součtu vlastních čísel odpovídajících těm vlastním vektorům, které nebyly zahrnuty do matice \textbf{B}. Při praktické realizaci proto do matice \textbf{B} zahrneme pouze vlastní vektory odpovídající dostatečně velkým vlastním číslům. Vlastní vektory odpovídající malým vlastním číslům lze vynechat, protože mají na přesnost reprezentace jen malý vliv.
+
+\noindent 

@@ -1,0 +1,594 @@
+\chapter{Prostor obrazových signálù}
+%
+V této kapitole bude podán pøehled základních teoretických nástrojù, které jsou potøebné pro kvalifikované zvládnutí problematiky digitálního zpracování obrazu.
+Ètenáøe zde prosíme o urèitou dávku trpìlivosti. Bez pochopení skuteèností uvedených v této kapitole se zpracováním obrazu nelze serióznì zabývat.
+Protože každý optický obraz je signálem, budeme v této kapitole ponìkud obecnìjší a místo o obrazu nebo obrazovém signálu budeme èasto obecnì hovoøit pouze o signálu.
+Závìry, které zde uvedeme, platí pro jakékoli signály, a tedy i pro signály obrazové. Obrazové signály jsou zpravidla dvojrozmìrné.
+S ohledem na tuto skuteènost budeme vztahy, které budou pozdìji prakticky využívány, ihned formulovat také v jejich dvojrozmìrných variantách.
+
+\section{Prostor signálù} \label{sec:prostor_signalu}
+
+Pøedpokládáme, že \emph{signál \index{signál}} je definován nad jistou podmnožinou (oznaème ji $\Omega$) $m$-rozmìrného euklidovského prostoru $E^m$
+(euklidovský prostor je prostor splòující Euklidovy postuláty; jedná se o bìžný metrický prostor, s níž jsme zvyklí pracovat napø. v geometrii).
+Touto podmnožinou mùže být nìjaká ohranièená nebo neohranièená souvislá oblast v $E^m$, množina jednotlivých bodù z $E^m$, ale také celý prostor $E^m$.
+Jestliže je oblast, nad níž je signál definován, souvislá, jedná se o tzv. \emph{spojitý signál \index{signál!spojitý}}.
+V dalším textu budeme \emph{souøadnice bodù \index{souøadnice!bodu}} takové oblasti oznaèovat $(x,y)$, $(u,v)$ atd.
+Jestliže je obraz definován pouze nad jednotlivými body, jedná se o tzv. \emph{diskrétní signál \index{signál!diskrétní}}.
+Velmi èasto se zde používá uspoøádání bodù v pravidelné (ekvidistantní) møížce.
+Bez újmy na obecnosti lze pak pøedpokládat, že souøadnice bodù jsou celoèíselné.
+V dalším textu budeme souøadnice bodù, nad nimiž je diskrétní obraz definován, znaèit jako $(m,n)$, $(k,l)$ atd.
+Pøi praktické implementaci na poèítaèi se používá diskrétní reprezentace.
+Spojitá reprezentace je však také užiteèná. Využijeme ji zejména pøi teoretickém odvozování.
+Ve spojitém i diskrétním pøípadì mohou mít obrazy buï koneènou a nebo i nekoneènou velikost.
+Pøedstavì o obrazu odpovídá samozøejmì více velikost koneèná (nejèastìji si pøedstavujeme, že je obraz definován nad oblastí ve tvaru obdélníka).
+Nekoneènou velikost je možné považovat za zjednodušení užiteèné pøi odvozování, které mùže být nìkdy snazší pro velikost nekoneènou než koneènou.
+
+Matematickou \emph{reprezentací signálu \index{signál!reprezentace}} je funkce $f:\Omega \rightarrow \gamma$, kde $\gamma$ je obor hodnot signálu.
+Množina $\gamma$ mùže být napø. množinou reálných nebo celých èísel (obrazy ve stupních šedi), množinou komplexních èísel
+(obrazy vznikající nìkterými transformacemi), množinou vektorù o tøech složkách (v barevných obrazech bývá èasto barva každého
+bodu popsána trojicí $R$, $G$, $B$, jejíž jednotlivé èleny udávají intenzitu èervené, zelené a modré barevné složky)
+nebo podmnožinou nìkteré z uvedených množin.
+O signálu $f$ øekneme, že je $m$-rozmìrným signálem.
+Množinu funkcí realizujících zobrazení $\Omega \rightarrow \gamma$ nazveme $m$-rozmìrným \emph{signálovým prostorem \index{prostor!signálový}} $\mathscr{S}$.
+Je tedy $\mathscr{S} = \{ f | f:\Omega \rightarrow \gamma \}$.
+Úvahy provedené dále v této kapitole se budou týkat zejména signálù reálných a komplexních.
+Doplòující informace, které se týkají signálù reprezentovaných celými èísly a vektory, uvedeme na vhodném místì pozdìji.
+
+\begin{prik} \label{prik:prostor_signalu}
+Mìjme obraz v úrovních jasu rozmìru $3 \times 3$ pixely.
+Hodnoty jasu v každém pixelu mohou být z rozsahu $0, \dots, 9$.
+Urèete, kolik prvkù má v daném pøípadì prostor obrazových signálù $\mathscr{S}$.
+\end{prik}
+\begin{reseni}
+S uvážením podobnosti s dekadickými èísly o devíti øádech snadno docházíme k závìru, že hledaný poèet prvkù je $10^9$.
+\end{reseni}
+
+\subsection{Linearita prostoru signálù, báze v prostoru signálù}
+%
+Pøi zpracování signálù dosti èasto pøedpokládáme, že pro signály platí \emph{princip superpozice \index{princip superpozice}}.
+Matematickým vyjádøením této pøedstavy je, že signálový prostor pøedpokládáme lineární.
+Zopakujme, že v lineárním prostoru je definována operace sèítání prvkù a násobení prvku konstantou (konstantou mùže být reálné nebo komplexní èíslo).
+Pøipomeòme dále, že v lineárním prostoru existuje nulový prvek a ke každému prvku existuje prvek opaèný.
+
+Ve zpracování signálu a obrazu hraje významnou úlohu \emph{báze \index{báze}} v prostoru signálù, což je pojem, který v dalším textu také pøipomeneme.
+Uvažujme nejprve prostor jednorozmìrných diskrétních signálù (oznaème jej $\mathscr{S}$), kde definièním oborem $\Omega$ je množina $M$ bodù.
+Každý bod je popsán svým indexem $m$. Bez újmy na obecnosti lze pøedpokládat, že index nabývá hodnot $0, 1, \dots, M-1$.
+V prostoru $\mathscr{S}$ uvažujme množinu $\{\varphi_k(m) | k = 0, 1, \dots, N-1 \}$ obsahující $N$ diskrétních funkcí definovaných nad $\Omega$.
+Funkce této množiny nazveme lineárnì závislými, jestliže lze najít koeficienty $a_k$ (z nichž alespoò jeden je rùzný od nuly) tak, že platí vztah
+\begin{equation} \label{eq:1_1}
+    \sum\limits_{k=0}^{N-1} a_k \varphi_k (m) = 0 \, .
+\end{equation}
+V opaèném pøípadì funkce nazveme lineárnì nezávislými.
+
+Množina ${\varphi_k(m)}$ je úplná v daném prostoru signálù, jestliže je možné každou funkci z tohoto prostoru vyjádøit jako lineární kombinaci funkcí z této množiny.
+Lineárnì nezávislý systém funkcí ${\varphi_k(m)}$, který je úplný, nazveme bází prostoru $\mathscr{S}$.
+Každou funkci $f(m)$ prostoru $\mathscr{S}$ lze vyjádøit jako lineární kombinaci bázových funkcí
+\begin{equation} \label{eq:1_2}
+    f(m) = \sum\limits_{k=0}^{N-1} F_k \varphi_k (m) = \sum\limits_{k=0}^{N-1} F(k) \varphi_k (m) \, ,
+\end{equation}
+kde $F_k$ jsou koeficienty, které obecnì mohou být komplexní. Protože na $\mathscr{S}$ mùžeme pohlížet jako na prostor $M$-rozmìrných vektorù, je zøejmé, že bázových funkcí je právì $M$.
+Pro zvolený systém bázových funkcí lze proto každý signál $f(m)$ prostoru $\mathscr{S}$ reprezentovat uspoøádanou $M$-ticí $(F_0, F_1, \dots, F_{M-1})$ koeficientù.
+Na tuto $M$-tici mùžeme ovšem také pohlížet jako na diskrétní funkci $F(k)$, $k = 0, 1, \dots, M-1$, èehož jsme již ve vztahu \eqref{eq:1_2} využili.
+
+Analogicky lze postupovat také pro jednorozmìrné spojité signály.
+V tomto pøípadì je definièním oborem signálù nespoèetná množina $\Omega \subseteq \mathrm{E}^1$,
+a proto lze oèekávat, že i báze bude obecnì tvoøena nespoèetnou množinu funkcí.
+Takovou množinu mùžeme formálnì zapsat jako jedinou funkci $\varphi(u,x)$ dvou argumentù,
+kde $x \in \Omega$ a $u\in U$, $U \subseteq \mathbb{R}$ ($\mathbb{R}$ znaèí množinu reálných èísel).
+%Tuto funkci budeme nazývat bázovým jádrem.
+Libovolný spojitý signál $f(x)$ lze pak vyjádøit jako lineární kombinaci pomocí vztahu
+\begin{equation} \label{eq:1_3}
+    f(x) = \int\limits_{U} F(u) \varphi (u, x)\, \dif u \, .
+\end{equation}
+S ohledem na zvolenou bázi $\varphi(u,x)$ lze tedy každý prvek $f(x)$ prostoru spojitých signálù reprezentovat pomocí funkce $F(u)$.
+
+Závìry zatím uvedené snadno zobecníme také na signály dvojrozmìrné.
+Pøedpokládáme, že v pøípadì dvojrozmìrného diskrétního signálu je $\Omega = \{(m,n) | m = 0, 1, \dots, M-1; \, n = 0, 1, \dots, N-1 \}$.
+Celkový poèet bázových funkcí je proto $M \times N$.
+V pøípadì dvojrozmìrného spojitého signálu je podle oèekávání poloha každého bodu popsána dvojicí souøadnic $x$, $y$ a dále je $U\subseteq \mathbb{R} \times \mathbb{R}$.
+Pro dvojrozmìrný diskrétní a dvojrozmìrný spojitý signál tak postupnì máme
+\begin{equation} \label{eq:1_4}
+    f(m, n) = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} F(k, l) \varphi_{k,l} (m, n) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_5}
+    f(x, y) = \iint\limits_{U} F(u, v) \varphi (u, v, x, y)\, \dif u\, \dif v \, .
+\end{equation}
+Jak je zøejmé ze vztahu \eqref{eq:1_4}, nahlížíme ve shodì s poznámkou ke vztahu \eqref{eq:1_2} v diskrétním pøípadì na koeficienty
+v lineární kombinaci jako na dvojrozmìrnou funkci $F(k,l)$, $k = 0, 1, \dots, M-1$, $l = 0, 1, \dots, N-1$.
+
+\begin{prik}
+Navrhnìte bázi pro prostor obrazových signálù z pøíkladu \ref{prik:prostor_signalu} z pøedchozí podkapitoly.
+\end{prik}
+
+\begin{reseni}
+Je zøejmé, že hledaná báze musí obsahovat devìt funkcí (obrazù) definovaných nad devíti pixely obrazu.
+Jednou z možností je zvolit funkce tak, že každá bude obsahovat vždy jednu hodnotu 1 a ostaní hodnoty budou 0.
+Každá z funkcí bude mít pøi tom hodnotu 1 na jiném místì.
+Bázi takto konstruovanou jistì velmi dobøe znáte napø. z práce s trojrozmìrnými vektorovými prostory.
+Uvedené pøipomenutí se hodí. Na náš prostor obrazù majících $3 \times 3$ pixely mùžeme totiž také nahlížet jako na prostor vektorù o devíti prvcích.
+Báze, kterou jsme nyní navrhli, je ortonormální. Pozdìji se seznámíme s bázemi, které jsou navženy ménì pøímoèaøe.
+\end{reseni}
+
+
+\subsection{Skalární souèin nad prostorem signálù}
+%=================================================
+Øešení úloh se usnadní, jestliže nad prostorem signálù zavedeme \emph{skalární souèin \index{skalární souèin}}. Nech $\mathscr{S}$ je lineární prostor signálù.
+Skalární souèin $\langle \varphi, \psi \rangle$ pøiøazuje každým dvìma prvkùm $\varphi$, $\psi$ tohoto prostoru èíslo
+(obecnì se jedná o èíslo komplexní) tìchto vlastností:
+\begin{equation} \label{eq:1_6}
+    \langle \varphi, \psi \rangle = \langle \psi, \varphi \rangle^*  \, ,
+\end{equation}
+\begin{equation} \label{eq:1_7}
+    \langle a \varphi_1 + b \varphi_2, \psi \rangle = a \langle \varphi_1, \psi \rangle + b \langle \varphi_2, \psi \rangle \, ,
+\end{equation}
+\begin{equation} \label{eq:1_9}
+    \langle \varphi, \varphi \rangle \geq 0 \, , \qquad \langle \varphi, \varphi \rangle = 0 \Leftrightarrow \varphi = 0 \, ,
+\end{equation}
+kde $a$, $b$ jsou èísla (obecnì opìt komplexní) a * oznaèuje èíslo komplexnì sdružené.
+Prostor, v~nìmž je zaveden skalární souèin, se nazývá \emph{unitárním prostorem \index{prostor!unitární}}.
+Pomocí skalárního souèinu lze zavést normu $\parallel \varphi \parallel$ prvku $\varphi$ jako odmocninu ze skalárního souèinu
+\begin{equation}
+   \parallel \varphi \parallel = \sqrt{\langle \varphi, \varphi \rangle} \, .
+\end{equation}
+
+\noindent
+Prvky $\varphi$, $\psi$ unitárního prostoru nazveme ortogonálními, jestliže platí
+\begin{equation} \label{eq:1_10}
+    \langle \varphi, \psi \rangle = 0 \, .
+\end{equation}
+Nech \{$\varphi_k$\} je systém prvkù unitárního prostoru. Tento systém nazveme ortogonálním, jestliže platí
+\begin{equation} \label{eq:1_11}
+    \langle \varphi_k, \varphi_l \rangle \left\{
+    \begin{array}{l} \neq 0,
+        \quad k = l \\ = 0,
+        \quad k \neq l
+    \end{array} \right. .
+\end{equation}
+Systém \{$\varphi_k$\} nazveme ortonormálním, jestliže navíc platí
+\begin{equation} \label{eq:1_12}
+    \langle \varphi_k, \varphi_l \rangle = \delta(k - l) \, ,
+\end{equation}
+kde $\delta ( i )$ je tzv. \emph{Kroneckerova funkce \index{funkce!Kroneckerova}}, která je definována nad množinou celých èísel vztahem
+\begin{equation} \label{eq:1_13}
+    \delta(i) = \left\{
+    \begin{array}{l} 1,
+        \quad i = 0 \\ 0,
+        \quad i = \pm 1, \pm 2, \ldots
+    \end{array} \right. .
+\end{equation}
+
+Uvažujme nyní unitární prostor $\mathscr{S}$, ve kterém je systém \{$\varphi_k$\} bází.
+Jestliže je systém \{$\varphi_k$\} ortogonální popø. ortonormální, pak hovoøíme o ortogonální nebo o ortonormální bázi.
+K provìøení úplnosti systému funkcí \{$\varphi_k$\} v $\mathscr{S}$ lze použít následující vìtu.
+Systém funkcí \{$\varphi_k$\} je úplný v $\mathscr{S}$ právì tehdy, jestliže v $\mathscr{S}$ neexistuje prvek (s výjimkou nulového), který by byl ortogonální ke všem prvkùm systému \{$\varphi_k$\} (vìtu uvádíme bez dùkazu).
+
+Zvolme nyní v prostoru $\mathscr{S}$ diskrétních signálù konkrétní skalární souèin a ukažme dùsledky této volby.
+Definièním oborem funkcí prostoru $\mathscr{S}$ nech je nejprve množina $\Omega = \{0, 1, \dots, M-1 \}$ a $\varphi(m)$, $\psi(m)$ nech jsou funkce z $\mathscr{S}$.
+Skalární souèin v prostoru $\mathscr{S}$ zaveïme takto
+\begin{equation} \label{eq:1_14}
+    \langle \varphi(m), \psi(m) \rangle = \sum\limits_{m=0}^{M-1} \varphi (m) \psi^*(m) \, ,
+\end{equation}
+kde * oznaèuje komplexnì sdruženou funkci.
+Na ètenáøi ponecháváme, aby ukázal, že takto definovaný skalární souèin má vlastnosti \eqref{eq:1_6} až \eqref{eq:1_9}.
+Nech $\{ \varphi_k(m) \}$ je báze v prostoru $\mathscr{S}$.
+Podmínku \eqref{eq:1_12} ortonormality lze nyní rozepsat ve tvaru
+\begin{equation} \label{eq:1_15}
+    \sum\limits_{m=0}^{M-1} \varphi_k (m) \varphi_l^*(m) = \delta(k - l) \, .
+\end{equation}
+Lze ukázat, že uvedenému vztahu je ekvivalentní vztah %FIXME
+\begin{equation} \label{eq:1_16}
+    \sum\limits_{k=0}^{M-1} \varphi_k (m) \varphi_k^*(n) = \delta(m-n) \, .
+\end{equation}
+
+Analogicky lze postupovat také ve spojitém pøípadì. Nech $\mathscr{S}$ je prostor spojitých signálù.
+V $\mathscr{S}$ uvažujme bázi $\varphi ( u, x )$, $x \in \Omega$, $u \in U$.
+Podmínka ortonormality báze má nyní tvar
+\begin{equation} \label{eq:1_17}
+    \langle \varphi(u, x), \varphi(v, x) \rangle = \delta(u - v) \, ,
+\end{equation}
+kde $\delta(u)$ je v tomto pøípadì tzv. Diracùv impulz.
+(I v dalším textu budeme podle potøeby symbolu $\delta$ používat k oznaèení buï Kroneckerovy funkce nebo Diracova impulzu.
+O kterou funkci jde, bude vždy zøejmé z kontextu).
+Diracùv impuls nabývá nenulové hodnoty pouze pro $u = 0$, kde je jeho funkèní hodnota nekoneèno.
+Podrobnìji o této funkci pojednáme v odstavci \ref{sec:dirac_impulse}.
+Nech $\varphi(x)$, $\psi(x)$ jsou funkce z $\mathscr{S}$.
+V prostoru $\mathscr{S}$ zavedeme skalární souèin pøedpisem
+\begin{equation} \label{eq:1_18}
+    \langle \varphi(x), \psi(x) \rangle = \int\limits_\Omega \varphi(x) \psi^*(x) \, \dif x \, .
+\end{equation}
+\noindent Ovìøení, že takto zavedený skalární souèin má vlastnosti \eqref{eq:1_6} až \eqref{eq:1_9},
+opìt ponecháváme ètenáøi jako cvièení. Podmínku ortonormality báze mùžeme nyní zapsat ve tvaru
+\begin{equation} \label{eq:1_19}
+    \int\limits_\Omega \varphi(u, x) \varphi^*(v, x)\, \dif x = \delta(u - v) \, .
+\end{equation}
+Opìt lze ukázat, že uvedenému vztahu je ekvivalentní vztah %FIXME
+\begin{equation} \label{eq:1_20}
+    \int\limits_U \varphi(u, x) \varphi^*(u, y)\, \dif u = \delta(x - y) \, .
+\end{equation}
+
+Zobecnìní dosud uvedeného na dvojrozmìrné signály je pøímoèaré.
+V pøípadì dvojrozmìrných signálù máme $\Omega \subseteq E^2$.
+Vztahùm \eqref{eq:1_14} až \eqref{eq:1_20} postupnì odpovídají následující vztahy
+(vztahy \eqref{eq:1_21}, \eqref{eq:1_24} podávají návod na výpoèet skalárního souèinu;
+vztahy \eqref{eq:1_22}, \eqref{eq:1_23}, \eqref{eq:1_25}, \eqref{eq:1_26} vyjadøují podmínku ortonormality):
+\begin{equation} \label{eq:1_21}
+    \langle \varphi(m, n), \psi(m, n) \rangle = \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} \varphi(m, n) \psi^*(m, n) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_22}
+    \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} \varphi_{k_1, l_1} (m, n) \varphi_{k_2, l_2}^*(m, n)
+    = \delta(k_1 - k_2) \delta(l_1 - l_2) = \delta(k_1 - k_2, l_1 - l_2) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_23}
+    \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} \varphi_{k, l} (m_1, n_1) \varphi_{k, l}^*(m_2, n_2) = \delta(m_1 - m_2, n_1 - n_2) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_24}
+    \langle \varphi(x, y), \psi(x, y) \rangle = \iint\limits_{\Omega} \varphi(x, y) \psi^*(x, y)\, \dif x \, \dif y \, ,
+\end{equation}
+\begin{equation} \label{eq:1_25}
+    \iint\limits_{\Omega} \varphi(u_1, v_1, x, y) \varphi^*(u_2, v_2, x, y)\, \dif x\, \dif y = \delta(u_1 - u_2, v_1 - v_2) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_26}
+    \iint\limits_{U} \varphi(u, v, x_1, y_1) \varphi^*(u, v, x_2, y_2)\, \dif u \, \dif v = \delta(x_1 - x_2, y_1 - y_2) \, .
+\end{equation}
+Poznamenejme, že výše uvedených vztazích jsme použili dvojrozmìrnou Kroneckerovu funkci, kterou lze definovat vztahem $\delta(i,j) = \delta(i)\delta(j)$, a dvojrozmìrný Diracùv impulz $\delta(x,y) = \delta(x)\delta(y)$.
+
+
+\subsection{Reprezentace signálu pomocí bázových funkcí}
+%=======================================================
+V této podkapitole ukážeme, jak je možné vyjádøit obraz jako lineární kombinaci zvolených bázových funkcí.
+Uvedený postup pozdìji vícekrát využijeme. Je základem transformací obrazu, napø. transformace Fourierovy.
+Nech $\mathscr{S}$ je unitární prostor diskrétních signálù definovaných nad množinou $M$ bodù,
+nech $f(m)$ je signál z~tohoto prostoru a $\{ \varphi_k( m ) | k = 0, 1, \dots, M-1 \}$
+nech je ortonormální báze v $\mathscr{S}$.
+Ze vztahu \eqref{eq:1_2} víme, že $f( m )$ je možné vyjádøit jako lineární kombinaci
+\begin{equation} \label{eq:1_27}
+    f(m) = \sum\limits_{l=0}^{M-1} F_l \varphi_l (m) \, .
+\end{equation}
+%
+Provedeme-li skalární souèin obou stran rovnice \eqref{eq:1_27} s funkcí $\varphi_k(m)$ báze, pak získáme
+\begin{equation} \label{eq:1_28}
+    \langle f(m), \varphi_k(m) \rangle = \sum\limits_{l=0}^{M-1} F_l \langle \varphi_l(m), \varphi_k(m) \rangle \, .
+\end{equation}
+%
+S ohledem na pøedpokládanou ortonormalitu báze získáváme hledaný výsledek
+\begin{equation} \label{eq:1_29}
+    F_k = \langle f(m), \varphi_k(m) \rangle \, .
+\end{equation}
+%
+Rozepíšeme-li skalární souèin podle vztahu \eqref{eq:1_14} a zapíšeme-li $M$-tici $F_0$, $F_1$, \dots, $F_{M-1}$
+formálnì jako funkci, pak lze vztah \eqref{eq:1_29} pøepsat do tvaru
+\begin{equation} \label{eq:1_30}
+    F(k) = \sum\limits_{m=0}^{M-1} f(m) \varphi_k^*(m) \, .
+\end{equation}
+%
+Vztah \eqref{eq:1_30} podává návod, jak pro zadaný signál $f(m)$ a zadanou ortonormální bázi $\{ \varphi_k(m) \}$ prostoru $\mathscr{S}$ urèit $M$-tici koeficientù ($F_0$, $F_1$, \dots, $F_{M-1}$), které signál reprezentují.
+
+Analogicky je opìt možné postupovat také pro spojité signály.
+Nech $\mathscr{S}$ je unitární prostor jednorozmìrných spojitých signálù, $\varphi ( u, v )$ nech je ortonormální báze
+a $f(x)$ nech je signál v $\mathscr{S}$. Ze vztahu \eqref{eq:1_3} víme, že $f$ je možné vyjádøit jako lineární kombinaci
+\begin{equation} \label{eq:1_31}
+    f(x) = \int\limits_{U} F(v) \varphi(v, x)\, \dif v \, .
+\end{equation}
+%
+Provedeme-li skalární souèin obou stran rovnice \eqref{eq:1_31} s $\varphi ( u, x )$, pak po úpravì získáme
+\begin{equation} \label{eq:1_32}
+    F(u) = \langle f(x), \varphi(u, x) \rangle \, .
+\end{equation}
+%
+Rozepíšeme-li skalární souèin podle \eqref{eq:1_18}, pak lze vztah \eqref{eq:1_32} pøepsat na
+\begin{equation} \label{eq:1_33}
+    F(u) = \int\limits_{\Omega} f(x) \varphi^*(u,x)\, \dif x \, .
+\end{equation}
+%
+Vztah \eqref{eq:1_33} opìt podává návod, jak pro zadaný signál $f(x)$ a pro zadanou ortonormální bázi $\varphi ( u, x )$ urèit funkci $F(u)$, která signál reprezentuje.
+Jak je již obvyklé, získáme podobnì snadno také pøedpisy pro funkce $F( k, l )$, $F( u, v )$ použité ve vztazích \eqref{eq:1_4} a \eqref{eq:1_5}:
+\begin{equation} \label{eq:1_34}
+    F(k, l) = \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} f(m, n) \varphi_{k, l}^*(m, n) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_35}
+    F(u, v) = \iint\limits_{\Omega} f(x, y) \varphi^*(u, v, x, y)\, \dif x \, \dif y \, .
+\end{equation}
+\begin{prik}
+Promyslete, co by se stalo, kdyby báze, s níž pracujeme, nebyla ortonormální, ale nejprve pouze ortogonální a pak zcela obecná.
+\end{prik}
+\begin{reseni}
+Uvažujme diskrétní jednorozmìrný pøípad. V pøípadì ortogonální báze není situace o mnoho obtížnìjší než u báze ortonormální. Opìt se snadno podaøí nalézt explicitní vztah pro hledané koeficienty. Potíže ale nastanou v pøípadì báze zcela obecné. Zde je pak nutné koeficenty urèit øešením soustavy rovnic. Protože poèet bázových funcí je v praktických pøípadech velký, je také velká soustava, která se má øešit. Teï je již jasné, proè v minulosti byly (a dodnes také jsou) ortonormální èi ortogonální báze tak akcentovány. Øešení pro obecnou bázi døíve nebylo prakticky možné.
+\end{reseni}
+
+
+\section{Operace nad prostorem signálù}
+%======================================
+Matematickým modelem úprav obrazu jsou operace nad prostorem obrazových signálù.
+Prùpravy získané v této podkapitole opìt pozdìji bohatì využijeme.
+Nech $\mathscr{S}$ je prostor signálù.
+Modelem úpravy signálu je unární nebo $n$-ární operátor $\mathscr{O}$ realizující zobrazení $\mathscr{S} \rightarrow \mathscr{S}$, popøípadì $\mathscr{S}^n \rightarrow \mathscr{S}$.
+Jestliže, s ohledem na naši aplikaci, uvažujeme prostor dvojrozmìrných signálù a jestliže $f(x,y), f_1(x,y), \dots, f_n(x,y)$ $ \in \mathscr{S} $ jsou prvky tohoto prostoru, pak mùžeme úpravu signálu popsat vztahy
+\begin{equation} \label{eq:1_36}
+    g(x, y) = \mathscr{O}\left\{ f(x, y) \right\},
+\end{equation}
+\begin{equation} \label{eq:1_37}
+    g(x, y) = \mathscr{O}\left\{ f_1(x, y), f_2(x, y), \ldots, f_n(x, y) \right\},
+\end{equation}
+kde $g(x,y)$ je opìt prvkem uvažovaného prostoru.
+Velmi èasto pøedpokládáme, že operátor $\mathscr{O}$ má nìjaké speciální vlastnosti; nejèastìji se jedná o linearitu a invarianci vùèi posuvu.
+Pojednáme o nich v následujících podkapitolách.
+
+\subsection{Lineární operace}
+%============================
+Vìtšina výsledkù v teorii zpracování signálù je odvozena za pøedpokladu, že úprava signálu je popsána operátorem, který je lineární.
+Vysvìtleme tento pojem. Nech $f(x,y), g(x,y) \in \mathscr{S}$ jsou signály; $a$, $b$ nech jsou reálná nebo komplexní èísla.
+Operátor $\mathscr{O}$ nazveme lineárním operátorem, jestliže platí
+\begin{equation} \label{eq:1_38}
+    \mathscr{O} \left\{ a f(x, y) + b g(x, y) \right\} = a \mathscr{O}\left\{ f(x, y) \right\} + b \mathscr{O} \left\{ g(x, y) \right\}.
+\end{equation}
+Uvedený vztah mùžeme samozøejmì zobecnit pro libovolný poèet sèítancù.
+
+\subsection{Operace invariantní vùèi posuvu}
+%===========================================
+Nìkdy požadujeme, aby mìl operátor kromì linearity ještì nìkteré další vlastnosti.
+Velmi èasto to bývá invariance operátoru vùèi posuvu, která je významnou vlastností ve zpracování obrazu.
+Pokud bychom ji nepøedpokládali, nebylo by možné, jak dále uvidíme, odvodit mnoho užiteèných výsledkù.
+
+Nech $f(x,y)$ je signál.
+Pøedpokládejme, že aplikací operátoru $\mathscr{O}$ na signál $f$ obdržíme signál $g$; je tedy $g(x,y) = \mathscr{O} \{f(x,y) \}$.
+Operátor $\mathscr{O}$ nazveme invariantním vùèi posuvu, jestliže pro libovolný signál $f(x,y)$
+a pro každou dvojici $a$, $b$ vyplývá ze vztahu $g(x,y) = \mathscr{O} \{f(x,y)\}$, že platí také
+\begin{equation} \label{eq:1_39}
+    g(x-a, y-b) = \mathscr{O}\left\{ f(x-a, y-b) \right\} \, .
+\end{equation}
+Výše uvedené mùžeme vyslovit také ménì formálnì.
+Jestliže operátor invariantní vùèi posuvu aplikujeme na dva vzájemnì posunuté, ale jinak shodné signály,
+pak výsledkem operace jsou signály, které jsou také vzájemnì posunuté, ale jinak shodné.
+Vzájemný posuv výsledných signálù je pøi tom stejný jako posuv signálù vstupních.
+
+\subsection{Diracùv impulz} \label{sec:dirac_impulse} \index{Diracùv impulz}
+%====================================================
+Mnoho pozoruhodných výsledkù ve zpracování signálù bylo odvozeno za použití tzv. impulzové funkce - Diracova impulzu.
+Tento odstavec proto vìnujeme uvedené funkci a jejím vlastnostem.
+Ètenáøe, který se snad hloubìji zabývá o matematiku prosíme o urèitou shovívavost k výkladu, který bude následovat.
+Výklad je zamìøen zejména na pochopení faktù, které jsou prakticky využitelné ve zpracování signálù.
+Pokud bychom požadovali výklad striktnì matematicky korektní, bylo by zapotøebí vzít v úvahu, že Diracùv impulz, pøesnì vzato, vlastnì ani není funkcí, která by splòovala všechny požadavky, které na funkci obvykle klademe (nevyhovuje napø. Lebesguovì teorii integrování).
+
+Pro další úvahy je užiteèné nejprve zavést funkci $\mathrm{rect}(x,y)$, která je definována pøedpisem
+\begin{equation} \label{eq:1_40}
+    \mathrm{rect}(x, y) = \left\{
+    \begin{array}{cc}
+    1, & \left( |x| \leq \frac{1}{2} \right) \cap \left( |y| \leq \frac{1}{2} \right) \\
+    0, & \mathrm{jinak}
+    \end{array} \right. .
+\end{equation}
+Dále zaveïme funkci
+\begin{equation} \label{eq:1_41}
+    \delta_n(x, y) = n^2 \mathrm{rect}(nx, ny), \quad n = 1, 2, 3, \dots
+\end{equation}
+\noindent tj.
+\begin{equation}
+    \delta_n(x, y) = \left\{
+    \begin{array}{cc}
+    n^2, & \left( |x| \leq \frac{1}{2n} \right) \cap \left( |y| \leq \frac{1}{2n} \right) \\
+    0, & \mathrm{jinak}
+    \end{array} \right. . \nonumber
+\end{equation}
+S ohledem na to, jak byla funkce zavedena, je zøejmé, že platí
+\begin{equation} \label{eq:1_42}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} \delta_n(x, y)\, \dif x \, \dif y = 1 \, .
+\end{equation}
+
+\noindent
+Pøedstavme si nyní pøípad, kdy $n \rightarrow \infty$.
+Funkce $\delta_\infty (x,y)$ se nazývá Diracùv impulz.
+Pro Diracùv impulz budeme v dalším textu používat jednoduššího zápisu $\delta(x,y)$.
+Je zøejmé, že pro všechna $(x,y) \neq (0,0)$ je funkèní hodnota Diracova impulzu $\delta(x,y) = 0$, v bodì $(0,0)$ je hodnota nekoneèno.
+Dále je zøejmé, že platí
+\begin{equation} \label{eq:1_43}
+    \delta(-x, -y) = \delta(x, y) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_44}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} \delta(x, y)\, \dif x \, \dif y = 1 \, .
+\end{equation}
+
+Pro odvození jedné z nejvýznaènìjších vlastností Diracova impulzu mìjme funkci $f(x,y)$ a uvažujme integrál
+(výraz na pravé stranì následující rovnice snadno obdržíme s využitím døíve uvedené definice funkce $\delta_n$)
+\begin{equation} \label{eq:1_45}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(x, y) \delta_n(x, y)\, \dif x \, \dif y
+    = n^2 \int\limits_{-1/2n}^{1/2n} \int\limits_{1/2n}^{1/2n} f(x, y)\, \dif x \, \dif y \, .
+\end{equation}
+Z výrazu na pravé stranì rovnice \eqref{eq:1_45} vidíme, že integrál na levé stranì rovnice vyjadøuje støední hodnotu
+funkce $f(x,y)$ v oblasti nad ètvercem o stranách $1/n$ se støedem v poèátku souøadné soustavy.
+Pro $n \rightarrow \infty$ pak proto obdržíme støední hodnotu nad nekoneènì malým ètvercem se støedem v poèátku,
+což je funkèní hodnota $f(0,0)$. Je tedy
+\begin{equation} \label{eq:1_46}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(x, y) \delta(x, y)\, \dif x \, \dif y = f(0, 0) \, .
+\end{equation}
+Posuneme-li impulz do bodu $(a,b)$, pak analogicky máme
+\begin{equation} \label{eq:1_47}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(x, y) \delta(x-a, y-b)\, \dif x \, \dif y = f(a, b) \, .
+\end{equation}
+Poznamenejme, že vlastnost popsaná vztahem \eqref{eq:1_47} má zásadní význam a èasto se jí používá.
+
+Koneènì na závìr tohoto odstavce uvedeme ještì jednu vlastnost, kterou pozdìji upotøebíme.
+Vlastnost je vyjádøena vztahy
+\begin{eqnarray} \label{eq:1_48}
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} \exp \left[ -\mathrm{j} 2 \pi \left(ux + vy\right) \right] \, \dif u \, \dif v &=& \delta(x, y) \, , \nonumber \\
+    \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} \exp \left[ -\mathrm{j} 2 \pi \left( ux + vy \right) \right] \, \dif x \, \dif y &=& \delta(u, v) \, ,
+\end{eqnarray}
+kde j je komplexní jednotka. Doporuèujeme ètenáøi, aby se alespoò neformálnì pokusil uvedenou vlastnost zdùvodnit.
+Návod: Uvažte, že pro $x=y=0$ se v prvním pøípadì jedná o integraci funkce nabývající hodnoty 1 nad nekoneènou oblastí.
+Pro $x \neq 0$, $y \neq 0$ se podle Eulerova vztahu $e^{\mathrm{j}\varphi} = \cos\varphi + \mathrm{j} \sin\varphi$
+jedná o integraci funkcí typu $\cos\varphi\cos\psi$, $\cos\varphi\sin\psi$, $\sin\varphi\cos\psi$, $\sin\varphi\sin\psi$
+($\varphi=2\pi ux$, $\psi=2\pi vy$) nad nekoneènou oblastí. Obdobnì lze postupovat i v pøípadì druhého vztahu.
+
+\begin{prik}
+Uvažujte Gaussovu funkci $ \frac{1}{\sigma \sqrt{2 \pi}} \exp(- \frac{x^2}{2 \sigma^2} )$, kterou asi dobøe znáte z kurzù o pravdìpodobnosti, kde popisuje tzv. normální rozložení hustoty pravdìpodobnosti.
+Asi také víte, jaký význam má parametr $\sigma$ a jak ovlivòuje tvar funkce.
+Pokuste se pøedstavit si limitní pøípad, kdy $\sigma \rightarrow 0$. Jakou funkci obdržíte?
+\end{prik}
+\begin{reseni}
+Odbržíte Diracùv impulz $\delta(x)$.
+\end{reseni}
+
+\subsection{Lineární sumace bodových zdrojù, konvoluce} \label{sec:lin_sum_bod_zdroju}
+%=====================================================================================
+Již døíve jsme poznamenali, že na vìtšinu úprav obrazu lze pohlížet jako na operátor.
+Zásadní otázkou zùstává, jak úèinek operátoru vypoèítat a jak operátor nìjakým univerzálním a praktickým zpùsobem popsat.
+V této podkapitole ukážeme øešení obou problémù.
+Zavedeme k tomu pojem konvoluce, což je operace, která se ve zpracování obrazu používá mimoøádnì èasto.
+Jak se v prùbìhu výkladu ukáže, nelze konvoluce využít k výpoètu úèinku zcela obecných operátorù,
+ale jen tìch, které jsou lineární a invariantní vùèi posunu.
+To však konvoluci na významu neubírá.
+
+Uvažujme funkci $f(x,y)$. Podle vztahu \eqref{eq:1_47} mùžeme $f(x,y)$ s využitím Diracova impulzu zapsat ve tvaru
+\begin{equation} \label{eq:1_49}
+    f(x, y) = \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(a, b) \delta(a-x, b-y) \, \dif a \, \dif b \, .
+\end{equation}
+Protože se pro Diracùv impulz používá také název \emph{bodový zdroj \index{bodový zdroj}}, øíkáme, že jsme funkci $f(x,y)$ zapsali ve formì lineární sumace bodových zdrojù.
+Aby lépe vynikly vlastnosti uvedeného zápisu, zapíšeme integrál ze vztahu \eqref{eq:1_49} na okamžik ve tvaru sumace. Dostaneme vztah
+\begin{equation} \label{eq:1_50}
+    f(x, y) = \sum\limits_{i} \sum\limits_{j} f(a_i, b_j) \delta(a_i-x, b_j-y) \Delta a_i \Delta b_j \, .
+\end{equation}
+Je užiteèné poznamenat, že hodnota $f(a_i,b_j)$ ve vztahu \eqref{eq:1_50} je na každém jednom intervalu konstantní, což pozdìji umožní výhodnì využít pøedpokládané linearity operátoru.
+
+Pøedpokládejme nyní, že na funkci $f(x,y)$ chceme aplikovat operátor $\mathscr{O}$.
+Budeme pøedpokládat, že operátor $\mathscr{O}$ je lineární a invariantní vùèi posuvu.
+Aplikací operátoru získáme výsledek $g(x,y)$. Máme
+\begin{equation} \label{eq:1_51}
+    g(x,y) = \mathscr{O} \left\{ f(x,y) \right\} \, .
+\end{equation}
+Zapíšeme-li funkci $f(x,y)$ podle vztahu \eqref{eq:1_49} jako lineární sumu bodových zdrojù, dostaneme
+\begin{equation} \label{eq:1_52}
+    g(x,y) = \mathscr{O} \left\{ f(x,y) \right\}
+    = \mathscr{O} \left\{ \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(a,b) \delta(a-x,b-y) \, \dif a \, \dif b \right\} \, .
+\end{equation}
+Protože je podle pøedpokladu operátor $\mathscr{O}$ lineární, dostáváme dále (viz též vztah \eqref{eq:1_50})
+\begin{equation} \label{eq:1_53}
+    g(x,y) = \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(a,b) \mathscr{O} \left\{ \delta(a-x,b-y) \, \dif a \, \dif b \right\}
+\end{equation}
+\noindent a podle vztahu \eqref{eq:1_43} také
+\begin{equation} \label{eq:1_54}
+    g(x,y) = \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(a,b) \mathscr{O} \left\{ \delta(x-a,y-b) \, \dif a \, \dif b \right\} \, .
+\end{equation}
+Pøedpokládejme dále, že podrobíme-li Diracùv impulz $\delta(x,y)$ operaci $\mathscr{O}$, získáme funkci $h(x,y) = \mathscr{O} \{ \delta(x,y) \}$.
+Funkce $h$ se nazývá impulzová charakteristika operátoru $\mathscr{O}$ (každý operátor invariantní vùèi posuvu je touto charakteristikou zcela popsán).
+Protože je podle pøedpokladu operátor $\mathscr{O}$ invariantní vùèi posuvu, je $\mathscr{O}\{ \delta(x-a,y-b) \} = h(x-a, y-b)$.
+S uvážením této skuteènosti je tedy
+\begin{equation} \label{eq:1_55}
+    g(x, y) = \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(a, b) h(x-a, y-b) \, \dif a \, \dif b \, .
+\end{equation}
+%
+Poznamenejme, že úpravou vztahu \eqref{eq:1_53} na vztah \eqref{eq:1_54} jsme pøevedli úlohu do tvaru, v~nìmž je možné využít dùsledkù invariance operátoru $\mathscr{O}$ vùèi posuvu (pøedpoklad invariance totiž zajišuje platnost vztahu $\mathscr{O}\{f(x-a,y-b)\} =  g(x-a,y-b)$, obecnì nikoli platnost vztahu $ \mathscr{O} \{f(a-x,b-y) \} = g(a-x,b-y))$.
+Rovnice \eqref{eq:1_55} má zásadní význam. Øíká toto:
+Máme-li lineární operátor $\mathscr{O}$ invariantní vùèi posuvu, pak odezvu $\mathscr{O} \{ f(x,y) \}$ na funkci $f(x,y)$ lze spoèítat integrací na základì znalosti odezvy $h(x,y) = \mathscr{O}\{\delta(x,y)\}$ operátoru na Diracùv impulz (tedy na základì jeho impulzové charakteristiky).
+Výraz na pravé stranì rovnice \eqref{eq:1_55} se nazývá konvolucí funkcí $f$ a $h$. Operace konvoluce se oznaèuje $\ast$.
+Zejména matematici rádi vidí, když je výsledná funkce vzniklá konvolucí zapsána ve tvaru $(f \ast h)(x,y)$. Lze zøejmì psát $(f \ast h)(x,y) = f(x,y) \ast h(x,y)$. Zatímco výraz na pravé stranì výrazu øíká, že máme dvì funkce, s nimiž teprve hodláme provést operaci konvoluce, výraz na stranì levé odkazuje na již hotový výsledek. Z tohoto pohledu nepovažujeme rozdíl za pøíliš podstatný. Obì varianty však budeme, podle okolností, používat.
+Je tedy
+\begin{equation} \label{eq:1_56}
+    g(x, y) = \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} f(a, b) h(x-a, y-b) \, \dif a \, \dif b = (f \ast h)(x, y) \, .
+\end{equation}
+Po zámìnì promìnných $a' = x-a$, $b' = y-b$ a jejich opìtovném pøejmenování $a' \rightarrow a$, $b' \rightarrow b$ máme také
+\begin{equation} \label{eq:1_57}
+    g(x, y) = \int\limits_{-\infty}^{+\infty} \int\limits_{-\infty}^{+\infty} h(a, b) f(x-a, y-b) \, \dif a \, \dif b = (h \ast f)(x, y) \, .
+\end{equation}
+Je tedy zøejmé, že platí
+\begin{equation} \label{eq:1_58}
+    (f \ast h)(x, y) = (h \ast f)(x, y) = f(x, y) \ast h(x, y) = h(x, y) \ast f(x, y) \, .
+\end{equation}
+Ze vztahu \eqref{eq:1_56} vidíme, že konvoluce poèítá výslednou hodnotu v bodì $(x,y)$ jako ,,vážený prùmìr`` funkce $f$ s váhovou funkcí $h$, která se èasto nazývá konvoluèní maska nebo filtr (pøesnìji øeèeno se jedná o impulzovou charakteristiku filtru; filtr je operátorem).
+Výpoèet pøi tom probíhá tak, že se funkce $h$ v rovinì $x$, $y$ otoèí o $180^\circ$ (dùsledek èlenù se zápornými znaménky v \eqref{eq:1_56}) a pak se posune o vektor $(x,y)$.
+Prùbìh výpoètu je ilustrován na obr. \ref{img:1_1}.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{01_signaly/images/img_1_1.pdf}
+    \end{center}
+    \caption{\dvojt K postupu výpoètu konvoluce}
+    \label{img:1_1}
+\end{figure}
+
+Pro úplnost poznamenejme, že vztahy pro jednorozmìrnou konvoluci lze získat ze vztahù \eqref{eq:1_56}, \eqref{eq:1_57} tak,
+že èleny odpovídající jedné z dimenzí jednoduše vypustíme. Máme tedy
+\begin{equation} \label{eq:1_59}
+    (f \ast h)(x) = (h \ast f)(x) = \int\limits_{-\infty}^{+\infty} f(a)h(x-a)\, \dif a = \int\limits_{-\infty}^{+\infty} f(x-a) h(a)\, \dif a\,.
+\end{equation}
+
+
+\subsection{Diskrétní konvoluce} \label{sec:diskretni_konvoluce}
+%===============================================================
+
+Uvažujme nyní prostor diskrétních obrazových signálù. Nech je $\Omega = \{(m,n) \, | \, m=0,1,\dots,M-1; \, n=0,1,\dots,N-1 \}$
+a $f(m,n)$ a $h(m,n)$ nech jsou signály z~uvažovaného prostoru.
+Diskrétní konvoluci lze pak zapsat pomocí vztahù
+\begin{equation} \label{eq:1_60}
+    (f \ast h)(m, n) =
+    %\frac{1}{MN}
+    \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} f(r, s) h(m - r, n - s) \, ,
+\end{equation}
+\begin{equation} \label{eq:1_61}
+    (h \ast f)(m, n) =
+    %\frac{1}{MN}
+    \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} h(r, s) f(m - r, n - s) \, .
+\end{equation}
+%Poznamenejme, že v literatuøe lze pro konvoluci nalézt též vztahy bez èlenu $1/(MN)$.
+%Tento rozdíl je vcelku nepodstatný, protože se jedná o pouhé násobení konstantou.
+%Pøi odvozování navazujících výsledkù je pouze zapotøebí mít na pamìti, kterou definici používáme.
+%Èlen $1/(MN)$ se snaží udržet velikost hodnot výsledku na øádovì stejné výši, jak byla u vstupních obrazù.
+
+\noindent
+Povšimnìme si, že pøi výpoètu konvoluce budou pro funkce $h$ popø. $f$ ve vztazích \eqref{eq:1_60}, \eqref{eq:1_61} vyžadovány také hodnoty vnì rozsahu $0, 1, \dots, M-1$; $0, 1, \dots, N-1$.
+Tento problém lze vyøešit dvìma zpùsoby.
+V obou doplníme definici funkcí $f$, $h$ i mimo oblast $\Omega$.
+Pøi tzv. lineární konvoluci pøedpokládáme, že funkce $f$, $h$ mimo oblast $\Omega$ nabývají hodnoty 0.
+Pøi tzv. cyklické konvoluci funkce $f$, $h$ naopak považujeme za periodické s periodou $M$, $N$.
+Výpoèet cyklické konvoluce lze pak provést na základì vztahù
+\begin{equation} \label{eq:1_62}
+    (f \ast h)(m, n) =
+    %\frac{1}{MN}
+    \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} f(r, s) h\left( \left( m - r \right)_M, \left(n - s\right)_N \right)
+\end{equation}
+\noindent nebo
+\begin{equation} \label{eq:1_63}
+    (h \ast f)(m, n) =
+    %\frac{1}{MN}
+    \sum\limits_{r=0}^{M-1} \sum\limits_{s=0}^{N-1} h(r, s) f\left( \left( m - r\right)_M, \left(n - s\right)_N \right) \, ,
+\end{equation}
+kde zápis $(p)_q$ znamená $p$ modulo $q$.
+V praxi jsou užívány oba zpùsoby výpoètu (konvoluce lineární i cyklická).
+Volba závisí na tom, zda v daném okamžiku více vyhovuje pøedstava, že signál nabývá mimo oblast $\Omega$ nulových hodnot nebo pøedstava, že je signál periodický.
+V kapitole \ref{sec:transformace_obrazovych_signalu} ukážeme, že pøedstava periodického signálu je užiteèná zejména v souvisloti s Fourierovou transformací.
+Poznamenejme ještì, že kdyby bylo $m,n = -\infty, \dots, \infty$, pak by pøinejmenším teoreticky k žádnému problému nedošlo.
+To mùže ilustrovat naše tvrzení z podkapitoly \ref{sec:prostor_signalu}, že práce s nekoneènì velkými obrazy mùže být nìkdy jednodušší než práce s obrazy koneèné velikosti. Nìco jiného je pak ale praktická implementace na poèítaèi.
+
+Pøedpokládejme, že je funkce $h$ reprezentována maticí.
+Pøi praktických výpoètech èasto bývá funkce $h$ nenulová pouze v relativnì malém poètu bodù (je-li to možné, pak takto funkci $h$ èasto zámìrnì volíme èi zjednodušujeme, aby èasová složitost výpoètu konvoluce byla pøijatelná).
+Pøi použití dosud uvedených vztahù jsou nenulové hodnoty vìtšinou bohužel soustøedìny do rohù matice, což komplikuje algoritmizaci a snižuje efektivnost výpoètu.
+(To je proto, že $h(x,y)$ má být impulzovou charakteristikou operátoru, a tedy odezvou na $\delta(0,0)$.
+Je-li bod $(0,0)$ rohem obrazu, pak nezbývá než pøedpokládat periodicitu; $h(x,y)$ pak nejspíš bude nenulové nejménì v dalších tøech exempláøích obrazu vyniklých periodicitou, a tedy i ve zbývajících tøech rozích obrazu pùvodního.)
+Z uvedených dùvodù je proto užiteèné èleny v matici reprezentující funkci $h$ pøeskládat a odpovídajícím zpùsobem také modifikovat vztahy pro výpoèet konvoluce.
+Pøedpokládejme pro jednoduchost, že hodnoty $M$, $N$ jsou liché a položme $P=(M-1)/2$, $Q=(N-1)/2$.
+Zaveïme funkci $\tilde{h}$, která je definována nad oblastí $\{(m, n) \, | \, m = -P, \dots, P; \, n = -Q, \dots, Q\}$, pomocí vztahu
+\begin{equation} \label{eq:1_64}
+    \tilde{h}(m, n) = \left\{
+    \begin{array}{cc}
+    h(-m, -n), & m \leq 0, n \leq 0 \\
+    h(M - m, -n), & m > 0, n \leq 0 \\
+    h(-m, N - n), & m \leq 0, n > 0 \\
+    h(M - m, N - n), & m > 0, n > 0
+    \end{array}
+    \right. .
+\end{equation}
+\noindent
+Funkce podle uvedeného pøedpisu jednoduše pouze získá užiteèné hodnoty z rohù obrazu a dále provede støedové pøevrácení tabulky získaných hodnot podle poèátku (viz též obr. \ref{img:1_1}); ve vztahu pro konvoluci již proto pozdìji nebude zapotøebí znamének minus.
+S~využitím funkce $\tilde{h}$ lze pak pro výpoèet konvoluce použít modifikovaného vztahu
+\begin{equation} \label{eq:1_65}
+  (f \ast h)(m, n) =
+  %\frac{1}{MN}
+   \sum\limits_{r=-P}^{P} \sum\limits_{s=-Q}^{Q} \tilde{h}(r, s) f\left( m + r, n + s \right) \,.
+\end{equation}
+Pøedpokládejme, že funkèní hodnoty $\tilde{h}(m,n)$ jsou nenulové pouze nad oblastí $\{(m,n)$ $| \, m = -R, \dots, R; \, n = -S,\dots, S \}$, kde $R<P$, $S<Q$.
+Ve vztahu \eqref{eq:1_65} tak proto staèí sèítat v~mezích $-R \leq r \leq R$, $-S \leq s \leq S$ a k~praktické reprezentaci funkce $\tilde{h}$ na poèítaèi staèí matice rozmìru $(2R+1) \times (2S+1)$ (pro tuto matici se èasto používá termínu konvoluèní maska).
+
+Dále je zajímavé si povšimnout, že pøedpisem pro cyklickou konvoluci lze vypoèítat též konvoluci lineární.
+Protože tato možnost má praktický význam, rozeberme ji podrobnìji.
+Vyjdìme ze vztahu \eqref{eq:1_65}, jímž se v praxi lineární konvoluce nejèastìji poèítá.
+Uvažujme oblast $\tilde{\Omega} = \{(m, n) \, | \, m = 0,1, \dots, M+R-1; \, n = 0,1,\dots, N+S-1\}$ a rozšiøme definici funkce $f$ na celou oblast $\tilde{\Omega}$ tak, že funkci $f$ položíme nad oblastí $\tilde{\Omega}\backslash\Omega$ rovnu nule.
+Nyní by již pro ètenáøe mìlo být snadným cvièením, aby ukázal, že lineární a cyklická konvoluce dají v tomto pøípadì shodný výsledek.
+

@@ -1,0 +1,389 @@
+\chapter{Bodové, algebraické a geometrické operace s obrazy} \label{sec:bodove_algebraicke_a_geometricke_operace_s_obrazy}
+
+V~praxi se èasto uplatòují operace, pøi nich se modifikuje jas (pøípadnì intenzita barevnıch sloek) tak, e jas vısledného obrazu v~kadém bodì je nìjakou funkcí jasu pùvodního obrazu v~téme bodì. Takové operace nazıváme operacemi bodovımi. Do operací algebraickıch vstupují zpravidla dva obrazy. Vıslednı obraz se získává tak, e se jasy ve stejnolehlıch bodech vstupních obrazù sèítají, odèítají, násobí nebo dìlí. Na rozdíl od bodovıch a algebraickıch operací mìní operace geometrické tvar a rozmìry obrazu. O uvedenıch tøídách operací pojednáme v této kapitole podrobnìji. 
+
+\section{Bodové operace}
+
+Nech $f(x, y)$ je obrazová funkce (jasová funkce) popisující vstupní obraz a $g(x, y)$ obrazová funkce popisující obraz vıstupní. Bodovou operací rozumíme transformaci obrazu podle pøedpisu
+
+\begin{equation} \label{eq:6_1}
+    g(x, y) = \varphi \left[ f \left( x, y \right) \right].
+\end{equation}
+
+Ze vztahu \eqref{eq:6_1} je zøejmé, e bodové operace vytváøejí vıstupní obraz tak, e bodu o souøadnicích $(x, y)$ pøiøadí hodnotu jasu, která je nìjakou funkcí $\varphi$ jasu vstupního obrazu v bodì o stejnıch souøadnicích. Dùvody pro provádìní bodovıch transformací mohou bıt rozmanité. Uveïme nìkolik pøíkladù: Citlivost prvkù, které se pøi snímání obrazu pouívají èasto není lineární. Pøi fotometrické kalibraci kompenzujeme bodovou operací nelinearitu snímacího prvku. Podobná je i situace na vıstupu øetìzce zpracovávajícího obraz, kde bodovou operací mùeme kompenzovat nelinearitu displeje. V~systémech pro zpracování obrazu je jednou z~nejpouívanìjších operací bodová operace provádìjící zmìnu rozsahu nebo prùbìhu jasu.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_1.pdf}
+    \end{center}
+    \caption{\dvojt Pøíklady funkcí realizujících bodové operace: \textbf{a}), \textbf{b}) lineární funkce dle vztahu \eqref{eq:6_3}, \textbf{c}) funkce po èástech lineární, \textbf{d}) kvadratická parabola \eqref{eq:6_4} ($c=1$), \textbf{e}), \textbf{f}) kubická parabola \eqref{eq:6_5}, \textbf{g}), \textbf{h}) exponencíální funkce \eqref{eq:6_6} ($\gamma = 3$, $\gamma = 1/3$).}
+    \label{img:6_1}
+\end{figure}
+
+Pøedpokládáme, e jas (oznaème jej $u$) vstupního obrazu mùe nabıvat hodnot z intervalu $\langle u_{\min}, u_{\max} \rangle$ a poadujeme, aby hodnoty $u_{\min}$, $u_{\max}$ byly transformovány na hodnoty $v_1 = \varphi(u_{\min})$, $v_2 = \varphi(u_{\max})$, které povaujeme za známé. Zaveïme hodnotu $\xi$ vztahem
+
+\begin{equation} \label{eq:6_2}
+    \xi = \frac{u - u_{\min}}{u_{\max} - u_{\min}}.
+\end{equation}
+
+Jako pøíklady funkcí $\varphi(\xi)$ realizujících bodovou transformaci lze uvést napø. následující funkce:
+
+\begin{equation} \label{eq:6_3}
+    \varphi(\xi) = v_1 + \xi ( v_2 - v_1 ),
+\end{equation}
+
+\begin{equation} \label{eq:6_4}
+    \varphi(\xi) = v_1 + \left[ \xi + c \xi ( 1 - \xi ) \right] ( v_2 - v_1 ),
+\end{equation}
+
+\begin{equation} \label{eq:6_5}
+    \varphi(\xi) = (1 - 3\xi^2 + 2\xi^3)v_1 + ( \xi -2\xi^2 + \xi^3)v_1' + (3\xi^2 - 2\xi^3)v_2 + ( -\xi^2 + \xi^3)v_2',
+\end{equation}
+
+\begin{equation} \label{eq:6_6}
+    \varphi(\xi) = v_1 + \xi^\gamma (v_2 - v_1 ).
+\end{equation}
+kde $v_1' = \varphi'(u) |_{u=u_{\min}}$, $v_2' = \varphi'(u) |_{u=u_{\max}}$ a \textit{c},$\gamma$ jsou konstanty zvolené tak, aby bylo dosaeno ádaného prùbìhu funkce $\varphi$. Pøíklady prùbìhù funkcí jsou uvedeny na obr \ref{img:6_1}.
+
+\subsection{Vliv bodovıch operací na histogram jasu}
+
+Nejprve uvedeme obecné úvahy tıkající se histogramu jasu. Uvaujme diskrétní obrazy s jasem popsanım celımi èísly. Obraz je definován nad oblastí sestávající z $N$ bodù. Nech $N_z$ oznaèuje poèet bodù, jejich jas je právì $z$. Pro histogram (oznaème jej $H$) jasu pak máme $H(z) = N_z$. Probírejme postupnì jednotlivé body obrazu a vyšetøujme jejich jas. Na hodnotu jasu mùeme pohlíet jako na náhodnou promìnnou (oznaème ji $\mathbf{b}$). Hodnota $p(z) = H(z)/N = N_z/N$ udává pravdìpodobnost jevu, e jas bodu je právì $z$. Je zøejmé, e $H(z) = Np(z)$. Poznamenejme, e pro hodnotu $p(z)$ bıvá té nìkdy pouíváno názvu normalizovanı histogram. Pro teoretické úvahy je vıhodné zavést odpovídající pojem také pro spojité obrazy s reálnımi hodnotami jasu. Nech $\mathscr{P}\{ z < \mathbf{b} \leq z + \Delta z \}$ oznaèuje pravdìpodobnost jevu, e jas bodu nabıvá hodnoty z intervalu $(z, z + \Delta z \rangle$, $\mathscr{S}$ nech je plocha celého obrazu a $\mathscr{S}\{ z < \mathbf{b} \leq z + \Delta z\}$ nech je plocha tìch jeho èástí, kde jas nabıvá hodnoty z intervalu $(z, z+\Delta z\rangle$. Ve spojitém pøípadì má $p(z)$ vıznam hustoty pravdìpodobnosti
+
+\begin{equation} \label{eq:6_7}
+    p(z) = \lim\limits_{\Delta x \rightarrow 0} \frac{\mathscr{P} \left\{ z < \mathbf{b} \leq z+\Delta z \right\} }{\Delta z} = \lim\limits_{\Delta x \rightarrow 0} \frac{\mathscr{S} \left\{ z < \mathbf{b} \leq z+\Delta z \right\} }{\mathscr{S}\Delta z}
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_2.pdf}
+    \end{center}
+    \caption{\dvojt Vliv bodovıch operací na histogram obrazu.}
+    \label{img:6_2}
+\end{figure}
+
+Vyšetøujme nyní, jak se histogram jasu mìní vlivem bodovıch operací. Uvaujme spojité obrazy s~reálnımi hodnotami jasu. Pøedpokládejme, e hustota pravdìpodobnosti jasu vstupního obrazu $f$ je známa (oznaème ji $p_f$) a e na obraz $f$ byla aplikována bodová operace popsaná rovnicí \eqref{eq:6_1}. Ukáeme, jak lze stanovit hustotu pravdìpodobnosti jasu vıstupního obrazu $g$ (oznaème ji $p_g$). Nech $u$, $v$ znaèí vstupní resp. vıstupní jas. Je tedy $v = \varphi(u)$. Pøedpokládejme, e $\varphi$ je bijekcí, a e lze proto konstruovat inverzní funkci $u = \varphi^{-1}(v)$. Uvaujme interval $\langle u, u+\Delta u \rangle$ vstupních jasù. Tomuto intervalu odpovídá interval $\langle v, v+\Delta v \rangle = \langle \varphi(u), \varphi(u+\Delta u)\rangle$ jasù vıstupních (obr. \ref{img:6_2}). Øeknìme, e ve vstupním obraze mìla jistá plocha obrazu jas z intervalu $\langle u, u+\Delta u \rangle$. Po transformaci bude mít tatá plocha jas z intervalu $\langle v, v+\Delta v \rangle$. Vzhledem ke vztahu \eqref{eq:6_7} proto máme 
+
+\begin{equation} \label{eq:6_8}
+    \int\limits_{v}^{v+\Delta v} p_g(z)\,dz = \int\limits_{u}^{u+\Delta u} p_f(z)\,dz.
+\end{equation}
+
+Jestlie jsou hodnoty $\Delta u$, $\Delta v$ dostateènì malé, pak mùeme na základì vztahu \eqref{eq:6_8} také psát
+
+\begin{equation} \label{eq:6_9}
+    p_g(v)\Delta v = p_f(u)\Delta u.
+\end{equation}
+
+Odtud získáme pro vıpoèet hustoty pravdìpodobnosti $p_g(v)$ pøedpis
+
+\begin{equation} \label{eq:6_10}
+    p_g(v) = \frac{p_f(u)}{\Delta v / \Delta u} = \frac{p_f(u)}{\varphi'(u)} = \frac{p_f [\varphi^{-1}(v)]}{\varphi'[\varphi^{-1}(v)]}.
+\end{equation}
+
+\begin{prik} \label{example:6_1}
+Pøedpokládejme, e jasy vstupního obrazu jsou nezáporné (\textit{u}$\geq$0) a e hustota pravdìpodobnosti jasu vstupního obrazu je popsána vırazem
+
+\begin{equation}
+    p_f(u) = \frac{2}{\sqrt{\pi}} \exp(-u^2). \nonumber
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_3.pdf}
+    \end{center}
+    \caption{\dvojt Hustoty pravdìpodobností jasu z pøíkladu \ref{example:6_1}.}
+    \label{img:6_3}
+\end{figure}
+
+Vıstupní obraz je definován vztahem
+
+\begin{equation}
+    g(x, y) = f^2(x, y). \nonumber
+\end{equation}
+
+Urèíme hustotu pravdìpodobnosti jasu vıstupního obrazu. Máme $v = \varphi(u) = u^2$, $u = \varphi^{-1}(v) = \surd v$. Podle vztahu \eqref{eq:6_10} pak pro hledanou hustotu dostáváme
+
+\begin{equation}
+    p_g(v) = \frac{\exp(-v)}{\sqrt{\pi v}}. \nonumber
+\end{equation}
+\end{prik}
+
+\subsection{Vyrovnání histogramu}
+
+Vyrovnáním histogramu rozumíme provedení takové bodové operace, která zajistí rovnomìrné rozloení hustoty pravdìpodobnosti jasu vısledného obrazu. Dùvody k provedení operace mohou bıt následující: 1) Vyrovnání mùe vést ke zlepšení kvality obrazu subjektivnì vnímané pozorovatelem. 2) Vyrovnání mùe bıt pouito jako transformace zajišující normalizované jednotné podmínky pøed dalším zpracováním obrazù (napø. pøed segmentací a rozpoznáním). (Poznamenejme, e pro jistou tøídu obrazù mùe však vyrovnání histogramu vést naopak i ke zhoršení subjektivnì vnímané kvality. Jako pøíklad uvate napø. obraz vzniklı naskenováním vıkresu obsahujícího èerné èáry na bílém podkladì.) Zamìøme se nyní na problém stanovení funkce $\varphi$ ze vztahu \eqref{eq:6_1} tak, aby rozloení pravdìpodobnosti $p_g$ bylo rovnomìrné. Úvahy se zjednoduší, jestlie budeme pøedpokládat, e jas vstupního i vıstupního obrazu je reprezentován reálnımi èísly (obr. \ref{img:6_4}a). Z podmínky rovnomìrného rozloení hustoty pravdìpodobnosti máme $p_g(v) = 1/(v_{\max} - v_{\min})$. Pouitím vztahu \eqref{eq:6_10} pak dostaneme
+
+\begin{equation} \label{eq:6_11}
+    \varphi'(v) = \frac{p_f(u)}{p_g(v)} = p_f(u)(v_{\max} - v_{\min}).
+\end{equation}
+
+Odtud
+
+\begin{equation} \label{eq:6_12}
+    \varphi(u) = \int\limits_{u_{\min}}^{u} \varphi'(z)\,dz = (v_{\max} - v_{\min}) \int\limits_{u_{\min}}^{u} p_f(z)\,dz.
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_4.pdf}
+    \end{center}
+    \caption{\dvojt Vyrovnání histogramu jasu.}
+    \label{img:6_4}
+\end{figure}
+
+Protoe je podle pøedpokladu hustota $p_f(z)$ známá, je vztah \eqref{eq:6_12} pøedpisem pro vıpoèet hledané funkce $\varphi$. Jestlie jsou jasy reprezentovány celımi èísly, je zapotøebí nìkolik dalších upøesnìní. Zamìøme se nejprve na pøípad, kdy je celımi èísly reprezentován pouze jas vıstupního obrazu. Máme tedy $v \in \{v_{\min}, v_{\min}+1, \dots, v_{\max}\}$. Jasy vstupního obrazu jsou reálné. Funkce $\varphi$ má v tomto pøípadì stupòovitı tvar (obr. \ref{img:6_4}b). Pro $z \in (u_v, u_{v+1} \rangle$ platí $\varphi(z) = v$. Problémem je stanovit pro jednotlivé hodnoty $v$ odpovídající hodnoty $u_v$. S pøihlédnutím ke skuteènosti, e v tomto pøípadì je $p_g(v) = 1/(v_{\max} - v_{\min} + 1)$, dostáváme z podmínky rovnomìrného rozdìlení pravdìpodobností pro hodnotu $u_v(v_{\min} \leq v \leq v_{\max})$ následující rovnici
+
+\begin{equation} \label{eq:6_13}
+    \frac{v - v_{\min}}{(v_{\max} - v_{\min} + 1)} = \int\limits_{u_{\min}}^{u_v} p_f(z)\,dz.
+\end{equation}
+
+Jestlie je celımi èísly reprezentován jas jak vıstupního tak i vstupního obrazu, pak je funkce $\varphi$ diskrétní. Stejnì jako v pøedchozím pøípadì, je i zde problémem stanovit pro jednotlivé hodnoty $v$ odpovídající hodnoty $u_v$. Hledanou hodnotu $u_v$ lze urèit jako nejmenší hodnotu, pro kterou je splnìna nerovnost
+
+\begin{equation} \label{eq:6_14}
+    \frac{v - v_{\min}}{(v_{\max} - v_{\min} + 1)} \leq \sum\limits_{z=u_{\min}}^{u_v} p_f(z).
+\end{equation}
+
+Jak z uvedeného postupu vyplıvá, nelze v pøípadì, kdy je celımi èísly reprezentován jas vıstupního i vstupního obrazu, dosáhnout vyrovnání histogramu zcela pøesnì. Histogram je vyrovnán pouze pøiblinì.
+
+\section{Algebraické operace s obrazy}
+
+Nech $f_1(x, y)$, $f_2(x, y)$ jsou známé obrazy. Algebraickou operací rozumíme postup, kdy je vıslednı obraz $g(x, y)$ získáván pomocí nìkterého z~následujících vztahù:
+
+\begin{equation} \label{eq:6_15}
+    g(x, y) = f_1(x, y) + f_2(x, y),
+\end{equation}
+
+\begin{equation} \label{eq:6_16}
+    g(x, y) = f_1(x, y) - f_2(x, y),
+\end{equation}
+
+\begin{equation} \label{eq:6_17}
+    g(x, y) = f_1(x, y) \times f_2(x, y),
+\end{equation}
+
+\begin{equation} \label{eq:6_18}
+    g(x, y) = f_1(x, y) \div f_2(x, y).
+\end{equation}
+
+Uveïme nìkolik pøíkladù, kdy mohou bıt algebraické operace pouity v~praxi: Pøi snímání kamerou je nìkdy vlivem nedokonalosti objektivu obrázek uprostøed svìtlejší a na krajích (nejvíce v~rozích) tmavší. Uvedenou vadu objektivu mùeme povaovat za multiplikativní chybu a korigovat ji pomocí vztahù \eqref{eq:6_17} nebo \eqref{eq:6_18}. Obraz $f_1$ je obraz, kterı má bıt korigován. Korekèní hodnoty obsaené v obrazu $f_2$ snadno vypoèítáme napø. z hodnot získanıch sejmutím bílé rovnomìrnì osvìtlené plochy. Podobnì lze korigovat systematickou chybu vznikající nerovnomìrnım osvìtlením pøedlohy pøi snímání kamerou. Pøi snímání scény, v~ní se pohybují objekty, lze rozdílu po sobì jdoucích obrazù vyuít k~detekci pohybu. Pouití sèítání obrazu pro redukci šumu ukáeme podrobnìji v~samostatné podkapitole.
+
+\subsection{Vliv algebraickıch operací na histogram jasu}
+
+Nech $p_1(z)$, $p_2(z)$ jsou hustoty pravdìpodobnosti jasu v obrazech $f_1(x, y)$, $f_2(x, y)$. Stanovíme hustotu pravdìpodobnosti $p(z)$ jasu obrazu $g(x, y)$ vzniklého souètem dle vztahu \eqref{eq:6_15}. Oznaème $p_{1,2}(u, v)$ sdruenou hustotu pravdìpodobnosti jasu v prvním a druhém obraze. Pøedpokládáme, e vstupní obrazy jsou nezávislé, a e proto platí $p_{1,2}(u, v) = p_1(u)p_2(v)$. Podle vztahu \eqref{eq:6_15} je hodnoty $z$ jasu v obraze $g(x, y)$ dosaeno tehdy, jestlie pøi jasu $v$ v obraze $f_2$ je jas v obraze $f_1$ roven hodnotì $u = z - v$. Odtud vychází pro hledanou hustotu $p(z)$ vztah 
+
+\begin{equation} \label{eq:6_19}
+    p(z) = \int\limits_{-\infty}^{\infty}p_{1,2}(z - v, v)\,dv = \int\limits_{-\infty}^{\infty}p_1(z-v)p_2(v)\,dv = p_1(z) \ast p_2(z).
+\end{equation}
+
+Vztah \eqref{eq:6_19} ukazuje, e hustota pravdìpodobnosti jasu vısledného obrazu je rovna konvoluci hustot pravdìpodobností jasù obou obrazù vstupních. Získanı vısledek lze snadno rozšíøit také na rozdíl obrazù dle vztahu \eqref{eq:6_16}. Postaèí poloit $\tilde{f}_2(x, y) = -f_2(x, y)$, èím pøevedeme rozdíl na souèet. Pro hustotu pravdìpodobnosti jasu obrazu $\tilde{f}_2$ máme $\tilde{p}_2(z) = p_2(-z)$.
+
+\subsection{Vyuití prùmìrování k redukci šumu}
+
+V tomto odstavci podrobnìji popíšeme jednu z praktickıch aplikací sèítání obrazù. Nech $f(x, y)$ je teoretickı obraz nemìnnı v èase. Pøi snímání získáváme ovšem obraz, kterı je poškozen šumem. Obraz proto snímáme opakovanì $M$-krát. Pøi $i$-tém sejmutí obdríme obraz $f(x, y) + n_i(x, y)$, kde $n_i$ je šum. Za aproximaci teoretického obrazu mùeme intuitivnì brát prùmìr
+
+\begin{equation} \label{eq:6_20}
+    \tilde{f}(x, y) = \frac{1}{M} \sum\limits_{i=1}^{M} [ f(x, y) + n_i(x, y) ].
+\end{equation}
+
+Ukáeme, e pouití prùmìru podle rovnice \eqref{eq:6_20} objektivnì vede ke zlepšení kvality sejmutého   obrazu. K hodnocení kvality pouijeme pomìru signál-šum, kterı je definován vztahem
+
+\begin{equation} \label{eq:6_21}
+    S\!N\!R(x, y) = \frac{f(x, y)}{\sqrt{\mathrm{E}\left\{ n^2(x, y) \right\}}}
+\end{equation}
+
+Pro hodnotu pomìru signál-šum v obraze vzniklém prùmìrováním $M$ obrazù odtud vychází
+
+\begin{equation} \label{eq:6_22}
+    S\!N\!R_M(x, y) = \frac{f(x, y)}{\sqrt{\mathrm{E}\left\{ \left[ \frac{1}{M} \sum\limits_{i=1}^{M} n_i(x, y) \right]^2 \right\}}}
+\end{equation}
+
+Vıraz \eqref{eq:6_22} dále upravíme. Pøi tom vyuijeme následujících pøedpokladù: 1) $n_i(x, y)$ je náhodná promìnná, pro ni platí $\mathrm{E} \{ n_i(x, y) \} = 0$; 2) náhodné promìnné $n_i(x, y)$, $n_j(x, y)$ jsou nekorelované, a proto platí $\mathrm{E} \{ n_i(x, y) n_j(x, y) \} = \mathrm{E} \{ n_i(x, y) \} \mathrm{E} \{ n_j(x, y) \}$; 3) $\mathrm{E} \{ n_i^2(x, y) \} = \mathrm{E} \{ n_j^2(x, y) \} = \mathrm{E} \{ n^2(x, y) \}$. Postupnì dostáváme
+
+\begin{equation} \label{eq:6_23} 
+    S\!N\!R_{M} \left(x, y\right) = \frac{Mf\left(x, y\right)}{\sqrt{\mathrm{E}\left\{\sum\limits_{i=1}^{M}n_{i}^{2} \left(x,y\right) \right\}} } = \sqrt{M} \frac{f(x, y)}{\sqrt{\mathrm{E}\{n^2(x, y)\}}} = \sqrt{M} S\!N\!R(x, y).
+\end{equation}
+
+Vztah \eqref{eq:6_23} ukazuje, e prùmìrováním z $M$ obrazù se pomìr signál-šum zvìtšil $\surd M$-krát.
+
+\section{Geometrické transformace obrazu}
+
+Geometrické transformace mìní tvar nebo rozmìry obrazu. Obecnì jsou popsány vztahem
+
+\begin{equation} \label{eq:6_24} 
+    g\left(x,y\right)=f\left[\varphi \left(x,y\right),\psi \left(x,y\right)\right].  
+\end{equation}
+
+Je zøejmé, e geometrická transformace je zcela zadána funkcemi $\varphi(x, y)$, $\psi(x, y)$. Vztah \eqref{eq:6_24} navíc podává i praktickı návod na to, jak transformaci provést. Pøedpokládejme, e obrazy $f(x, y)$ i $g(x, y)$ jsou diskrétní. Na základì vztahu \eqref{eq:6_24} lze postupnì probírat všechny body vıstupního obrazu $g$ a pro kadı bod $(x, y)$ urèit odpovídající polohu $[ \varphi(x, y), \psi(x, y) ]$ ve vstupním obraze $f$. Hodnota jasu $f[ \varphi (x, y), \psi(x, y)]$ je pak vzata jako hodnota $g(x, y)$. Zatímco $x, y$ nabıvají celoèíselnıch hodnot (postupujeme po celoèíselnıch souøadnicích pixelù vıstupního obrazu), jsou hodnoty $\varphi(x, y)$, $\psi(x, y)$ obvykle reálné, nikoli celoèíselné. Podle pøedpokladu je však i vstupní obraz $f$ diskrétní, a proto i pro nìj jsou hodnoty jasu známy jen v bodech o celoèíselnıch souøadnicích. Pro získání hodnot v mezilehlıch bodech o neceloèíselnıch souøadnicích lze vyuít metod, které byly podrobnìji popsány v~podkapitole \ref{sec:prakticke_metody_rekonstrukce_obrazu}. V praxi se nejèastìji pouívá bilineární interpolace nebo interpolace vyššího øádu.    
+
+Zabıvejme se nyní podrobnìji funkcemi $\varphi(x, y)$, $\psi(x, y)$. Nejobecnìjším poadavkem je, aby dvojice $[ \varphi(x, y), \psi(x, y)]$ byla homeomorfismem (nesplnìní tohoto poadavku by zpùsobilo „roztrhání`` obrazu). Kromì toho bıvají obvykle poadovány i jiné vlastnosti. Jsou-li funkce $\varphi(x, y)$, $\psi(x, y)$ lineární, pak je transformace \eqref{eq:6_24}  transformací afinní. Afinní transformace je zadána šesti hodnotami $a_{11}$, $a_{12}$, $a_{21}$, $a_{22}$, $b_1$, $b_2$ a lze ji zapsat následujícím vztahem
+
+\begin{equation} \label{eq:6_25}
+    \left[\begin{array}{c} {\varphi \left(x,y\right)} \\ {\psi \left(x,y\right)} \end{array}\right]=\left[\begin{array}{cc} {a_{11} } & {a_{12} } \\ {a_{21} } & {a_{22} } \end{array}\right]\left[\begin{array}{c} {x} \\ {y} \end{array}\right]+\left[\begin{array}{c} {b_{1} } \\ {b_{2} } \end{array}\right].  
+\end{equation}
+
+\begin{prik} \label{example:6_2}
+Uvaujme diskrétní obraz rozmìru $M \times N$ bodù popsanı obrazovou funkcí $f(m, n)$ (obr. \ref{img:6_5}). Provedeme rotaci obrazu kolem levého dolního rohu o úhel $\varphi(0 \leq \alpha \leq \pi/2)$. Rozmìry obrazu vzniklého rotací budou $\lceil(N-1)\sin \varphi + (M-1)\cos \varphi + 1\rceil \times \lceil (N-1)\cos \varphi + (M-1) \sin \varphi + 1 \rceil$ bodù. Poèátek $(0, 0)$ pøedpokládáme u obou obrazù v levém dolním rohu. Oznaène $\tilde{x}, \tilde{y}$ souøadnice v pùvodním a $x, y$ souøadnice v novém obraze. Pro transformaci souøadnic z pùvodního do nového obrazu snadno získáme pøedpis
+
+\begin{equation}
+    x = \tilde{x}\cos \varphi -\tilde{y}\sin \varphi +(N-1) \sin \varphi, \nonumber
+\end{equation}
+
+\begin{equation}
+    y = \tilde{x}\sin \varphi +\tilde{y}\cos \varphi. \nonumber 
+\end{equation}
+
+Odtud máme
+
+\begin{equation}
+    \left[\begin{array}{c} {\varphi \left(x,y\right)} \\ {\psi \left(x,y\right)} \end{array}\right]=\left[\begin{array}{c} {\tilde{x}} \\ {\tilde{y}} \end{array}\right]=\left[\begin{array}{cc} {\cos \varphi } & {\sin \varphi } \\ {-\sin \varphi } & {\cos \varphi } \end{array}\right]\left[\begin{array}{c} {x} \\ {y} \end{array}\right]+\left(N-1\right)\left[\begin{array}{c} {-\sin \varphi \cos \varphi } \\ {\sin ^{2} \varphi } \end{array}\right]. \nonumber
+\end{equation}
+
+Prakticky provedeme transformaci tak, e probíráme všechny body vıstupního obrazu jeden po druhém. Poloha bodu ve vıstupním obraze je specifikována celoèíselnou dvojicí $x, y$. Jestlie platí $[ 0 \leq \varphi(x, y) \leq M-1 ] \& [ 0 \leq \psi(x, y) \leq N-1 ]$, urèíme hodnotu $g(x, y)$ jako hodnotu $f[ \varphi(x, y), \psi(x, y) ]$, kterou vypoèítáme interpolací. V opaèném pøípadì poloíme napø. $g(x, y) = 0$.
+\end{prik}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_5.pdf}
+    \end{center}
+    \caption{\dvojt Afinní transformace obrazu - rotace.}
+    \label{img:6_5}
+\end{figure}
+
+\begin{prik} \label{example:6_3}
+Geometrickou transformací, která se v praxi uplatòuje velmi èasto, je zmìna rozmìru obrazu. Opìt uvaujme diskrétní obraz rozmìru $M \times N$ bodù. Tento obraz má bıt transformován tak, aby rozmìry vıstupního obrazu byly $P \times Q$. Snadno obdríme vztah
+
+\begin{equation}
+    \left[\begin{array}{c} {\varphi \left(x,y\right)} \\ {\psi \left(x,y\right)} \end{array}\right]=\left[\begin{array}{cc} {\frac{P-1}{M-1} } & {0} \\ {0} & {\frac{Q-1}{N-1} } \end{array}\right]\left[\begin{array}{c} {x} \\ {y} \end{array}\right].\nonumber
+\end{equation}
+\end{prik}
+
+Obecnìjší ne transformace afinní jsou transformace projektivní. Jak afinní tak projektivní transformace zachovávají linearitu transformovanıch útvarù (pøímky se transformují opìt na pøímky). Na rozdíl od afinních transformací však projektivní transformace nezachovávají rovnobìnost. Projektivní transformace se uplatòují zejména v pøípadech, které nìjakım zpùsobem souvisí se støedovım promítáním. Pøíkladem praktické úlohy je transformace, pøi ní má bıt obraz deformován tak, aby budil dojem, e je umístìn na nìjaké obecnì umístìné rovinì v prostoru, kterou zobrazujeme støedovım promítáním.
+
+Pøi popisu projektivních transformací se zpravidla pouívá homogenních souøadnic. Homogenní souøadnice reprezentují bod v $n$-rozmìrném afinním prostoru jako smìr v jistém pøidrueném $(n+1)$-rozmìrném vektorovém prostoru. Uvaujme dvojrozmìrnı afinní prostor a zaveïme pøidruenı trojrozmìrnı vektorovı prostor a souøadnou soustavu v~nìm tak, jak je znázornìno na obr. \ref{img:6_6}. V afinním prostoru uvaujme bod, jeho afinní souøadnice jsou $(x, y)$. Homogenními souøadnicemi uvaovaného bodu je trojice $(wx, wy, w)$, kde $w$ je libovolné reálné èíslo $w \neq 0$. V homogenních souøadnicích je tedy kadı bod reprezentován nekoneènım poètem vektorù v pøidrueném vektorovém prostoru, které jsou ovšem všechny navzájem kolineární. Speciálnì mùeme také volit $w = 1$. Dostaneme tak trojici $(x, y, 1)$. Zvláštní vıznam této volby je patrnı z obr. \ref{img:6_6}. Je-li naopak trojice $(x, y, w)$ homogenními souøadnicemi nìjakého bodu, pak také trojice $(x/w, y/w, 1)$ je homogenními souøadnicemi tého bodu a dvojice $(x/w, y/w)$ je jeho souøadnicemi afinními. Projektivní transformace bodu o afinních souøadnicích $(x, y)$ je popsána rovnicí
+
+\begin{equation} \label{eq:6_26} 
+    \left[\begin{array}{c} {\varphi \left(x,y\right)} \\ {\psi \left(x,y\right)} \\ {\omega \left(x,y\right)} \end{array}\right]=\left[\begin{array}{ccc} {p_{11} } & {p_{12} } & {p_{13} } \\ {p_{21} } & {p_{22} } & {p_{23} } \\ {p_{31} } & {p_{32} } & {p_{33} } \end{array}\right]\left[\begin{array}{c} {x} \\ {y} \\ {1} \end{array}\right].  
+\end{equation} 
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_6.pdf}
+    \end{center}
+    \caption{\dvojt Zavedení homogenních souøadnic.}
+    \label{img:6_6}
+\end{figure}
+
+Homogenní souøadnice bodu po transformaci jsou $(\varphi(x, y), \psi(x, y), \omega(x, y))$, odkud pro afinní souøadnice plyne vztah $(\varphi(x, y)/\omega(x, y), \psi(x, y)/\omega(x, y))$. Ze vztahu \eqref{eq:6_26} vyplıvá, e ve dvojrozmìrném prostoru je projektivní transformace je popsána devíti hodnotami $p_{11}$, $p_{12}$, \dots, $p_{33}$. Uvedené hodnoty lze ovšem násobit libovolnou  nenulovou reálnou konstantou, ani by se vısledek transformace zmìnil (násobením se sice zmìní délka vektoru na levé stranì vztahu \eqref{eq:6_26}, ale bod, kterı je vektorem reprezentován, je stále tentı).
+
+\begin{prik} \label{example:6_4}
+Uvaujme projektivní transformaci zadanou tak, e pro ètveøici bodù $\tilde{A}_{1} ,\tilde{A}_{2} ,\tilde{A}_{3} ,\tilde{A}_{4}$ ve vstupním obraze jsou pøedepsány jim odpovídající body $A_{1} ,A_{2}, A_{3}, A_{4}$ v obraze vıstupním (na obr. \ref{img:6_7} jsou jako body $\tilde{A}_{1}, \tilde{A}_{2}, \tilde{A}_{3}, \tilde{A}_{4}$ zvoleny rohy obrazu). Naznaèíme postup odvození transformaèní matice ze vztahu \eqref{eq:6_26}. Souøadnice bodu $\tilde{A}_{i}$ v pùvodním obraze oznaèíme $\tilde{x}_{i}, \tilde{y}_{i}$. Poloha korespondujícího bodu $A_i$ ve vıstupním obraze je pøedepsána souøadnicemi $\tilde{x}_i$, $\tilde{y}_i$. Dále zavedeme oznaèení $\mathbf{p}_1 = (p_{11}, p_{12}, p_{13})^\top, \mathbf{p}_2 = (p_{21}, p_{22}, p_{23})^\top, \mathbf{p}_3 = (p_{31}, p_{32}, p_{33})^\top, \mathbf{x}_i = (x_i, y_i, 1)^\top$. Na základì vztahu \eqref{eq:6_26} nyní pro kadı ze zadanıch bodù dostáváme 
+
+\begin{equation}
+    \left[\begin{array}{c} {\tilde{w}_{i} \tilde{x}_{i} } \\ {\tilde{w}_{i} \tilde{y}_{i} } \\ {\tilde{w}_{i} } \end{array}\right]=\left[\begin{array}{c} {p_{1}^\top} \\ {p_{2}^\top} \\ {p_{3}^\top} \end{array}\right]x_{i}. \nonumber
+\end{equation}
+Ze tøetí rovnice v uvedeném vztahu máme $\tilde{w}_{i} = \mathbf{p}_3^\top \mathbf{x}_{i}$. Dosazením do prvních dvou rovnic po úpravì dostaneme
+
+\begin{equation}
+    \left[
+    \begin{array}{ccc}
+    \mathbf{x}_i^\top & \mathbf{0} & -\tilde{x}_i \mathbf{x}_i^\top \\
+    \mathbf{0} & \mathbf{x}_i^\top & -\tilde{y}_i \mathbf{x}_i^\top
+    \end{array}
+    \right]
+    \left[
+    \begin{array}{c}
+    \mathbf{p}_1 \\
+    \mathbf{p}_2 \\
+    \mathbf{p}_3
+    \end{array}
+    \right]
+    =
+    \left[
+    \begin{array}{c}
+    0 \\ 0
+    \end{array}
+    \right]. \nonumber
+\end{equation}
+
+Vidíme, e kadı ze zadanıch bodù pøispívá k nalezení transformaèní matice dvìma rovnicemi, co dává celkem osm rovnic pro devìt neznámıch. Protoe víme, e transformaèní matici je moné násobit libovolnım reálnım èíslem, ani by se vısledek transformace zmìnil, zvolíme k zajištìní jednoznaènosti øešení doplòující podmínku. Nejsnáze se prakticky realizuje postup, kdy nìkterı z prvkù transformaèní matice poloíme roven pøedem zvolené hodnotì (prosíme ètenáøe, aby promyslel úskalí tohoto øešení).
+\end{prik}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_7.pdf}
+    \end{center}
+    \caption{\dvojt Projektivní transformace obrazu.}
+    \label{img:6_7}
+\end{figure}
+
+Nelineární geometrickou transformací obrazu rozumíme transformaci, kde $\varphi(x, y)$, $\psi(x, y)$ jsou nelineární funkce. Neèastìji se jedná o polynomy. Mùeme je volit napø. ve tvaru
+
+\begin{equation} \label{eq:6_27}
+    \varphi \left(x,y\right)=x+\Delta x\left(x,y\right), \quad \psi \left(x,y\right)=y+\Delta y\left(x,y\right),
+\end{equation}
+kde
+
+\begin{equation} \label{eq:6_28}
+    \Delta x\left(x,y\right)=\sum _{r=0}^{m}\sum _{s=0}^{m-r}a_{rs} x^{r} y^{s}, \quad \Delta y\left(x,y\right)=\sum _{r=0}^{m}\sum _{s=0}^{m-r}b_{rs} x^{r} y^{s}
+\end{equation}
+nebo také
+
+\begin{equation} \label{eq:6_29}
+    \Delta x\left(x,y\right)=\sum _{r=0}^{m}\sum _{s=0}^{m}a_{rs} x^{r} y^{s}, \quad \Delta y\left(x,y\right)=\sum _{r=0}^{m}\sum _{s=0}^{m}b_{rs} x^{r} y^{s}.
+\end{equation}
+
+Ze vztahu \eqref{eq:6_27} je zøejmé, e funkce $\Delta x(x, y)$, $\Delta y(x, y)$ popisují „pøemístìní`` bodu, ke kterému bìhem transformace dojde. Zavedení funkcí $\Delta x(x, y)$, $\Delta y(x, y)$ je názorné a také vıhodné pro praktickou implementaci. Polynomy, které se pro transformaci pouívají, v~praxi zpravidla nebıvají pøíliš vysokého stupnì (obvykle druhého nebo tøetího). Neznámé hodnoty koeficientù $a_{rs}$, $b_{rs}$ je moné stanovit tak, e pro jistı poèet bodù $(x_i, y_i)$ pøedepíšeme hodnoty $\varphi(x_i, y_i)$, $\psi(x_i, y_i)$. To dává dvì soustavy rovnic
+
+\begin{equation} \label{eq:6_30}
+    \varphi \left(x_{i} ,y_{i} \right)=x_{i} +\sum_{r=0}^{m}\sum_{s=0}^{m-r}a_{rs} x_{i}^{r} y_{i}^{s},
+    \quad
+    \psi \left(x_{i} ,y_{i} \right)=y_{i} +\sum _{r=0}^{m}\sum _{s=0}^{m-r}b_{rs} x_{i}^{r} y_{i}^{s},
+\end{equation} 
+z~nich lze hodnoty $a_{rs}$, $b_{rs}$ stanovit (v pøípadì polynomu \eqref{eq:6_29} lze postupovat analogicky). Pøedpisy \eqref{eq:6_28}, \eqref{eq:6_29} obsahují $(m+2)(m+1)$ resp. $2(m+1)^2$ neznámıch koeficientù. Kadá dvojice $[ (x_i, y_i), (\varphi(x_i, y_i), \psi(x_i, y_i)) ]$ dává vzniknout dvìma rovnicím. Je proto zapotøebí nejménì $(m+2)(m+1)/2$ resp. $(m+1)^2$ takovıch dvojic. Je-li poèet dvojic právì roven uvedené hodnotì, obdríme soustavu lineárních rovnic, kterou lze øešit eliminací. Je-li poèet zadanıch dvojic vìtší, obdríme soustavu, která je pøedeterminovaná (a dost moná také nekonzistentní). O øešení pøedeterminovanıch soustav pojednává dodatek B XXX.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_8.pdf}
+    \end{center}
+    \caption{\dvojt Nelineární geometrická transformace.}
+    \label{img:6_8}
+\end{figure}
+
+Je zøejmé, e èím je poadovaná geometrická transformace komplikovanìjší, tím vyšší stupeò polynomù je nutné v~rovnicích \eqref{eq:6_28}, \eqref{eq:6_29} zvolit. Jestlie by stupeò polynomù pøesáhl rozumnou mez (øeknìme napø. 3 a 5), pak je lepší pouít postupu, kdy vstupní i vıstupní obraz rozdìlíme na oblasti a transformaèní polynomy stanovíme zvláš pro kadou dílèí oblast. Stupeò polynomù mùe bıt v~tomto pøípadì nízkı, protoe s~ohledem na sloitost transformace mùeme volit jemnost dìlení. Nejèastìji se proto v~tomto pøípadì pouívají polynomy bilineární. Transformaci vyuívající dìlení na podoblasti lze zadat tak, e vıstupní  obraz pokryjeme ètyøúhelníkovou sítí a ve vstupním obraze definujeme odpovídající sí transformovanou (obr. \ref{img:6_9}). Sí zadáváme polohou uzlovıch kontrolních bodù ve vstupním i vıstupním obraze. Nejsnáze se implementuje pøípad, kdy je sí ve vıstupním obraze obdélníková. Pøi praktické realizaci transformace se opìt probírají všechny body vıstupního obrazu. Podle toho, do které oblasti vıstupního obrazu bod padl, se pouije odpovídající transformaèní vztah. Pro $i$-tou oblast má vztah tvar 
+
+\begin{equation} \label{eq:6_31}
+    \varphi _{i} \left(x,y\right)=x+\left(a_{i} x+b_{i} y+c_{i} xy+d_{i} \right),
+\end{equation}
+
+\begin{equation} \label{eq:6_32}
+    \psi_{i} \left(x,y\right)=y+\left(e_{i} x+f_{i} y+g_{i} xy+h_{i} \right).
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_9.pdf}
+    \end{center}
+    \caption{\dvojt Geometrická transformace s rozdìlením obrazu na oblasti.}
+    \label{img:6_9}
+\end{figure}
+
+Neznámé hodnoty $a_i$, $b_i$, $c_i$, $d_i$, $e_i$, $f_i$, $g_i$, $h_i$ urèíme pro kadou oblast z~podmínky, aby se vrcholy oblasti (uzlové kontrolní body) transformovaly tak, jak bylo pøedepsáno. Pro kadou oblast máme ètyøi vrcholy po dvou souøadnicích, co dává celkem osm rovnic potøebnıch pro urèení hledanıch hodnot.
+
+Pro nelineární geometrické operace bıvá nìkdy pouíváno termínu warping (borcení, kroucení). V televizní tvorbì se v poslední dobì stala populární také technika nazıvaná morphing, která provádí plynulou zmìnu jednoho objektu v jinı. Pøedpokládejme, e je zadán poèáteèní a cílovı obraz (oznaème je $f_\mathrm{s}(x, y)$, $f_\mathrm{d}(x, y)$). Úkolem je vytvoøit sekvenci $f_i(x, y)$ obrazù zachycující postupnou zmìnu obrazu poèáteèního v cílovı. Jistou moností øešení zadaného úkolu by bylo pouít prolínání obrazù podle jednoduchého pøedpisu
+
+\begin{equation} \label{eq:6_33}
+    f_{i} \left(x,y\right)=\left(1-\lambda \right)f_\mathrm{s} \left(x,y\right)+\lambda f_\mathrm{d} \left(x,y\right)
+\end{equation}
+pøi hodnotì $\lambda$ postupnì se zvyšující od 0 do 1. Vısledky samotného prolínání však zpravidla nejsou pøesvìdèivé. Lepšího dojmu lze dosáhnout kombinací prolínání s nelineární geometrickou transformací. K definování transformace lze pouít sítì kontrolních bodù, kterou pokryjeme poèáteèní i cílovı obraz. Polohu kontrolních bodù pøedepíšeme tak, aby bylo dosaeno poadované deformace obrazu (obr. \ref{img:6_10}). Sítí je nutné pokrıt i obrazy mezilehlé, v nich lze však sí generovat automaticky pomocí interpolace. Ke generování $i$-tého mezilehlého obrazu pouijeme vztahu
+
+\begin{equation} \label{eq:6_34}
+    f_i (x, y) = (1 - \lambda) f_\mathrm{s} \left[ \varphi_{i, \mathrm{s}}(x, y), \psi_{i, \mathrm{s}} (x, y) \right] + \lambda f_\mathrm{d} \left[ \varphi_{i, \mathrm{d}} (x, y), \psi_{i, \mathrm{d}} (x,y) \right],
+\end{equation}
+kde $\varphi_{i, \mathrm{s}}$, $\psi_{i, \mathrm{s}}$, $\varphi_{i, \mathrm{d}}$, $\psi_{i, \mathrm{d}}$ jsou po èástech bilineární funkce transformující souøadnice z $i$-tého mezilehlého obrazu do obrazu poèáteèního resp. cílového. Uvedené funkce jsou urèeny zadanou sítí.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{06_bodoveoperace/images/img_6_10.pdf}
+    \end{center}
+    \caption{\dvojt Promìna ètverce na krunici pomocí morphingu.}
+    \label{img:6_10}
+\end{figure}
+

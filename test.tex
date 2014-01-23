@@ -1,0 +1,316 @@
+%& -translate-file=cp227.tcx
+% Format: wpdflatex 
+
+%& -translate-file=cp1250cs.tcx  % cp1250 -> IL2
+%& -translate-file=cp1250t1.tcx  % cp1250 -> T1
+
+%Radši použijeme T1
+%\input csenc-t.tex %Kuben - pro OS/2 - CP852 -> t1
+\input csenc-wt.tex %Petra - pro Windows - cp1250 -> T1
+
+%\input csenc-p.tex  %Kuben - pro OS/2 - pøekódovává cp852 na IL2
+%\input csenc-w.tex  %Petra - pro Windows - pøekódovává cp1250 na IL2
+
+\input tisk_s_ik.tex
+
+\overfullrule=6pt
+
+\makeindex
+
+\begin{document}
+
+\fancyhf{}
+\renewcommand{\headrulewidth}{0pt}
+\pagenumbering{roman}
+
+%Titulní stránka Zaèátek
+\pdfbookmark{Titulní strana}{titlepage}
+
+\newlength{\vyskaloga}
+\setlength{\vyskaloga}{40mm}
+
+\vspace*{-11mm}
+
+\noindent
+\makebox[\linewidth]{\hskip13mm
+\vbox to \textheight{\vss\vskip8mm
+\vbox to 237mm{\hsize=164mm
+\centering
+\mbox{\hbox to .9\linewidth{\vbox to\vyskaloga{\vss
+\hbox{\includegraphics[height=40mm]{loga/vsb.pdf}}
+\vss }
+\hfill
+\vbox to\vyskaloga{\vss
+\hbox{\includegraphics[height=25mm]{loga/logo_zcu.pdf}}
+\vss }}}
+\vfill
+
+\bfseries\huge NÁZEV SKRIPT
+\vspace{20mm}
+
+AUTOR/AUTOØI
+\vfill
+
+\mbox{%
+\begin{minipage}{\linewidth }
+\leftskip 0pt plus 0.5fil
+    \rightskip 0pt plus -0.5fil
+    \parfillskip 0pt plus 1fil\relax
+\large\mdseries
+Text byl vytvoøen v rámci realizace projektu \emph{Matematika pro inženýry
+21.~století} (reg.\,è. CZ.1.07/2.2.00/07.0332), na kterém se spoleènì podílela
+Vysoká škola báòská -- Technická univerzita Ostrava a Západoèeská univerzita v Plzni
+\end{minipage}}%
+\vspace{10mm}
+
+\includegraphics[viewport=206 253 636 340,width=130mm]{loga/OPVK_hor_zakladni_logolink_CB_cz.pdf}
+}\vss }}
+
+%Konec titulní strany
+\newpage
+
+\vspace*{10cm}
+\pdfbookmark{Copyright}{copyright}
+
+{\parindent0pt
+Autor
+
+Název
+\vfill
+
+\copyright{} Autor, rok
+
+ISBN
+}
+\pagebreak
+
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+\setcounter{page}{3}
+
+\newpage
+\pdfbookmark{Pøedmluva}{predmluva}
+
+\chapter*{Pøedmluva}
+\addcontentsline{toc}{chapter}{Pøedmluva}
+
+{\parskip=0.9ex
+Tento materiál by mìl sloužit jako struèná informace o možnostech, které nabízí šablony pøipravené
+pro tvorbu skript v rámci projektu Matematika pro inženýry 21.~století.
+
+Texty ve formátu PDF bude existovat ve dvou verzích --- první, èernobílá, je urèena pro tisk, druhá, která je barevná,
+je urèena pro prohlížení na monitoru. Kromì toho budou existovat varianty s ikonami (pøedevším pro kombinované studium)
+a bez ikon. Tento materiál se týká variant urèených pro tisk. Pozdìji budou pøipraveny i varianty urèené pro
+prohlížení na monitoru.
+
+Text byl vysázen pomocí sázecího systému \TeX{} ve formátu pdf\,\LaTeX.
+\vspace{2cm}
+
+\noindent
+\makebox[\textwidth]{V~Brnì 16.\,9. 2009\hfill Jaromír Kuben}%
+}
+\newpage
+
+\section*{Orientace v textu}
+
+Každá kapitola má svou pevnou strukturu, která by vám mìla pomoci k rychlejší orientaci v textu.
+Pøi psaná mùžete využít následující "`stavební kameny"':
+\ifikony
+
+\subsection*{Prùvodce studiem\ikona{6}} Prostøednictvím prùvodce
+studiem vás chceme seznámit s tím, co vás v dané kapitole èeká,
+které èásti by mìly být pro vás opakováním, na co je tøeba se
+obzvláštì zamìøit atd.
+\smallskip
+
+\subsection*{Cíle\ikona{5}}
+V èásti cíle se dozvíte, co všechno zvládnete a budete umìt po
+prostudování dané kapitoly.\unskip
+\smallskip
+
+\subsection*{Pøíklad\ikona{4}}
+Touto ikonou jsou oznaèeny všechny øešené pøíklady.  Konec
+øešených pøíkladù je oznaèen plným trojúhelníèkem (\blacktroj).
+\smallskip
+
+\subsection*{Pojmy k zapamatování\ikona{3}}
+Pojmy zde uvedené jsou vìtšinou nové a zcela zásadní.
+To znamená tyto pojmy nejen
+pochopit a umìt ilustrovat na pøíkladech, ale také umìt vyslovit
+jejich pøesné definice.
+\smallskip
+
+\subsection*{Kontrolní otázky\ikona{1}}
+Odpovìzením na tyto otázky si ovìøíte, zda jste daným pojmùm porozumìli, zda
+si uvìdomujete rozdíly mezi zdánlivì podobnými pojmy, zda dovedete
+uvést pøíklad ilustrující danou situaci atd.
+\smallskip
+
+\subsection*{Pøíklady k procvièení\ikona{2}}
+Tyto pøíklady slouží k tomu, abyste si dùkladnì procvièili
+probranou látku. Výsledky uvedených pøíkladù jsou zaøazeny na
+konci každé kapitoly.
+\smallskip
+
+\subsection*{Klíè k pøíkladùm k procvièení\ikona{9}}
+Na konci  každé kapitoly je uveden klíè ke cvièením, který
+obsahuje výsledky  pøíkladù k procvièení.
+\smallskip
+
+\subsection*{Autotest\ikona{10}}
+Pomocí autotestu si otestujete své znalosti a poèetní dovednosti
+z celého objemu uèiva.
+\smallskip
+
+\subsection*{Pro zájemce\ikona{7}}
+Tato èást, jak již bylo uvedeno výše, obsahuje rozšíøení výsledkù
+na funkce tøí a zejména obecnì $n$~promìnných.
+Je od ostatního textu odlišena menším typem písma.
+\smallskip
+
+\subsection*{Literatura\ikona{8}}
+Jedná se o literaturu použitou autory pøi vytváøení tohoto
+studijního materiálu, nikoliv jen o literaturu doporuèenou k dalšímu
+studiu. Pokud nìkterou z uvedených publikací doporuèujeme
+zájemcùm, pak je to v textu spolu s odkazem na daný titul jasnì
+uvedeno.\unskip
+\smallskip
+
+\subsection*{Rejstøík\ikona{11}}
+Rejstøík, uvedený na konci skript, poslouží ke snadné orientaci
+v textu.
+%
+\else
+%
+\subsection*{Prùvodce studiem} Prostøednictvím prùvodce
+studiem vás chceme seznámit s tím, co vás v dané kapitole èeká,
+které èásti by mìly být pro vás opakováním, na co je tøeba se
+obzvláštì zamìøit atd.
+\smallskip
+
+\subsection*{Cíle}
+V èásti cíle se dozvíte, co všechno zvládnete a budete umìt po
+prostudování dané kapitoly.\unskip
+\smallskip
+
+\subsection*{Pøíklad}
+Touto ikonou jsou oznaèeny všechny øešené pøíklady.  Konec
+øešených pøíkladù je oznaèen plným trojúhelníèkem (\blacktroj).
+\smallskip
+
+\subsection*{Pojmy k zapamatování}
+Pojmy zde uvedené jsou vìtšinou nové a zcela zásadní.
+To znamená tyto pojmy nejen
+pochopit a umìt ilustrovat na pøíkladech, ale také umìt vyslovit
+jejich pøesné definice.
+\smallskip
+
+\subsection*{Kontrolní otázky}
+Odpovìzením na tyto otázky si ovìøíte, zda jste daným pojmùm porozumìli, zda
+si uvìdomujete rozdíly mezi zdánlivì podobnými pojmy, zda dovedete
+uvést pøíklad ilustrující danou situaci atd.
+\smallskip
+
+\subsection*{Pøíklady k procvièení}
+Tyto pøíklady slouží k tomu, abyste si dùkladnì procvièili
+probranou látku. Výsledky uvedených pøíkladù jsou zaøazeny na
+konci každé kapitoly.
+\smallskip
+
+\subsection*{Klíè k pøíkladùm k procvièení}
+Na konci  každé kapitoly je uveden klíè ke cvièením, který
+obsahuje výsledky  pøíkladù k procvièení.
+\smallskip
+
+\subsection*{Autotest}
+Pomocí autotestu si otestujete své znalosti a poèetní dovednosti
+z celého objemu uèiva.
+\smallskip
+
+\subsection*{Pro zájemce}
+Tato èást, jak již bylo uvedeno výše, obsahuje rozšíøení výsledkù
+na funkce tøí a zejména obecnì $n$~promìnných.
+Je od ostatního textu odlišena menším typem písma.
+\smallskip
+
+\subsection*{Literatura}
+Jedná se o literaturu použitou autory pøi vytváøení tohoto
+studijního materiálu, nikoliv jen o literaturu doporuèenou k dalšímu
+studiu. Pokud nìkterou z uvedených publikací doporuèujeme
+zájemcùm, pak je to v textu spolu s odkazem na daný titul jasnì
+uvedeno.\unskip
+\smallskip
+
+\subsection*{Rejstøík}
+Rejstøík, uvedený na konci skript, poslouží ke snadné orientaci
+v textu.
+\fi
+\vspace{10mm}
+
+\noindent
+Definice a vìty jsou uvedeny v rámeèku (v tiskové verzi)
+resp. barevným písmem s barevným pozadím (v obrazovkové verzi). Konce dùkazù
+jsou vyznaèeny prázdným ètvereèkem~(\openbox), konce øešení pøíkladù plným trojúhelníèkem (\blacktroj).
+
+\newpage
+
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic}
+
+\fancyhf{}
+\fancyhead[RO,LE]{\bfseries\thepage }
+\fancyhead[LO]{\slshape\rightmark }
+\fancyhead[RE]{\slshape\leftmark }
+\renewcommand{\headrulewidth}{.4pt}
+\fancypagestyle{plain}{%
+\fancyhf{}%
+\fancyhead[RO,LE]{\bfseries\thepage }%
+\renewcommand{\headrulewidth}{.4pt}}
+
+\input kap1
+
+%Literatura
+\newpage
+\pdfbookmark{Literatura}{literatura}  
+\begin{thebibliography}{10}
+
+\bibitem{HoKu}
+Hošková, Š. -- Kuben, J.
+\emph{Integrální poèet funkcí jedné promìnné}.
+1.~vydání.
+Brno: Vojenská akademie v Brnì, 2004. 205~s. Skriptum.
+ISBN 80-85960-75-3.
+
+\bibitem{HoKuRa}
+Hošková, Š. -- Kuben, J. -- Raèková, P.
+\emph{Integrální poèet funkcí více promìnných}.
+1.~vydání.
+Brno: Vojenská akademie v Brnì, 2005. 6+140~s. Skriptum.
+ISBN 80-7231-031-3.
+
+\bibitem{schwsar}
+Schwabik, Š. -- Šarmanová, P.
+\emph{Malý prùvodce historií integrálu}.
+Pøírodovìdecká fakulta Masarykovy univerzity v Brnì,
+Dìjiny matematiky, sv.~6. 1.~vydání.
+Praha: Prometheus, 1996. 96~s.
+ISBN 80-7196-038-1.
+
+\bibitem{Si}
+Sikorski, R.
+\emph{Diferenciální a integrální poèet. Funkce více promìnných.}
+Druhé, zmìnìné a doplnìné vydání. Vydání pøekladu~1.
+Praha: Academia, 1973. 496~s.
+
+\end{thebibliography}
+
+%Tisk rejstøíku
+\newpage
+
+\printindex
+
+\end{document}
+

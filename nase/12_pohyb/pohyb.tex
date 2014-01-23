@@ -1,0 +1,226 @@
+\noindent \textbf{12  Analýza obrazů proměnných v čase}
+
+\noindent Až dosud jsme předpokládali, že obrazy, které zpracováváme, jsou nepohyblivé. Některé úlohy však mají povahu dynamickou. V takovém případě pak často pracujeme nikoli s jedním, ale s celou sekvencí obrazů pořízených např. kamerou. Škála úloh, které přicházejí v úvahu, je rozmanitá. Úkolem například může být detekovat ve scéně pohybující se objekty, stanovit parametry jejich pohybu, případně objekty i rozpoznat. Jindy je naopak scéna statická, ale pohybuje se kamera, která scénu sleduje. Taková situace nastává např. u autonomních robotů, u nichž se žádá, aby se sami dokázali ve scéně orientovat. Cílem také může být stanovení geometrických parametrů sledovaných objektů nebo stanovení trajektorie kamery ve scéně. Velké šíři problémů, které při analýze obrazů proměnných v čase vyvstávají, odpovídá i široká škála metod, které jsou v literatuře pro jejich řešení popisovány. V tomto textu se omezíme pouze na některé častěji používané typické přístupy. Jedním z nástrojů, který se při zpracování obrazů proměnných v čase uplatňuje téměř pravidelně, je Kalmanův filtr. Popis Kalmanova filtru a jeho možných aplikací v diskutované třídě úloh uvádíme v podkapitolách 12.1 až 12.4. Kapitola 12.5 je věnována tzv. optickém toku, dalšímu nástroji, který lze dnes již považovat za klasický.     
+
+\noindent \textbf{12.1 Diskrétní Kalmanův filtr}
+
+\noindent Uvažujme dynamický systém, tedy systém, jehož stav se mění v čase. Chování systému budeme vyšetřovat v okamžicích \textit{t} = 0,1,2,..., $\infty$. Předpokládáme, že stav systému v libovolném čase \textit{t} je možné zcela popsat vektorem \textbf{x}\textit{t} stavových proměnných. Posloupnost \{\textbf{x}\textit{t}\} je vektorovým stochastickým procesem. Dále předpokládáme, že chování systému v čase je popsáno rovnicí
+
+ . \eqref{GrindEQ__12_1_}
+
+\noindent Slovně lze rovnici \eqref{GrindEQ__12_1_} formulovat takto: Stav systému v čase \textit{t}+1 popsaný vektorem \textbf{x}\textit{t}+1 je závislý na stavu \textbf{x}\textit{t}, na deterministickém budícím signálu \textbf{d}\textit{t} a na šumu \textbf{w}\textit{t} v čase \textit{t}. Je zřejmé, že vektor \textbf{x}\textit{t}+1 je lineární kombinací prvků vektorů \textbf{x}\textit{t}, \textbf{d}\textit{t}, \textbf{w}\textit{t}. Matice \textbf{$\Phi$}\textit{t}+1$\mid$\textit{t}, \textbf{D}\textit{t}, \textbf{$\Gamma$}\textit{t} obsahují koeficienty lineární kombinace. Indexem \textit{t} je při tom zdůrazněno, že také tyto matice obecně mohou být proměnné v čase. Je zajímavé promyslet význam posledního členu na pravé straně rovnice \eqref{GrindEQ__12_1_}. Neformálně řečeno vyjadřuje tento člen nedůvěru v to, že pro popis systému platí rovnice \textbf{x}\textit{t}+1 = \textbf{$\Phi$}\textit{t}+1$\mid$\textit{t}\textbf{x}\textit{t}+\textbf{D}\textit{t}\textbf{d}\textit{t}. Čím větší je nedůvěra, tím více šumu přidáváme. Vidíme tedy, že Kalmanův filtr počítá s tím, že chování vyšetřovaného systému nemusí být známo zcela přesně. Neúplná znalost je vzata v úvahu přidáním šumu dynamiky systému. Pro úplnost poznamenejme, že z předpokladu \eqref{GrindEQ__12_1_} vyplývá, že posloupnost \{\textbf{x}\textit{t}\} je tzv. markovský proces. (V markovských procesech závisí stav v čase \textit{t} pouze na stavu v čase \textit{t}$-$1 a nikoli na historii, jak se systém do stavu v čase \textit{t}$-$1 dostal.) Předpokládejme dále, že v každém čase \textit{t} provádíme měření, kterým zjišťujeme, v jakém stavu se systém právě nachází. Obecně lze měřit libovolný počet hodnot, z nichž každá je nějakou lineární kombinací stavových proměnných. Hodnoty naměřené v čase \textit{t} uspořádáme do vektoru \textbf{z}\textit{t}. Modelem měření je rovnice  
+
+ . \eqref{GrindEQ__12_2_}
+
+\noindent Matice \textbf{H}\textit{t} je maticí měření, která popisuje, jak měřené veličiny závisí na hodnotách stavových proměnných. Měření je zkresleno šumem \textbf{v}\textit{t}. Předpokládáme, že šumy \textbf{w},\textbf{v} jsou gaussovské vektorové náhodné procesy s nulovou střední hodnotou a s charakterem bílého šumu. Uvedené předpoklady jsou vyjádřeny rovnicemi 
+
+ , \eqref{GrindEQ__12_3_}
+
+ ,     . \eqref{GrindEQ__12_4_}
+
+\noindent Výše uvedené rovnice platí pro všechna \textit{t},\textit{s} = 0,1,2,... ; \textbf{Vw},\textit{t} a \textbf{Vv},\textit{t} jsou disperzní matice šumu dynamiky systému a šumu měření
+
+ ,     . \eqref{GrindEQ__12_5_}
+
+\noindent Předpokládáme, že šumy \textbf{w},\textbf{v} jsou na sobě nezávislé a že jsou nezávislé také na počátečním stavu \textbf{x}0. Pro všechna \textit{t},\textit{s} = 0,1,2,...  tedy máme
+
+ , \eqref{GrindEQ__12_6_}
+
+ ,     . \eqref{GrindEQ__12_7_}
+
+\noindent Cílem výpočtu je provést v každém okamžiku \textit{t} odhad$\hat{x}_{t} $stavového vektoru \textbf{x}\textit{t}. Pro provedení odhadu by při tom měly být vzaty v úvahu všechny hodnoty, které byly až do doby \textit{t} získány měřením. Chybu  odhadu můžeme stanovit jako rozdíl 
+
+ . \eqref{GrindEQ__12_8_}
+
+\noindent Odhad $\hat{x}_{t} $stanovíme tak, aby byly splněny následující vlastnosti
+
+ ,     . \eqref{GrindEQ__12_9_}
+
+\noindent Vztah \eqref{GrindEQ__12_9_} je předpisem, v němž se odhad $\hat{x}_{t} $ hledá na základě minimalizace tzv. bayesovského rizika. Zaveďme podmíněnou hustotu pravděpodobnosti \textit{p}(\textbf{x}\textit{t}\textbar \textbf{z}0,\textbf{z}1,..., \textbf{z}\textit{t}), což je hustota pravděpodobnosti vektorové náhodné proměnné \textbf{x}\textit{t} za předpokladu, že v časech 0,1,..., \textit{t} byly naměřeny hodnoty \textbf{z}0,\textbf{z}1,..., \textbf{z}\textit{t}. Tuto hustotu označíme zkráceně \textit{p}(\textbf{x}\textit{t}\textbar \textbf{Z}\textit{t}). Lze ukázat, že v našem případě je požadavku \eqref{GrindEQ__12_9_} ekvivalentní postup, kdy je odhad $\hat{x}_{t} $ nalezen jako hodnota maximalizující hodnotu \textit{p}(\textbf{x}\textit{t}\textbar \textbf{Z}\textit{t}). Věříme, že čtenář shledá, že tento postup je racionální i sám o sobě, bez zdůrazňování skutečnosti, že jde o důsledek požadavku \eqref{GrindEQ__12_9_}, což jsme zde pouze uvedli, ale nedokázali. Protože podrobná realizace naznačeného postupu a odvození výsledných vztahů pro Kalmanův filtr by přesahovaly možnosti tohoto textu, uvedeme zde pouze výsledek. Filtr počítá odhad $\hat{x}_{t+1} $ v čase \textit{t}+1 pomocí rekurentního předpisu využívajícího hodnot v čase \textit{t}. Protože je předpis poněkud komplikovanější, bývá rozdělen do několika dílčích kroků. Kromě výpočtu odhadu $\hat{x}_{t+1} $ je také stanovována disperzní maticechyby odhadu. Jako pomocná hodnota je dále v každém kroku počítána predikce  disperzní matice chyby odhadu a matice \textbf{K}\textit{t}+1 zesílení. Výpočet pak může být realizován v následujících krocích 
+
+ , \eqref{GrindEQ__12_10_}
+
+ , \eqref{GrindEQ__12_11_}
+
+ , \eqref{GrindEQ__12_12_}
+
+ , \eqref{GrindEQ__12_13_}
+
+ . \eqref{GrindEQ__12_14_}
+
+\noindent Jak je z uvedených vzorců vidět, je pro realizaci výpočtu zapotřebí znát hodnoty \textbf{$\Phi$}\textit{t}+1\textbar \textit{t}, \textbf{D}\textit{t}, \textbf{$\Gamma$}\textit{t}, \textbf{H}\textit{t}, \textbf{Vw}\textit{,t}, \textbf{Vv}\textit{,t}. Tyto hodnoty získáme na základě analýzy úlohy, v níž má být filtr použit (příklad je uveden v následující podkapitole). Pro spuštění algoritmu je dále nutné zadat počáteční hodnotu $\hat{x}_{0} $ odhadu stavového vektoru a počáteční hodnotu  disperzní matice chyby odhadu v čase \textit{t}=0. Protože je odhad neustále korigován měřením, není Kalmanův filtr příliš citlivý na přesnost nastavení počátečních hodnot. Nejsou-li k dispozici přesnější údaje, můžeme položit$\hat{x}_{0} =0$ a za vzít diagonální matici, v níž jsou na diagonále dostatečně veliké odhady počátečních disperzí jednotlivých prvků stavového vektoru.
+
+\noindent \textbf{12.2  Aplikace  Kalmanova filtru při sledování pohybujících se objektů}
+
+\noindent Předpokládejme, že v časech \textit{t} = 0,1,... kamera snímá obrazy scény a produkuje tak sekvenci obrazů \textit{I}1,\textit{I}2,... . Zatímco kamera je pevná, vyskytují se ve scéně pohybující se objekty. Pro jednoduchost předpokládejme, že objekty zájmu jsou izolované body. Úkolem pak je tyto body detekovat a sledovat jejich pohyb v jednotlivých obrazech sekvence. Problém je ilustrován na obr. 12.1. Nechť \textit{X} je bod zájmu. Průmět bodu \textit{X} v obraze \textit{It} označíme \textit{Xt}; (\textit{ut},\textit{vt}) nechť jsou souřadnice bodu \textit{Xt} v \textit{It}.  Předpokládáme, že hodnoty souřadnic lze získat měřením. Měření je však zatíženo chybami, a to např. přinejmenším proto, že souřadnice bodů v obrazech často měříme celočíselným počtem pixelů, zatímco přesné hodnoty jsou reálné (na chybách měření se ovšem mohou podílet i další vlivy). Pokud lze pro pohyb bodu v obraze formulovat nějaký model, pak je možné k odhadu přesnějších hodnot souřadnic bodů použít Kalmanova filtru. Filtr postupně odhaduje souřadnice bodu v čase \textit{t}=1,2,... . Při tom pro každé \textit{t} bere v úvahu nejen všechna měření provedená až do doby \textit{t} včetně, ale také teoretická očekávání o pohybu bodu, která jsou vtělena do modelu systému. Lze proto očekávat, že odhad poskytnutý Kalmanovým filtrem bude lepší než jednotlivé měření.
+
+\noindent 
+
+\noindent 
+
+\noindent Nyní ukážeme konkrétní návrh Kalmanova filtru. Řekněme, že jsme zjistili, že pro všechna \textit{t} jsou souřadnice \textit{ut},\textit{vt} obrazu bodu zájmu v \textit{It} nekorelované, a že proto můžeme pro každou souřadnici použít samostatný filtr (tento předpoklad je dosti častý a většinou také oprávněný). Každý sledovaný bod tak bude vyžadovat dva filtry: Jeden pro souřadnici \textit{u}, druhý pro souřadnici \textit{v}. Oddělené zpracování souřadnic je výhodné. Oproti případu, kdy by pro obě souřadnice byl použit filtr jediný, mají matice ve vztazích \eqref{GrindEQ__12_1_}, \eqref{GrindEQ__12_2_}, \eqref{GrindEQ__12_10_} až \eqref{GrindEQ__12_14_} poloviční rozměry, a výpočet je proto rychlejší, a to i přesto, že se v případě dvou filtrů provádí dvakrát (uvažte např. násobení čtvercových matic - zvětší-li se rozměr matice dvakrát, vzroste počet operací osmkrát). Protože pro obě souřadnice použijeme dvou shodně konstruovaných filtrů, budeme v dalším textu uvádět pouze vztahy pro souřadnici \textit{u}. Vztahy pro souřadnici \textit{v} budou analogické. Řekněme dále, že o tom, jakými zákonitostmi se pohyb sledovaných bodů v obrazech řídí, nemáme přesné poznatky. Musíme proto navrhnout pokud možno dosti obecný model. Takovým může být např. model, v němž jako stavové proměnné volíme souřadnici \textit{u}, její první diferenci \textit{u}' a druhou diferenci \textit{u}" a v němž předpokládáme, že druhá diference (zrychlení) je konstantní. Stavový vektor je tedy \textbf{x}\textit{t} = (\textit{ut},\textit{ut}',\textit{ut}")T. Předpokládáme, že chování systému dostatečně výstižně popisují rovnice 
+
+ , \eqref{GrindEQ__12_15_}
+
+ , \eqref{GrindEQ__12_16_}
+
+ . \eqref{GrindEQ__12_17_}
+
+\noindent V našem případě je $\Delta$\textit{t}=1. Měřenou hodnotou je pouze hodnota souřadnice (vektor \textbf{z}\textit{t} obsahuje pouze jedinou složku). Deterministické buzení systému v našem případě není, a proto lze ve všech vzorcích členy \textbf{D}\textit{t}\textbf{d}\textit{t} vypustit. Matice \textbf{$\Phi$}\textit{t}+1$\mid$\textit{t}, \textbf{H}\textit{t} jsou v popisovaném případě konstantní v čase a mají tvar
+
+ ,     . \eqref{GrindEQ__12_18_}
+
+\noindent Podle míry, jak přesně rovnice \eqref{GrindEQ__12_15_} až \eqref{GrindEQ__12_17_} vystihují skutečný pohyb bodů v obraze, nastavíme hodnoty v maticích \textbf{Vw},\textit{t} a \textbf{$\Gamma$}\textit{t}, které popisují nejistotu modelu. Obě matice zde volíme diagonální a v čase konstantní
+
+ ,     . \eqref{GrindEQ__12_19_}
+
+\noindent Hodnoty $\sigma$\textit{x}2, $\sigma$\textit{v}2, $\sigma$\textit{a}2 jsou variance šumů, který je podle vztahu \eqref{GrindEQ__12_1_} přičítán k pravé straně rovnice pro souřadnici, k pravé straně rovnice pro rychlost a k pravé straně rovnice pro zrychlení. Jak je vidět z tvaru matice \textbf{Vw},\textit{t}, předpokládáme v našem případě, že jednotlivé složky šumového vektoru jsou na sobě nezávislé. Jak je dále vidět z rovnice \eqref{GrindEQ__12_1_}, upravují hodnoty $\gamma$\textit{x}, $\gamma$\textit{v}, $\gamma$\textit{a} velikost šumu. Matice \textbf{Vv},\textit{t} obsahuje pouze hodnotu variance $\sigma$\textit{m}2 šumu měření a je tedy \textbf{Vv},\textit{t} = [$\sigma$\textit{m}2]. Návrh konkrétních hodnot obsažených v maticích \textbf{Vw},\textit{t}, \textbf{$\Gamma$}\textit{t}, \textbf{Vv},\textit{t} je obtížný. I když se návrh může opírat o nějakou logickou úvahu, je vždy na místě experimentální ověření. Nevhodně zvolené hodnoty mohou vést ke zbytečnému snížení účinnosti filtru. Pro rozběhnutí filtru je dále zapotřebí zvolit počáteční hodnoty. Počáteční hodnotu stavového vektoru můžeme volit např. $\hat{x}_{0} $= (\textit{u}0,0,0), kde \textit{u}0 je souřadnice zjištěná při prvním výskytu sledovaného bodu. Jako počáteční hodnotu  disperzní matice chyby odhadu můžeme vzít diagonální matici, kde na diagonálu postupně umístíme předpokládané disperze chyby počátečního odhadu souřadnice, rychlosti a zrychlení. Není-li k dispozici žádný apriorní předpoklad, pak na diagonálu jednoduše umístíme dostatečně veliké hodnoty.
+
+\noindent 
+
+\noindent 
+
+\noindent Nakonec ještě popišme samotný algoritmus sledování pohybu bodů. Uvažujme po sobě jdoucí obrazy \textit{It}, \textit{It}+1 sejmuté v časech \textit{t}, \textit{t}+1. Řekneme, že bod \textit{Xt} z obrazu \textit{It} koresponduje s bodem \textit{Xt}+1 z obrazu \textit{It}+1, jestliže \textit{Xt}, \textit{Xt}+1 jsou obrazy téhož bodu scény. Sledování bodů lze realizovat pomocí hledání korespondujících párů bodů v po sobě jdoucích obrazech. Předpokládáme, že časový interval, v~němž jsou obrazy snímány, je dostatečně krátký, a že jsou proto po sobě následující obrazy dosti podobné. Algoritmus sledování může pracovat např. takto: V obrazech \textit{It}, \textit{It}+1 nalezneme body zájmu. K tomu lze použít např. některého z detektorů rohů (kapitola 8.4). Nechť \textit{Xt} je bod zájmu nalezený v~obraze \textit{It}. Předpokládejme, že odhad $\hat{u}_{t} ,\hat{v}_{t} $ souřadnic tohoto bodu získaný Kalmanovým filtrem podle vztahu \eqref{GrindEQ__12_13_} je již znám. V obraze \textit{It}+1 nyní hledáme bod \textit{Xt+}1 korespondující s \textit{Xt}. Vztahy \eqref{GrindEQ__12_12_}, \eqref{GrindEQ__12_15_} poskytují predikci $\hat{u}_{t+1\left|t\right. } ,\hat{v}_{t+1\left|t\right. } $ polohy bodu \textit{Xt+}1 v obraze \textit{It}+1. Tato predikce je verifikována nalezením skutečné polohy korespondujícího bodu. Skutečnou polohu korespondujícího bodu lze najít takto: Body zájmu nalezené v \textit{It}+1, jejichž vzdálenost od predikované polohy je menší než jistá prahová hodnota, jsou považovány za kandidáty na korespondenci a korespondence mezi \textit{Xt} a každým z kandidátů je dále prověřována. (Na obr. 12.2 se v~blízkosti predikované polohy vyznačené křížkem vyskytují celkem tři kandidáti na korespondenci s bodem \textit{Xt}; prahová hodnota vzdálenosti je vyznačena čárkovanou kružnicí.) Vhodnou prahovou hodnotu vzdálenosti lze odhadnout s využitím disperzní matice  chyby odhadu stavového vektoru. Nechť \textit{Yt}+1 je možným kandidátem. Posouzení zda \textit{Yt}+1 s \textit{Xt} skutečně koresponduje je provedeno na základě porovnání hodnot zvolených jasových příznaků (kapitola 9.8, 9.9) vypočítaných pro jisté okolí každého z bodů testované dvojice (na obr. 12.2 jsou znázorněna okolí kruhová). Alternativně by též bylo možné přímo porovnat okolí bodů \textit{Xt}, \textit{Yt}+1 podobně, jak jsme prováděli v~kapitole 11.6. Nechť \textbf{a}(\textit{Xt}), \textbf{a}(\textit{Yt}+1) jsou vektory příznaků vypočítané pro body \textit{Xt}, \textit{Yt}+1. Hodnota \textbar \textbf{a}(\textit{Xt}) $-$ \textbf{a}(\textit{Yt}+1)\textbar  umožňuje posoudit míru korespondence. Za bod korespondující s \textit{Xt} považujeme toho z kandidátů, pro kterého je uvedená délka dostatečně malá a významně menší než pro kandidáty zbývající. Jestliže je bod korespondující s \textit{Xt} nalezen, jsou známy jeho souřadnice, což v terminologii Kalmanova filtru znamená, že bylo provedeno měření. Na základě takto provedeného měření pak vztah \eqref{GrindEQ__12_13_} poskytuje zpřesněný odhad $\hat{u}_{t+1} ,\hat{v}_{t+1} $, v němž je redukován vliv šumu. Je samozřejmé, že v průběhu času mohou některé body zájmu z obrazu zmizet. To může nastat buď proto, že bod opustí zorné pole kamery nebo proto, že je zakryt nějakým objektem scény. Nové body se naopak mohou objevit.
+
+\noindent \textbf{12.3 Alfa, beta filtr pro sledování pohybu bodu}
+
+\noindent Předpokládejme nyní, že matice \textbf{$\Phi$}\textit{t}+1$\mid$\textit{t}, \textbf{D}\textit{t}, \textbf{$\Gamma$}\textit{t}, \textbf{H}\textit{t}, \textbf{Vw},\textit{t}, \textbf{Vv},\textit{t} v~Kalmanově filtru jsou v~čase konstantní (ve zbytku této podkapitoly již proto u těchto matic index \textit{t} nebudeme používat). Praktická zkušenost s~použitím Kalmanova filtru ukazuje, že se hodnoty v~maticích \textbf{K}\textit{t}, , mění nejvíce na začátku výpočtu a s~rostoucím \textit{t} se postupně ustalují. Nabízí se proto myšlenka provádět výpočet s~pevnou hodnotou matice \textbf{K}, která odpovídá ustálenému stavu. Očekáváme, že tento postup sice na začátku výpočtu povede k~jistému snížení účinnosti filtru, to však ale bude na druhé straně vyváženo jednodušším (a tudíž rychlejším) výpočtem. Zaveďme tedy
+
+ ,     ,     . \eqref{GrindEQ__12_20_}
+
+\noindent Položme dále \textbf{Q} = \textbf{$\Gamma$}\textit{t}\textbf{ Vw},\textit{t} \textbf{$\Gamma$}\textit{t}T. Rovnice \eqref{GrindEQ__12_10_} až \eqref{GrindEQ__12_14_} můžeme nyní přepsat do tvaru
+
+ , \eqref{GrindEQ__12_21_}
+
+ , \eqref{GrindEQ__12_22_}
+
+ , \eqref{GrindEQ__12_23_}
+
+ , \eqref{GrindEQ__12_24_}
+
+ . \eqref{GrindEQ__12_25_}
+
+\noindent Do rovnice \eqref{GrindEQ__12_21_} postupně dosadíme rovnice \eqref{GrindEQ__12_25_} a \eqref{GrindEQ__12_22_}. Dostaneme
+
+ . \eqref{GrindEQ__12_26_}
+
+\noindent Úpravou rovnice \eqref{GrindEQ__12_26_} pak snadno dostáváme rovnici
+
+ . \eqref{GrindEQ__12_27_}
+
+\noindent Poznamenejme, že rovnice ve tvaru, ke kterému jsme dospěli, bývá nazývána rovnicí Ricattiho. Rovnice \eqref{GrindEQ__12_27_} je rovnicí, z~níž lze stanovit matici (ostatní hodnoty jsou známé). Známe-li tuto matici, pak dle vztahu \eqref{GrindEQ__12_22_} již snadno stanovíme matici Kalmanova zisku.
+
+\noindent 
+
+\noindent Ilustrujme popsaný postup na konkrétním případě. Podobně jako v~předchozí podkapitole navrhneme filtr pro odhad polohy bodů v~obraze. Opět předpokládáme, že souřadnice bodů jsou nekorelované, a navrhneme proto pro každou souřadnici oddělený filtr. Protože jsou filtry pro obě souřadnice konstruovány shodně, omezíme se při výkladu pouze na jedinou souřadnici, kterou označíme \textit{u}. Pro jednoduchost tentokrát uvažujeme model s~konstatní rychlostí. Stavový vektor volíme \textbf{x}\textit{t} = (\textit{ut},\textit{ut}')T. Předpokládáme, že pohyb bodů dostatečně přesně popisují rovnice \textit{ut}+1 = \textit{ut} + $\Delta$\textit{t} \textit{ut}', \textit{ut}'+1 = \textit{ut}'. Označme \textit{ut}* hodnotu souřadnice získanou měřením v čase \textit{t}. Vektor měření pak je \textbf{z}\textit{t} = (\textit{ut}*). Matice filtru mají tvar
+
+ ,     ,     ,     . \eqref{GrindEQ__12_28_}
+
+\noindent Zatím neznámou matici  předpokládáme ve tvaru 
+
+ . \eqref{GrindEQ__12_29_}
+
+\noindent Dále vypočtěme
+
+ . \eqref{GrindEQ__12_30_}
+
+\noindent Z~rovnice \eqref{GrindEQ__12_27_} máme
+
+ . \eqref{GrindEQ__12_31_}
+
+\noindent Úpravou \eqref{GrindEQ__12_31_} dále dostaneme
+
+ . \eqref{GrindEQ__12_32_}
+
+\noindent Známe-li hodnoty prvků matice \textbf{Q}, můžeme z~rovnice \eqref{GrindEQ__12_32_} vypočítat hodnoty \textit{v}11,\textit{v}12,\textit{v}22, což jsou prvky matice. Jistou komplikací ovšem je, že rovnice \eqref{GrindEQ__12_32_} je nelineární, a výpočet je proto poněkud nepříjemný. Jestliže je matice  vypočtena, můžeme snadno stanovit matici Kalmanova zisku. Z rovnice \eqref{GrindEQ__12_22_} dostaneme
+
+ . \eqref{GrindEQ__12_33_}
+
+\noindent Položme $\alpha$ = \textit{k}1, $\beta$ = $\Delta$\textit{t} \textit{k}2. Rozepsáním vztahů \eqref{GrindEQ__12_23_} (člen \textbf{Dd}\textit{t} opět odpadá) a \eqref{GrindEQ__12_24_} obdržíme 
+
+ , \eqref{GrindEQ__12_34_}
+
+ , \eqref{GrindEQ__12_35_}
+
+ . \eqref{GrindEQ__12_36_}
+
+\noindent Prakticky se při sledování pohybu bodů hodnoty $\alpha$,$\beta$ počítají pouze při zřizování filtru pro nově se objevivší bod. Navíc lze často stejných hodnot $\alpha$,$\beta$ využít pro celou skupinu bodů nebo dokonce pro celou třídu úloh. Výpočet prováděný během sledování se tak redukuje na pouhé opakované vyčíslování vztahů \eqref{GrindEQ__12_34_} až \eqref{GrindEQ__12_36_}. Nízká složitost výpočtu je výhodná zejména pro úlohy v reálném čase. Na závěr této podkapitoly poznamenejme, že podobným postupem, jako jsme odvodili vztahy pro případ, kdy rychlost předpokládáme konstatní, by bylo možné odvodit také vztahy pro případ, kdy je konstatní zrychlení. Obdrželi bychom tzv. $\alpha$,$\beta$,$\gamma$ filtr. Odvození je však bohužel poněkud zdlouhavé a výsledné vztahy dosti komplikované.
+
+\noindent 
+
+\noindent \textbf{12.4  Sledování objektů v obrazech získaných pohybující se kamerou}
+
+\noindent Předpokládejme nyní, že sledovaná scéna je pevná, ale že se pohybuje kamera, která scénu sleduje. Nejprve promyslíme, jakými zákonitostmi se řídí pohyb průmětů bodů sledované scény po obraze. K tomu využijeme terminologie a symboliky zavedené v kapitole 11.1. Nechť bod \textit{Ot} (reprezentovaný v souřadném systému scény vektorem \textbf{o}\textit{t}) popisuje polohu počátku souřadného systému kamery v čase \textit{t} (tj. polohu středu projekce) a matice \textbf{R}\textit{t} nechť popisuje natočení souřadného systému kamery v čase \textit{t} vzhledem k souřadnému systému scény. Zavedeme vektor posunutí \textbf{b}\textit{t,s} a matici rotace \textbf{R}\textit{t,s} tak, aby pro transformaci ze souřadného systému kamery v čase \textit{s} do souřadného systému kamery v čase \textit{t} platilo (následující vztah je zobecněním vztahu (11.18))
+\begin{equation} \label{GrindEQ__12_37_} 
+x_{t} =R_{t,s} x_{s} +b_{t,s} .  
+\end{equation} 
+Uvažujme bod \textit{X} scény. V obrazech získaných kamerou v časech \textit{t}, \textit{t}+1 jsou souřadnice průmětů tohoto bodu popsány vektory \textbf{u}\textit{t}, \textbf{u}\textit{t}+1 (kapitola 11.1). Z rovnic \eqref{GrindEQ__11_4_} a \eqref{GrindEQ__12_37_} snadno získáme vztah
+\begin{equation} \label{GrindEQ__12_38_} 
+\lambda _{t} F_{t} Q_{t} u_{t} =\lambda _{t+1} R_{t,t+1} F_{t+1} Q_{t+1} u_{t+1} +b_{t,t+1} .  
+\end{equation} 
+Odtud máme $u_{t+1} =\frac{\lambda _{t} }{\lambda _{t+1} } Q_{t+1}^{-1} F_{t+1}^{-1} R_{t,t+1}^{-1} F_{t} Q_{t} u_{t} -\frac{1}{\lambda _{t+1} } Q_{t+1}^{-1} F_{t+1}^{-1} R_{t,t+1}^{-1} b_{t,t+1} $. \eqref{GrindEQ__12_39_}
+
+\noindent Je patrné, že rovnice \eqref{GrindEQ__12_39_} je ve tvaru, jaký je předpokládán Kalmanovým filtrem. Stavovým vektorem je vektor \textbf{u}\textit{t}, vektorem deterministického buzení je vektor \textbf{b}\textit{t},\textit{t}+1. Porovnáním rovnice \eqref{GrindEQ__12_39_} s rovnicí \eqref{GrindEQ__12_1_} máme
+\begin{equation} \label{GrindEQ__12_40_} 
+{\bf F}_{t+1\left|t\right. } =\frac{\lambda _{t} }{\lambda _{t+1} } Q_{t+1}^{-1} F_{t+1}^{-1} R_{t,t+1}^{-1} F_{t} Q_{t} ,     D_{t} =-\frac{1}{\lambda _{t+1} } Q_{t+1}^{-1} F_{t+1}^{-1} R_{t,t+1}^{-1} .  
+\end{equation} 
+Praktické použití právě odvozeného exaktního modelu však bohužel není jednoduché. Ke stanovení matic \textbf{$\Phi$}\textit{t}+1$\mid$\textit{t} a \textbf{D}\textit{t} jsou potřebné matice \textbf{Q}\textit{t}+1, \textbf{F}\textit{t}+1, \textbf{R}\textit{t,t}+1 a vektor \textbf{b}\textit{t,t}+1, které však v okamžiku, kdy je odhad vektoru \textbf{u}\textit{i}+1 zapotřebí provést, obvykle nejsou k dispozici. Často jsou naopak teprve na základě tohoto odhadu (provedeného pro dostatečný počet bodů) vypočítány. Proto jsou i v případě pohybující se kamery častěji používány přibližné modely popsané v podkapitolách 12.2, 12.3.
+
+\noindent 
+
+\noindent \textbf{12.5  Optický tok}
+
+\noindent Uvažujeme opět obrazy, které se mění v čase, a to buď proto, že se pohybují objekty ve scéně nebo proto, že se pohybuje kamera. Na rozdíl od předchozích podkapitol však nyní předpokládejme, že se obrazy v čase mohou měnit zcela spojitě. Nechť \textit{X} je nějaký bod scény. V čase \textit{t} nechť se tento bod promítá do bodu, který je v souřadné soustavě obrazu reprezentován vektorem (\textit{u},\textit{v}). V čase \textit{t}+$\delta$\textit{t} se tentýž bod \textit{X} scény zobrazuje do bodu (\textit{u}+$\delta$\textit{u}, \textit{v}+$\delta$\textit{v}), kde $\delta$\textit{u} = \textit{u}'$\delta$\textit{t}, $\delta$\textit{v} = \textit{v}'$\delta$\textit{t} a \textit{u}'=d\textit{u}/d\textit{t}, \textit{v}'=d\textit{v}/d\textit{t}. Představujeme si, že protože je bod (\textit{u}+$\delta$\textit{u}, \textit{v}+$\delta$\textit{v}) průmětem téhož bodu \textit{X}, jako byl dříve bod (\textit{u},\textit{v}), nabývá bod (\textit{u}+$\delta$\textit{u}, \textit{v}+$\delta$\textit{v}) v čase \textit{t}+$\delta$\textit{t} stejného jasu, jako byl jas v bodě (\textit{u},\textit{v}) v čase \textit{t}. Nechť \textit{f}(\textit{u},\textit{v},\textit{t}) označuje funkci jasu (obrazovou funkci), která je nyní proměnná v čase. Rozviňme tuto funkci v okolí bodu (\textit{u},\textit{v},\textit{t}) v Taylorovu řadu. Dostaneme:
+
+  . \eqref{GrindEQ__12_41_}
+
+\noindent Tečky v rovnici \eqref{GrindEQ__12_41_} naznačují členy vyšších řádů. Podle předchozí úvahy má být
+
+  . \eqref{GrindEQ__12_42_}
+
+\noindent Dosadíme-li do rovnice \eqref{GrindEQ__12_42_} vztah \eqref{GrindEQ__12_41_}, v~němž zanedbáme členy vyšších řádů, vydělíme-li rovnici hodnotou $\delta$\textit{t} a předpokládáme-li $\delta$\textit{t}$\rightarrow$0, pak z \eqref{GrindEQ__12_42_} obdržíme rovnici
+
+ . \eqref{GrindEQ__12_43_}
+
+\noindent Zaveďme dále označení ,   ,   . \eqref{GrindEQ__12_44_}
+
+\noindent Rovnici \eqref{GrindEQ__12_43_} lze pak přepsat do tvaru
+
+ . \eqref{GrindEQ__12_45_}
+
+\noindent Rovnice \eqref{GrindEQ__12_45_} bývá nazývána rovnicí optického toku. Její použití je následující: Funkce \textit{fu}, \textit{fv}, \textit{ft} jsou známy. Známe totiž funkci \textit{f}(\textit{u},\textit{v},\textit{t}) (je sejmuta např. kamerou) a zřejmě ji také dokážeme derivovat, a to podle okolností buď analyticky nebo spíše numericky. Neznámými jsou tedy hodnoty rychlostí \textit{u}'(\textit{u},\textit{v}), \textit{v}'(\textit{u},\textit{v}) v jednotlivých bodech obrazu. Nalezneme-li funkce \textit{u}'(\textit{u},\textit{v}), \textit{v}'(\textit{u},\textit{v}), pak na jejich základě můžeme usuzovat např. na tvar pohybujících se objektů. Objekty různých tvarů totiž produkují různá rychlostní pole. Rovnice \eqref{GrindEQ__12_45_} však bohužel sama o sobě ke zjištění rychlostního pole nestačí, a je proto nutné formulovat doplňující podmínky. Často bývá jako doplňující uváděna podmínka, aby se rychlostní pole po ploše obrazu měnilo co nejmírněji. (Přísně vzato je však uvedený požadavek poněkud spekulativní. Např. na kontuře, kde je pohyblivý objekt překrýván objektem pevným, určitě může být změna rychlostního pole náhlá.) Požadavek „mírné změny`` rychlostního pole lze vzít v úvahu tak, že hledáme takové funkce \textit{u}'(\textit{u},\textit{v}), \textit{v}'(\textit{u},\textit{v}), které vyhovují rovnici \eqref{GrindEQ__12_45_} a při tom současně minimalizují funkcionál
+
+ . \eqref{GrindEQ__12_46_}
+
+\noindent Minimalizaci funkcionálu s doplňující podmínkou ve tvaru rovnosti (rovnice (12.45)) lze, jak známo, provést metodou Lagrangeových multiplikátorů. S ohledem na charakter úlohy, kdy můžeme připustit i přibližné řešení, lze postup zjednodušit. Zaveďme označení
+
+ . \eqref{GrindEQ__12_47_}
+
+\noindent Nyní minimalizujme funkcionál \textit{F}(\textit{u}',\textit{v}') + $\lambda$\textit{G}(\textit{u}',\textit{v}'), kde $\lambda$ je zvolená reálná kladná konstanta. V tomto případě již ovšem není zajištěno, že rovnice \eqref{GrindEQ__12_45_} bude splněna přesně. Velikost konstanty $\lambda$ určuje váhu, jakou má požadavek na splnění rovnice \eqref{GrindEQ__12_45_}. Velké hodnoty $\lambda$ způsobují, že je dobře splněna rovnice \eqref{GrindEQ__12_45_}, ale hůře požadavek \eqref{GrindEQ__12_46_}. U malých hodnot $\lambda$ je tomu naopak. Konečně ještě poznamenejme, že ať již řešíme problém minimalizace funkcionálu jakoukoli metodou, je nutné zadat okrajové podmínky pro \textit{u}',\textit{v}' (tedy hodnoty těchto funkcí na okrajích obrazu). Okrajové podmínky bývají zpravidla opět zadávány poněkud spekulativně (např. \textit{u}'(\textit{u},\textit{v})=\textit{v}'(\textit{u},\textit{v}) = 0).
+
+\noindent 
+
+\noindent Na závěr podkapitoly o optickém toku ještě ukážeme několik příkladů rychlostního pole jednoduchých objektů. Předpokládejme nejprve izolovaný bod \textit{X} pohybující se ve scéně. Poloha bodu ve scéně je popsána vektorem (\textit{x}(\textit{t}), \textit{y}(\textit{t}), \textit{z}(\textit{t})). Scénu pozorujeme kamerou, jejíž střed promítání je umístěn do počátku souřadného systému a jejíž průmětna má rovnici \textit{z} = $-$\textit{f}, kde \textit{f} je ohnisková vzdálenost (obr. 12.3a). Pro rychlost pohybu obrazu bodu \textit{X} z podobnosti trojúhelníků snadno dostaneme
+
+ ,     . \eqref{GrindEQ__12_48_}
+
+\noindent Nyní uvažujme rovinnou plochu, která se pohybuje rovnoběžně s průmětnou (obr. 12.3a). Nechť \textit{X} je bodem této plochy. V čase \textit{t} = 0 je poloha bodu \textit{X} popsána vektorem (\textit{x}0,\textit{y}0,\textit{z}0). V čase \textit{t} je poloha téhož bodu \textit{x}(\textit{t}) = \textit{x}0+\textit{wt}, \textit{y}(\textit{t}) = \textit{y}0, \textit{z}(\textit{t}) = \textit{z}0. Pro rychlost pohybu obrazu bodu \textit{X} máme
+
+ ,   . \eqref{GrindEQ__12_49_}
+
+\noindent Rychlostní pole odpovídající popsanému případu je znázorněno na obr. 12.3a. Podobně dále uvažujme případ, kdy je pohyb popsán rovnicemi \textit{x}(\textit{t}) = \textit{x}0, \textit{y}(\textit{t}) = \textit{y}0, \textit{z}(\textit{t}) = \textit{z}0+\textit{wt} (\textit{w} $>$ 0, jedná se tedy o pohyb roviny směrem ke kameře). V tomto případě obdržíme 
+
+ ,     . \eqref{GrindEQ__12_50_}
+
+\noindent Odpovídající rychlostní pole je znázorněno na obr. 12.3b.
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent 
+
+\noindent \textbf{Obr. 12.3.} Rychlostní pole vytvořené pohybující se rovinou.
+

@@ -1,0 +1,592 @@
+\chapter{Filtrace obrazovıch signálù} \label{sec:filtrace}
+
+Filtrace je jednou ze základních metod úpravy signálù (vèetnì signálù reprezentujících obrazy) spoèívající v úpravì kmitoètového spektra.
+V principu lze filtraci provádìt dvìma postupy: nerekurzivnì a rekurzivnì. Uvaujme prostor diskrétních signálù.
+Nerekurzivní filtry vytváøejí vıstupní signál v kadém bodì jako lineární kombinaci vzorkù signálu vstupního.
+Impulzová charakteristika nerekurzivních filtrù obsahuje vdy jen koneènı poèet nenulovıch hodnot, protoe jinak by je nebylo moné prakticky realizovat.
+Nerekurzivní filtry jsou proto také oznaèovány jako filtry FIR (finite-extent impulse response).
+Rekurzivní filtry naproti tomu pøedepisují vztah mezi vstupním a vıstupním signálem obecnìji:
+vıstupní signál v kadém bodì je lineární kombinací vzorkù nejen signálu vstupního, ale také právì urèovaného signálu vıstupního.
+Jako rekurzivní lze realizovat také filtry, jejich impulzová charakteristika obsahuje nekoneènı poèet nenulovıch hodnot.
+Rekurzivní filtry proto také bıvají oznaèovány jako filtry IIR (infinite-extent impulse response).
+Problematice nerekurzivní i rekurzivní filtrace je vìnována tato kapitola.
+Kromì teoretickıch základù uvedeme také nìkteré praktické metody návrhu filtrù, vèetnì metod vyuívajících stochastického pøístupu.
+
+\section{Nerekurzivní filtrace}
+
+Nech $f(m,n)$ je diskrétní vstupní signál a $h(m,n)$ nech je impulzová charakteristika filtru.
+Nerekurzivní filtrací rozumíme úpravu signálu podle pøedpisu
+\begin{equation} \label{eq:5_1}
+    g(m, n) = f(m, n) * h(m, n) \, .
+\end{equation}
+Provedeme-li Fourierovu transformaci rovnice \eqref{eq:5_1}, získáváme vztah
+\begin{equation} \label{eq:5_2}
+    G(k, l) = F(k, l) * H(k, l) \, .
+\end{equation}
+Z~rovnice \eqref{eq:5_2} je patrné, e filtrace provádí úpravu frekvenèního spektra signálu.
+Tato pøedstava bıvá ostatnì dosti èasto primární.
+Èasto poadujeme, aby filtr modifikoval frekvenèní spektrum signálu jistım pøedepsanım zpùsobem, tj. aby mìl jistou poadovanou frekvenèní charakteristiku.
+
+\subsection{Realizace nerekurzivního filtru v~prostorové a frekvenèní doménì}
+
+V praxi se vıpoèet filtrace provádí jak v doménì prostorové podle vztahu \eqref{eq:5_1}, tak v doménì frekvenèní podle vztahu \eqref{eq:5_2}.
+Jedním z faktorù, které ovlivòují volbu postupu, je èasová sloitost vıpoètu.
+Uvedeme pøíklad èasové rozvahy.
+Pøedpokládejme, e máme provést filtraci dle vztahu \eqref{eq:5_1} a e funkce $f$, $h$ jsou nenulové
+nad ètvercovımi oblastmi o rozmìrech $M \times M$ a $R \times R$ bodù.
+Pøedpokládejme, e vstupní signál $f$ i impulzová charakteristika $h$ filtru jsou reálné, co bıvá v~praxi èasto splnìno.
+Èasovou sloitost budeme mìøit poètem reálnıch násobení.
+Protoe pøi praktické realizaci konvoluce máme vypoèítat $M^2$ hodnot a protoe vıpoèet kadé z~nich vyaduje $R^2$ násobení,
+dostáváme pro èasovou sloitost $C_\mathrm{S}$ filtrace realizované v prostorové doménì vztah
+\begin{equation} \label{eq:5_3}
+    C_\mathrm{S} = M^2 R^2\,.
+\end{equation}
+
+Pøi provádìní filtrace ve frekvenèní doménì je tøeba provést Fourierovu transformaci vstupního signálu,
+pak souèin na pravé stranì vztahu \eqref{eq:5_2} a koneènì zpìtnou Fourierovu transformaci.
+Pøedpokládáme, e frekvenèní charakteristiku $H(k,l)$ pouitého filtru známe pøedem a e ji není nutné poèítat.
+Protoe pøechod od vztahu \eqref{eq:5_1} ke vztahu \eqref{eq:5_2} pøedpokládá pouití cyklické konvoluce,
+pøevedeme vıpoèet konvoluce lineární (v praktickıch aplikacích se konvoluce ve vztahu (\ref{eq:5_1}) dosti èasto uvauje lineární)
+na vıpoèet konvoluce cyklické tak, jak jsme ji døíve popsali v~odstavci \ref{sec:diskretni_konvoluce}.
+Zaveïme oznaèení $Q=M+R-1$.
+Pøedpokládejme, e èasová sloitost rychlé Fourierovy transformace je $3Q^2 \log_2 Q/4$ komplexních násobení - tj.
+$3Q^2 \log_2Q$ násobení reálnıch (jedno násobení komplexní vyaduje ètyøi násobení reálná).
+Celková èasová sloitost $C_\mathrm{F}$ filtrace realizované ve frekvenèní doménì mìøená poètem reálnıch násobení tedy je
+\begin{equation} \label{eq:5_4}
+    C_\mathrm{F} = Q^2 ( 3 \log_2 Q + 4 + 3 \log_2 Q ) = Q^2 ( 4 + 6 \log_2 Q ) \, .
+\end{equation}
+Porovnáním vztahù \eqref{eq:5_3} a \eqref{eq:5_4} zjišujeme, e provedení filtrace ve frekvenèní doménì je vıhodnìjší, jestlie platí
+\begin{equation} \label{eq:5_5}
+    R > \sqrt{4 + 6 \log_2 Q} \, .
+\end{equation}
+Napø. pro $Q=1024$ vychází, e filtrace ve frekvenèní doménì je pøi uvedenıch kriteriích vıhodnìjší pro $R>8$.
+
+\subsection{Filtry s nulovou fází}
+
+Úpravu frekvenèního spektra intuitivnì chápeme tak, e se filtrací mìní amplituda jednotlivıch frekvenèních sloek signálu, nikoli však jejich fáze.
+Pøedpokládáme tedy, e frekvenèní charakteristika filtru je reálná (obecnìji mùeme na takovı filtr pohlíet jako na filtr,
+jeho frekvenèní charakteristika má nulové imaginární sloky, a proto jej nazıváme filtrem s nulovou fází).
+Oprávnìnost uvedeného poadavku je stvrzována praktickımi zkušenostmi - pøi zpracování obrazu filtry,
+jejich frekvenèní charakteristika má nenulové imaginární sloky, lze subjektivnì zaznamenat neádoucí degradace obrazu.
+Podmínku nulové fáze filtru ve frekvenèní doménì mùeme zapsat pomocí vztahu
+\begin{equation} \label{eq:5_6}
+    H(k, l) = H^*(k, l) \, .
+\end{equation}
+S vyuitím pøedpisu \eqref{eq:2_39} pro Fourierovou transformaci odtud snadno získáváme podmínku
+\begin{equation} \label{eq:5_7}
+    h(m, n) = h^*(-m, -n) \, .
+\end{equation}
+Vidíme tedy, e podmínka nulové fáze frekvenèní charakteristiky filtru vyaduje,
+aby impulzová charakteristika filtru byla centrovaná kolem poèátku podle vztahu \eqref{eq:5_7}.
+Pøi filtraci obrazù je nìkdy moné volit impulzovou charakteristiku filtru na základì intuice.
+I v~takovém pøípadì lze ovšem z vıše popsanıch dùvodù doporuèit respektování vztahu \eqref{eq:5_7}. 
+
+\subsection{Návrh filtru s vyuitím vıøezové funkce}
+
+Èasto chceme v prostorové doménì realizovat filtr, jeho poadovanou impulzovou charakteristiku (oznaème ji napø. $i(m,n)$) sice známe,
+avšak její praktické pouití je nevıhodné, protoe je nenulová nad pøíliš rozsáhlou oblastí, co by vedlo k vysoké èasové sloitosti vıpoètu.
+V tìchto pøípadech lze vytvoøit aproximaci $h(m,n)$ ideální impulzové charakteristiky $i(m,n)$ jejím zkrácením
+pomocí vıøezové (okenní) funkce $w(m,n)$ podle pøedpisu
+\begin{equation} \label{eq:5_8}
+    h(m, n) = i(m, n) w(m, n) \, .
+\end{equation}
+Návrh filtru nyní spoèívá ve volbì vhodného typu vıøezové funkce $w$ a ve volbì velikosti vıøezu tak,
+aby se vlastnosti filtru dostateènì shodovaly s vlastnostmi poadovaného filtru ideálního.
+Pøi volbì vıøezové funkce se zpravidla poaduje splnìní následujících vlastností:
+\begin{equation} \label{eq:5_9}
+    w(m, n) = w^*(-m, -n) \, ,
+\end{equation}
+\begin{equation} \label{eq:5_10}
+    w(m, n) = w_1(m) w_2(n) \, .
+\end{equation}
+Místo separability dle vztahu \eqref{eq:5_10} mùe bıt nìkdy poadována funkce rotaènì symetrická, co je zajištìno pøedpisem
+\begin{equation} \label{eq:5_11}
+    w(m, n) = w_0\left( \sqrt{m^2 + n^2} \right) \, .
+\end{equation}
+Splnìní uvedenıch vlastností vìtšinou usnadòuje realizaci následného vıpoètu.
+Splnìní vlastnosti \eqref{eq:5_9} je pøedpokladem pro vytvoøení filtru s nulovou fází.
+Separabilita funkce podle \eqref{eq:5_10} ulehèuje napø. vıpoèet Fourierovy transformace.
+Je toti
+\begin{equation} \label{eq:5_12}
+    \mathscr{F} \left\{ w(m, n) \right\}
+    = \mathscr{F} \left\{ w_1(m)w_2(n) \right\}
+    = \mathscr{F} \left\{ w_1(m) \right\} \mathscr{F} \left\{w_2(n) \right\} = W_1(k) W_2(l) \, .
+\end{equation}
+V praxi se pouívá mnoha typù vıøezovıch funkcí. Zde uvedeme pouze nìkteré z~nich
+(dále uvedené funkce mohou bıt pouity na místì funkcí $w_1$, $w_2$, $w_0$; $Q$ oznaèuje velikost vıøezu):
+
+\vspace{4 mm}
+\noindent {\em Obdélník:}
+\begin{equation} \label{eq:5_13}
+    w(n) = \left\{
+    \begin{array}{cc}
+    1, & |n|<Q \\
+    0, & \mathrm{jinak}
+    \end{array}
+    \right. ,
+\end{equation}
+
+\noindent {\em Barlettova funkce:}
+\begin{equation} \label{eq:5_14}
+    w(n) = \left\{
+    \begin{array}{cc}
+    \left( 1 - \frac{\left| n \right|}{Q} \right) , & |n|<Q \\
+    0, & \mathrm{jinak}
+    \end{array}
+    \right. ,
+\end{equation}
+
+\noindent {\em Hanningova funkce:}
+\begin{equation} \label{eq:5_15}
+    w(n) = \left\{
+    \begin{array}{cc}
+    \frac{1}{2} \left[ 1 + \cos \left( \pi \frac{n}{Q} \right) \right] , & |n|<Q \\
+    0, & \mathrm{jinak}
+    \end{array}
+    \right. .
+\end{equation}
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{05_filtrace/images/img_5_1.pdf}
+    \end{center}
+    \caption{\dvojt Prùbìhy nìkterıch vıøezovıch funkcí}
+    \label{img:5_1}
+\end{figure}
+
+\noindent
+Prùbìhy uvedenıch funkcí jsou znázornìny na obr. \ref{img:5_1}.
+Prùbìh frekvenèní charakteristiky $\mathscr{F} \{i(m,n)w(m,n)\}$ lze pouít pro posouzení kvality filtru.
+Uplatníme-li na obì strany rovnice \eqref{eq:5_8} Fourierovu transformaci, pak pro frekvenèní charakteristiku získáme vztah
+\begin{equation} \label{eq:5_16}
+    H(k, l) = I(k, l) * W(k, l) \, ,
+\end{equation}
+kde $I$ je frekvenèní charakteristika ideálního filtru a $W$ je Fourierùv obraz vıøezové funkce.
+
+
+\subsection{Návrh optimálního filtru}
+
+V~tomto odstavci se budeme vìnovat praktické metodì návrhu impulzové charakteristiky $h(m,n)$ filtru.
+Uvaujme obrazy rozmìru $M \times N$. Teoreticky má tentı rozmìr i impulzová charakteristika filtru.
+Budeme však poadovat, aby hodnoty $h(m,n)$ byly nenulové jen nad zvolenou a relativnì malou oblastí,
+co je nezbytné z~hlediska dosaení pøijatelné èasové sloitosti vıpoètu pomocí konvoluce v~prostorové
+doménì (z podkapitoly \ref{sec:diskretni_konvoluce} víme, e je pak vıhodné nenulové hodnoty impulzové
+charakteristiky filtru vhodnì pøeskládat a odpovídajícím zpùsobem modifikovat praktickı pøedpis pro vıpoèet konvoluce).
+Oznaème $\Omega$ mnoinu dvojic $(m,n)$, kde mají bıt hodnoty $h(m,n)$ nalezeny.
+Pøedpokládejme, e $\Omega$ je obdélníkovou oblastí rozmìru $R \times S$.
+Dále pøedpokládejme, e známe poadovanou frekvenèní charakteristiku filtru.
+Této ideální frekvenèní charakteristiky patrnì nebude moné s~ohledem na døíve zavedené omezení dosáhnout pøesnì.
+Nech $I$ je ideální a $H$ skuteèná frekvenèní charakteristika filtru (obì charakteristiky pøedpokládáme reálné).
+Nalezenı filtr bude tím lepší, èím menší bude chyba
+\begin{equation} \label{eq:5_17}
+    \varepsilon = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} W_{k, l} \left[ H(k, l) - I(k, l) \right]^2,
+\end{equation}
+kde $W_{k, l}$ jsou váhové konstanty zohledòující vıznam dílèí chyby pro jednotlivé frekvenèní sloky.
+Tyto konstanty volíme. Vdy však musí bıt $W_{k, l} > 0$.
+Za optimální povaujeme takovı filtr, kterı minimalizuje hodnotu chyby $\varepsilon$.
+Rozveïme nyní naznaèenı postup ponìkud podrobnìji.
+Fourierùv obraz impulzové charakteristiky filtru (tj. skuteènou frekvenèní charakteristiku) zapíšeme ve tvaru
+\begin{equation} \label{eq:5_18}
+    H(k, l) = \sum\limits_{r=0}^{R-1} \sum\limits_{s=0}^{S-1} h(r, s) \Phi_{k, l} (r, s) \, ,
+\end{equation}
+kde
+\begin{equation} \label{eq:5_19}
+    \Phi_{k, l} (r, s) = \exp \left[ - \mathrm{j} 2 \pi \left( \frac{rk}{M} + \frac{sl}{N} \right) \right] \, .
+\end{equation}
+Dosazením vztahu \eqref{eq:5_18} do \eqref{eq:5_17} dostáváme
+\begin{equation} \label{eq:5_20}
+    \varepsilon 
+    = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} W_{k, l} \left[ \sum\limits_{r=0}^{R-1} \sum\limits_{s=0}^{S-1} h(r, s) \Phi_{k, l} (r, s) - I(k, l) \right]^2.
+\end{equation}
+Pro nalezení extrému poloíme
+\begin{eqnarray} \label{eq:5_21}
+    &\frac{\partial\varepsilon}{\partial h(m, n)} = 0 \, ,& \nonumber \\
+    &(m = 0, 1, \dots, R-1, \,\, n = 0, 1, \dots, S - 1 ) \, .&
+\end{eqnarray}
+Po úpravách zjišujeme, e hledané hodnoty $h(r,s)$ jsou øešením soustavy lineárních rovnic
+\begin{equation} \label{eq:5_22}
+    \sum\limits_{r=0}^{R-1} \sum\limits_{s=0}^{S-1} A_{m, n} (r, s) h(r, s) = B_{m, n} \, ,
+\end{equation}
+kde
+\begin{equation}
+    A_{m, n} (r, s) = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} W_{k, l} \Phi_{k, l} (r, s) \Phi_{k, l} (m, n) \, , \nonumber
+\end{equation}
+\begin{equation}
+    B_{m, n} = \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} W_{k, l} I(k, l) \Phi_{k, l} (m, n) \, . \nonumber
+\end{equation}
+
+\section{Rekurzivní filtrace}
+
+V pøípadì rekurzivní filtrace je vıstupní signál $g$ svázán se vstupním signálem $f$ prostøednictvím vztahu
+\begin{equation} \label{eq:5_23}
+    b(m, n) * g(m, n) = a(m, n) * f(m, n) \, ,
+\end{equation}
+kde $b$, $a$ jsou diskrétní funkce, které rekurzivní filtr popisují.
+Nech je hodnota $b(0, 0)$ nenulová.
+Beze ztráty na obecnosti pøedpokládáme, e $b(0, 0) = 1$.
+Rozepsáním konvoluce ze vztahu \eqref{eq:5_23} snadno ovìøíme, e platí 
+\begin{equation} \label{eq:5_24}
+    g(m, n) = a(m, n) * f(m, n) + c(m, n) * g(m, n) \, ,
+\end{equation}
+kde funkce $c$ je definována takto
+\begin{equation} \label{eq:5_25}
+    c(m, n) = \left\{
+    \begin{array}{cc}
+    0, & m = 0, n = 0 \\
+    -b(m, n), & \mathrm{jinak}
+    \end{array}
+    \right. .
+\end{equation}
+Fourierovou transformací rovnice \eqref{eq:5_23} obdríme vztah
+\begin{equation} \label{eq:5_26}
+    G(k, l) = \frac{A(k, l)}{B(k, l)} F(k, l) \, ,
+\end{equation}
+kde $A$, $B$, $F$, $G$ jsou Fourierovy obrazy funkcí $a$, $b$, $f$, $g$.
+Vidíme, e frekvenèní charakteristika rekurzivního filtru je $H(k,l)=A(k,l)/B(k,l)$.
+
+Motivací pro pouití rekurzivní filtrace je zpravidla to, e rekurzivní filtr mùe mít niší èasovou sloitost ne nerekurzivní filtr obdobnıch vlastností.
+Nech $N$, $N_a$, $N_b$ jsou rozmìry oblastí, nad nimi funkce $f$, $a$, $b$ nabıvají nenulovıch hodnot
+(pro jednoduchost nyní pøedpokládáme, e všechny oblasti mají ètvercovı tvar).
+Z vırazu \eqref{eq:5_24} je zøejmé, e èasová sloitost rekurzivní filtrace pøi pøímém vıpoètu je (detailnìji je postup vıpoètu popsán v následující podkapitole)
+\begin{equation} \label{eq:5_27}
+    C_\mathrm{R} = N^2 \left( N_a^2 + N_b^2 \right) \, .
+\end{equation}
+Rekurzivní filtr je tedy vıhodnı tehdy, jestlie se funkce $a$, $b$ podaøí navrhnout tak,
+aby rozmìry $N_a$, $N_b$ byly malé (menší ne rozmìr oblasti, nad ní nabıvá nenulovıch hodnot funkce $h$ nerekurzivního filtru srovnatelnıch vlastností).
+Poznamenejme, e hodnoty $N_a$, $N_b$ mohou bıt u rekurzivního filtru koneèné i tehdy,
+jestlie je impulzová charakteristika filtru nenulová nad nekoneènım poètem bodù.
+
+
+\subsection{Realizace rekurzivního filtru pøímım vıpoètem}
+
+Ze vztahu \eqref{eq:5_24} vidíme, e k tomu, aby bylo moné provést vıpoèet hodnoty $g(m,n)$ vıstupního pole,
+je nutné døíve znát ty hodnoty pole $g$, pro které jsou odpovídající hodnoty funkce $c$ nenulové.
+Vıpoèet je proto ádoucí zorganizovat tak, aby hodnoty $g$ byly získávány v potøebném poøadí.
+Je ovšem zøejmé, e pro nìkteré funkce $c$ nebude existovat ádné poøadí, které by pøímı vıpoèet umonilo
+(pozdìji však uvidíme e, takové filtry mohou bıt vyèíslitelné iteraèním postupem).
+Na obr. \ref{img:5_2} jsou ilustrovány oba pøípady.
+Je zde vyznaèen tvar oblasti, nad ní funkce $c$ nabıvá nenulovıch hodnot, a také moné smìry postupu pøi vıpoètu.
+Plnım kruhem je vyznaèeno místo, pro které je hodnota $g(m,n)$ vıstupního pole v daném okamiku urèována.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=1.0]{05_filtrace/images/img_5_2.pdf}
+    \end{center}
+    \caption{\dvojt a) Funkce $c(m, n)$ umoòující pøímı vıpoèet, b) neumoòující pøímı vıpoèet}
+    \label{img:5_2}
+\end{figure}
+
+Pro ,,nastartování`` vıpoètu rekurzivního filtru je tøeba mít pøedem k dispozici nìkteré hodnoty vıstupního obrazu $g$.
+Tyto hodnoty mají vıznam okrajovıch podmínek.
+Poadujeme-li filtr lineární, pak je nutné jako okrajové podmínky zadávat pouze hodnoty 0.
+Toto tvrzení vyplıvá z jednoduché úvahy: Nech $\mathscr{O}$ je uvaovanı rekurzivní filtr.
+Pøedpokládejme, e filtr $\mathscr{O}$ je lineární.
+Platí proto
+\begin{equation} \label{eq:5_28}
+    \mathscr{O} \left\{ af(m, n) \right\} = a \mathscr{O} \left\{ f(m, n) \right\}.
+\end{equation}
+Poloíme-li v \eqref{eq:5_28} $a=0$, konstatujeme na základì uvedeného vztahu,
+e v~pøípadì lineárního filtru nulovému vstupnímu obrazu nutnì odpovídá také nulovı obraz vıstupní.
+Pøi volbì nenulovıch okrajovıch podmínek by zde obecnì došlo ke sporu:
+nulovému vstupnímu obrazu by odpovídal nenulovı obraz vıstupní, a proto by filtr $\mathscr{O}$ nebyl lineární.
+Ani poloha bodù, ve kterıch zadáváme okrajové podmínky, nemùe bıt volena libovolnì.
+Okrajové podmínky, lze zadávat pouze v tìch místech, kde hodnotu vıstupního pole neurèuje vıraz \eqref{eq:5_24}.
+Obr. \ref{img:5_3} ukazuje pøíklady míst, v nich se zadávají okrajové podmínky, pro rùzné tvary oblasti, nad ní je funkce $c$ nenulová.
+
+\begin{figure}[th]
+    \begin{center}
+        \includegraphics[scale=0.88]{05_filtrace/images/img_5_3.pdf}
+    \end{center}
+    \caption{\dvojt Pøíklady okrajovıch podmínek pro rùzné funkce $c(m, n)$}
+    \label{img:5_3}
+\end{figure}
+
+Na rozdíl od nerekurzivních filtrù, které jsou vdy stabilní, je u filtrù rekurzivních nutno sledovat problémy stability.
+Jestlie je filtr nestabilní, pak se v~prùbìhu vıpoètu mohou šíøit zaokrouhlovací chyby a pøípadné šumy vstupního pole a dosahovat vysokıch hodnot.
+Tento problém byl v~minulosti detailnì studován, ale jeho podrobnìjší diskuse by pøesáhla rámec tohoto textu.
+V~pøípadì zájmu proto ètenáøe odkazujeme napø. na práci \cite{Dudgeon84}.
+
+
+\subsection{Realizace rekurzivního filtru iteraèním vıpoètem}
+
+V pøedchozím odstavci jsme vysvìtlili, e má-li oblast, nad ní funkce $b$, $c$ nabıvají nenulové hodnoty,
+vhodnı tvar, pak lze rekurzivní filtraci realizovat pøímım vıpoètem.
+Ne všechny filtry jsou ovšem takto realizovatelné.
+Pøímı vıpoèet nelze uplatnit tehdy, jestlie by pro vıpoèet hodnoty $g(m,n)$ bylo zapotøebí hodnot v tìch místech vıstupního pole, kde zatím nebyly vypoèteny.
+V~tìchto pøípadech lze však pouít iteraèního postupu.
+Na základì vztahu \eqref{eq:5_24} se pro vıpoèet $g(m,n)$ nabízí iteraèní pøedpis
+\begin{equation} \label{eq:5_29}
+    g_i(m, n) = a(m, n) * f(m, n) + c(m, n) * g_{i-1} (m, n) \, ,
+\end{equation}
+kde $g_i(m,n)$ znamená hodnotu v~$i$-tém iteraèním kroku.
+Pro zahájení iteraèního pochodu volíme $g_0(m,n) = 0$.
+Oprávnìnost iteraèního postupu popsaného vztahem \eqref{eq:5_29} je ovšem samozøejmì nutné doloit studiem konvergence.
+Aèkoli pøedpokládáme, e samotnı vıpoèet filtrace bude provádìn v~prostorové doménì, analızu konvergence provedeme v~doménì frekvenèní.
+Fourierovou transformací vztahu \eqref{eq:5_24} obdríme
+\begin{equation} \label{eq:5_30}
+    G(k, l) = A(k, l) F(k, l) + C(k, l) G(k, l) \, ,
+\end{equation}
+kde $C$ je Fourierovou transformací funkce $c$.
+Z \eqref{eq:5_30} dostaneme dále vztah
+\begin{equation} \label{eq:5_31}
+    G(k, l) = \frac{A(k, l)}{1 - C(k, l)} F(k, l) \, .
+\end{equation}
+Fourierovou transformací rovnice \eqref{eq:5_29} získáme
+\begin{equation} \label{eq:5_32}
+    G_i(k, l) = A(k, l) F(k, l) + C(k, l) G_{i-1}(k, l) \, .
+\end{equation}
+Odtud máme
+\begin{eqnarray} \label{eq:5_33}
+    G_1(k, l) &=& A(k, l) F(k, l) \, , \\
+    G_2(k, l) &=& A(k, l) F(k, l) \left[ 1 + C(k, l) \right] \, ,\\
+    G_n(k, l) &=& A(k, l) F(k, l) \sum\limits_{i=0}^{n-1} C^i(k, l) \, . \nonumber
+\end{eqnarray}
+S vyuitím identity
+\begin{equation} \label{eq:5_34}
+    \sum\limits_{i=0}^{n-1} C^i(k, l) = \frac{1 - C^n(k, l)}{1 - C(k, l)} \, ,
+\end{equation}
+za pøedpokladu, e $|C(k,l)|<1$, a s~uplatnìním vztahu \eqref{eq:5_31} docházíme v~pøípadì nekoneèného poètu iteraèních krokù k~následujícímu závìru
+\begin{equation} \label{eq:5_35}
+    \lim\limits_{n \rightarrow \infty} G_n(k, l) 
+    = A(k, l) F(k, l) \lim\limits_{n \rightarrow \infty} \frac{1 - C^n(k, l)}{1 - C(k, l)} 
+    = \frac{A(k, l)}{1 - C(k, l)} F(k, l) = G(k, l) \, .
+\end{equation}
+Vidíme tedy, e jestlie platí $|C(k,l)|<1$, pak iteraèní proces konverguje k~pøesnému øešení.
+Poznamenejme však, e uvedená podmínka je zbyteènì pøísná.
+Podrobnìjší analızou bylo toti dokázáno, e iteraèním postupem lze realizovat kadı stabilní filtr \cite{Dudgeon84}.
+
+\subsection{Návrh rekurzivního filtru}
+
+Návrhem rekurzivního filtru rozumíme stanovení funkcí $a(m,n)$, $b(m,n)$ tak, aby mìl filtr poadované vlastnosti.
+Vıchozími údaji pro návrh mùe bıt napø. nìjakı vstupní signál $f(m,n)$ a poadovaná odezva $d(m,n)$
+filtru na tento signál (pøíkladem je realizace filtru se~zadanou impulzovou charakteristikou).
+Naznaème postup takového návrhu.
+Aby èasová sloitost filtrace byla co nejmenší, poadujeme, aby funkce $a$, $b$ mìly nenulové funkèní hodnoty jen v~malém poètu bodù.
+Nech $g(m,n)$ je skuteèná odezva filtru na funkci $f(m,n)$.
+S~ohledem na pøedchozí poadavek se bude skuteèná odezva lišit od odezvy poadované.
+Úhrnná kvadratická chyba filtru v prostorové doménì pak je
+\begin{equation} \label{eq:5_36}
+    \varepsilon = \sum\limits_{m} \sum\limits_{n} \left[ g(m, n) - d(m, n) \right]^2.
+\end{equation}
+Funkce $a(m,n)$, $b(m,n)$ stanovíme minimalizací funkcionálu \eqref{eq:5_36}.
+Analogickı postup mùeme realizovat také ve frekvenèní doménì.
+Úhrnná kvadratická chyba filtru ve frekvenèní doménì je
+\begin{equation} \label{eq:5_37}
+    \varepsilon = \sum\limits_{k} \sum\limits_{l} \left[ G(k, l) - D(k, l) \right]^2
+    = \sum\limits_{k} \sum\limits_{l} \left[ \frac{A(k, l)}{B(k, l)} F(k, l) - D(k, l) \right]^2.
+\end{equation}
+Mùeme také zavést funkci $W_{k,l}$ vyjadøující váhu chyby pro jednotlivé frekvence.
+Pro chybu pak máme vztah
+\begin{equation} \label{eq:5_38}
+    \varepsilon_\mathrm{W} = \sum\limits_{k} \sum\limits_{l} W_{k, l} \left[ \frac{A(k, l)}{B(k, l)} F(k, l) - D(k, l) \right]^2.
+\end{equation}
+Poznamenejme na závìr, e a ji pouijeme návrhu v doménì prostorové nebo frekvenèní, jsou rezultující úlohy minimalizace nelineární,
+a proto je zde zapotøebí pouít numerického øešení.
+
+
+\section{Obecnı model degradace a rekonstrukce obrazu}
+
+Pøi snímání obrazu èasto dochází k jeho rùznım poškozením (degradacím).
+Obraz mùe bıt napø. zašumìlı, neostrı atd.
+Pokud je to moné, bıvá obvykle ádoucí tyto degradace korigovat.
+Korekce bıvá dosti èasto realizována filtrací.
+Klíèovou otázkou je volba vhodného filtru.
+K jeho nalezení je nejprve vhodné zavést model degradace obrazu.
+Oznaème $f_\mathrm{I}$ vstupní nepoškozenı obraz.
+Obraz $f_\mathrm{I}$ není ovšem k dispozici.
+Dostupnı je místo nìj pouze obraz poškozenı, kterı oznaèíme $f_\mathrm{D}$.
+Pøedstavujeme si, e degradace je zpùsobena nìjakım operátorem (oznaème jej $\mathscr{D}$) a dále si pøedstavujeme,
+e dochází k degradaci aditivním šumem (oznaème jej $v$).
+Je tedy
+\begin{equation} \label{eq:5_39}
+    f_\mathrm{D} = \mathscr{D} \left\{ f_\mathrm{I} \right\} + v \, .
+\end{equation}
+Úkolem rekonstrukce obrazu je nalézt rekonstrukèní operátor $\mathscr{R}$ tak,
+abychom jeho aplikací na obraz $f_\mathrm{D}$ obdreli obraz (oznaème jej $f_\mathrm{R}$),
+kterı je co moná nejbliší obrazu $f_\mathrm{I}$.
+Máme tedy
+\begin{equation} \label{eq:5_40}
+    f_\mathrm{R} = \mathscr{R} \left\{ f_\mathrm{D} \right\} = \mathscr{R} \left\{ \mathscr{D} \left\{ f_\mathrm{I} \right\} + v \right\} \, .
+\end{equation}
+Ze všech monıch operátorù zvolíme za operátor $\mathscr{R}$ ten, kterı dává minimální hodnotu chyby
+\begin{equation} \label{eq:5_41}
+    \varepsilon = || f_\mathrm{R} - f_\mathrm{I} || \, .
+\end{equation}
+
+Pøedpokládejme nyní, e degradaèní operátor $\mathscr{D}$ je lineární a invariantní vùèi posuvu.
+Jeho impulzovou a frekvenèní charakteristiku oznaème $h_\mathrm{D}$, $H_\mathrm{D}$.
+Také rekonstrukèní operátor $\mathscr{R}$ pøedpokládáme lineární a invariantní vùèi posuvu.
+Úkolem je nalézt impulzovou charakteristiku $h_\mathrm{R}$ nebo frekvenèní charakteristiku
+$H_\mathrm{R}$ rekonstrukèního operátoru $\mathscr{R}$ tak, aby byla minimalizována chyba ze vztahu \eqref{eq:5_41}.
+Zapišme rovnice \eqref{eq:5_39}, \eqref{eq:5_40} pomocí konvoluce. Máme
+\begin{equation} \label{eq:5_42}
+    f_\mathrm{D} (m, n) = f_\mathrm{I} (m, n) * h_\mathrm{D} (m, n) + v(m, n) \, ,
+\end{equation}
+\begin{equation} \label{eq:5_43}
+    f_\mathrm{R} (m, n) = \left[ f_\mathrm{I} (m, n) * h_\mathrm{D} (m, n) + v(m, n) \right] * h_\mathrm{R}(m, n) \, .
+\end{equation}
+Provedeme-li Fourierovu transformaci uvedenıch vztahù, dostaneme
+\begin{equation} \label{eq:5_44}
+    F_\mathrm{D} (k, l) = F_\mathrm{I} (k, l) H_\mathrm{D} (k, l) + V(k, l) \, .
+\end{equation}
+\begin{equation} \label{eq:5_45}
+    F_\mathrm{R} (k, l) = \left[ F_\mathrm{I} (k, l) H_\mathrm{D} (k, l) + V(k, l) \right] H_\mathrm{R}(k, l) \, .
+\end{equation}
+
+
+\section{Inverzní filtrace}
+
+O \emph{inverzním filtru \index{filtr!inverzní}} hovoøíme tehdy, jestlie frekvenèní charakteristiku rekonstrukèního operátoru $\mathscr{R}$ zvolíme ve tvaru
+\begin{equation} \label{eq:5_46}
+    H_\mathrm{R} (k, l) = \frac{1}{H_\mathrm{D} (k, l)} \, .
+\end{equation}
+Dosazením vztahu \eqref{eq:5_46} do \eqref{eq:5_45} zjišujeme, e platí
+\begin{equation} \label{eq:5_47}
+    F_\mathrm{R} (k, l) = F_\mathrm{I} (k, l) + \frac{V(k, l)}{H_\mathrm{D}(k, l)} \, .
+\end{equation}
+Inverzní Fourierovou transformací pak obdríme
+\begin{equation} \label{eq:5_48}
+    f_\mathrm{R} (m, n) = f_\mathrm{I} (m, n) + \mathscr{F}^{-1} \left\{ \frac{V(k, l)}{H_\mathrm{D}(k, l)} \right\} \, .
+\end{equation}
+Ze vztahu \eqref{eq:5_48} vidíme, e pokud by obraz $f_\mathrm{D}$ nebyl degradován šumem,
+pak by inverzní filtr poskytl obraz, kterı je shodnı s nepoškozenım vstupním obrazem $f_\mathrm{I}$.
+Za pøítomnosti šumu se ovšem obrazy $f_\mathrm{R}$ a $f_\mathrm{I}$ liší.
+Odchylka je popsána druhım èlenem na pravé stranì rovnice \eqref{eq:5_48}.
+Je zøejmé, e vliv šumu roste s tím, jak klesají hodnoty $H_\mathrm{D}(k,l)$.
+Protoe u vìtšiny degradací jsou hodnoty $H_\mathrm{D}(k,l)$ odpovídající vyšším frekvenèním slokám,
+kde vliv šumu zejména oèekáváme, malé (obraz je obvykle rozostøován tím, e jsou potlaèeny vyšší frekvence),
+dochází pouitím inverzního filtru èasto k neádoucímu zdùraznìní šumu.
+Jinım praktickım problémem je, e frekvenèní charakteristiku degradaèního operátoru mnohdy neznáme pøesnì.
+Èasto je nutné spokojit se s pouhım odhadem.
+
+
+\section{Wienerùv filtr ve frekvenèní doménì}
+
+V~této podkapitole vyuijeme k~nalezení rekonstrukèního filtru stochastického pøístupu.
+Ukáeme odvození tzv. \emph{Wienerova filtru \index{filtr!Wienerùv}} ve frekvenèní doménì.
+%(v prostorové doménì jej odvodíme v~následující podkapitole).
+Pøedpokládáme, e $\mathbf{f}_\mathrm{I}(m,n)$, $\mathbf{f}_\mathrm{D}(m,n)$, $\mathbf{f}_\mathrm{R}(m,n)$
+jsou homogenní náhodná pole rozmìru $M\!\!\times\!\!N$ reprezentující postupnì ideální, degradovanı a rekonstruovanı obraz
+a e $\mathbf{v}(m,n)$ je náhodné pole rozmìru $M\!\!\times\!\!N$, které reprezentuje aditivní šum.
+Také odpovídající Fourierovy obrazy $\mathbf{F}_\mathrm{I}(m,n)$, $\mathbf{F}_\mathrm{D}(m,n)$,
+$\mathbf{F}_\mathrm{R}(m,n)$, $\mathbf{V}(m,n)$ jsou náhodná pole rozmìru $M\!\!\times\!\!N$.
+Pro zestruènìní polome
+\begin{equation} \label{eq:5_49}
+    \mathbf{f}_\Delta (m, n) 
+    = \mathbf{f}_\mathrm{R} (m, n) - \mathbf{f}_\mathrm{I} (m, n) \, ,
+\end{equation}
+\begin{equation} \label{eq:5_50}
+    \mathbf{F}_\Delta (k, l)
+    = \mathscr{F} \left\{ \mathbf{f}_\Delta (m, n) \right\}
+    = \mathbf{F}_\mathrm{R} (k, l) - \mathbf{F}_\mathrm{I}(k, l) \, .
+\end{equation}
+Rekonstrukèní filtr nalezneme minimalizací chyby
+\begin{equation} \label{eq:5_51}
+    \varepsilon
+    = \mathrm{E} \left\{ \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} | \mathbf{f}_\Delta (m, n) |^2 \right\} \, .
+\end{equation}
+Podle Parsevalova teorému \eqref{eq:2_59} ovšem platí
+\begin{equation} \label{eq:5_52}
+    \varepsilon
+    = \mathrm{E} \left\{ \sum\limits_{m=0}^{M-1} \sum\limits_{n=0}^{N-1} | \mathbf{f}_\Delta (m, n) |^2 \right\}
+    = \mathrm{E} \left\{ \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} | \mathbf{F}_\Delta (k, l) |^2 \right\} \, .
+\end{equation}
+$\mathbf{F}_\Delta(k,l)$ vyjádøíme dosazením vztahu \eqref{eq:5_45} do vztahu \eqref{eq:5_50}.
+Dostaneme
+\begin{equation} \label{eq:5_53}
+    \mathbf{F}_\Delta (k, l)
+    = \left[ \mathbf{F}_\mathrm{I} (k, l) H_\mathrm{D} (k, l) + \mathbf{V}(k, l) \right] H_\mathrm{R}(k, l) - \mathbf{F}_\mathrm{I}(k, l) \, .
+\end{equation}
+Uváíme-li, e $|\mathbf{F}_\Delta(k, l)|^2 = \mathbf{F}_\Delta(k, l)\mathbf{F}_\Delta^*(k, l)$, pak ze vztahu \eqref{eq:5_52} máme
+\begin{equation} \label{eq:5_54}
+    \varepsilon
+    = \mathrm{E} \left\{ \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} \mathbf{F}_\Delta (k, l) \mathbf{F}_\Delta^* (k, l) \right\} \, .
+\end{equation}
+Frekvenèní charakteristiku $H_\mathrm{R}$ rekonstrukèního filtru urèíme z podmínky
+\begin{equation} \label{eq:5_55}
+    \frac{\partial\varepsilon}{\partial H_\mathrm{R}(r, s)} = 0, \,\,\, r = 0, 1, \dots, M-1, \,\,\, s = 0, 1, \dots, N-1 \, .
+\end{equation}
+Ze vztahu \eqref{eq:5_54} máme
+\begin{eqnarray} \label{eq:5_56}
+    \frac{\partial\varepsilon}{\partial H_\mathrm{R}(r, s)}
+    &=& \mathrm{E} \left\{ \sum\limits_{k=0}^{M-1} \sum\limits_{l=0}^{N-1} \left[ \frac{\partial\mathbf{F}_\Delta (k, l)}{\partial H_\mathrm{R}(r, s)} \mathbf{F}_\Delta^* (k, l) + \mathbf{F}_\Delta (k, l) \frac{\partial \mathbf{F}_\Delta^*(k, l)}{\partial H_\mathrm{R}(r, s)} \right] \right\} \nonumber \\
+    &=& \mathrm{E} \left\{ \frac{\partial\mathbf{F}_\Delta (r, s)}{\partial H_\mathrm{R}(r, s)} \mathbf{F}_\Delta^* (r, s) + \mathbf{F}_\Delta (r, s) \frac{\partial \mathbf{F}_\Delta^*(r, s)}{\partial H_\mathrm{R}(r, s)}\right\} \, . 
+\end{eqnarray}
+Pøedpokládejme, e náhodná pole $\mathbf{f}_\mathrm{I}$, $\mathbf{v}$ jsou nekorelovaná.
+Uplatnìním vısledku z podkapitoly \ref{sec:statisticka_analyza_obrazovych_transformaci} lze snadno ukázat,
+e pole $\mathbf{F}_\mathrm{I}(k,l)$ a $\mathbf{V}(k,l)$ jsou proto také nekorelovaná,
+z èeho vyplıvá $\mathrm{E}\{\mathbf{F}_\mathrm{I}(k,l)\mathbf{V}(k,l)\} = \mathrm{E}\{\mathbf{F}_\mathrm{I}(k,l)\}\mathrm{E}\{\mathbf{V}(k,l)\}$.
+Dále pøedpokládejme, e $\mathrm{E}\{\mathbf{v}(m,n)\} = 0$.
+Odtud plyne, e $\mathrm{E}\{\mathbf{V}(k,l)\} = 0$.
+Dosadíme-li do vztahu \eqref{eq:5_56} vztah \eqref{eq:5_53},
+poloíme-li $\mathrm{E}\{\mathbf{F}_\mathrm{I}(k,l)\mathbf{F}_\mathrm{I}^*(k,l)\}/\surd(M\!N) = G_{\mathrm{f}_\mathrm{I} \mathrm{f}_\mathrm{I}}(k,l)$,
+$\mathrm{E}\{\mathbf{V}(k,l) \mathbf{V}^*(k,l)\}/\surd(M\!N) = G_{\mathrm{vv}}(k,l)$, pak po úpravách dostaneme pro rekonstrukèní filtr pøedpis
+\begin{equation} \label{eq:5_57}
+    H_\mathrm{R}(r, s)
+    = H_\mathrm{D}^*(r, s) \frac{G_{\mathrm{f}_\mathrm{I} \mathrm{f}_\mathrm{I}}(r, s)}{|H_\mathrm{D}(r, s)|^2 G_{\mathrm{f}_\mathrm{I} \mathrm{f}_\mathrm{I}}(r, s) + G_{\mathrm{vv}}(r, s)} \, .
+\end{equation}
+Poznamenejme, e $G_{\mathrm{f}_\mathrm{I} \mathrm{f}_\mathrm{I}}$ je vıkonová spektrální hustota vstupního nedegradovaného signálu
+a $G_{\mathrm{vv}}$ je vıkonová spektrální hustota šumu (viz. vısledek pøíkladu \ref{example:3_1}).
+
+
+%\section{Wienerùv filtr v prostorové doménì}
+
+%\noindent V~této podkapitole ukáeme odvození Wienerova filtru v~prostorové doménì. Opìt pøedpokládáme, e \textbf{f}I, \textbf{f}D, \textbf{f}R jsou homogenní náhodná pole reprezentující ideální, degradovanı a rekonstruovanı obraz a e \textbf{v} je náhodné pole popisující aditivní šum. Stejnì jako v~pøedchozí podkapitole, je i zde cílem nalézt filtr, kterı na základì znalosti degradovaného obrazu provede jeho rekonstrukci, která je v jistém smyslu optimální. Abychom mohli pouít pøehledného maticového zápisu, reprezentujme všechna uvedená pole pomocí sloupcovıch vektorù rozmìru \textit{MN}. Pøedpokládáme, e odhad bude moné vyjádøit ve tvaru
+
+% , \eqref{GrindEQ__5_58_}
+
+%\noindent kde \textbf{W} je zatím neznámá matice rozmìru \textit{MN}$\times$\textit{MN} a \textbf{b} je zatím neznámı vektor rozmìru \textit{MN}, které musíme stanovit tak, aby byl odhad optimální. Poadujeme, aby støední hodnota odhadu byla stejná jako støední hodnota ideálního obrazu, tedy aby platilo
+
+% . \eqref{GrindEQ__5_59_}
+
+%\noindent Dále poadujme, aby odhad \textbf{f}R minimalizoval chybu
+
+% . \eqref{GrindEQ__5_60_}
+
+%\noindent Ekvivalentním postupem k~minimalizaci chyby ze vztahu \eqref{GrindEQ__5_60_} je aplikace principu ortogonality. Podle tohoto principu mùeme hledanou matici \textbf{W} a vektor \textbf{b} nalézt pomocí následující podmínky
+
+% . \eqref{GrindEQ__5_61_}
+
+%\noindent Protoe jsme princip ortogonality uvedli bez dùkazu, pokusme se alespoò o jeho ponìkud ménì formální, avšak názornou interpretaci: Jestlie jsou chyba odhadu (rozdíl v první kulaté závorce) a odchylka pozorování od støední hodnoty (rozdíl v druhé kulaté závorce) nekorelované velièiny, pak ji pouitımi prostøedky (statistické momenty druhého øádu) nelze nic zlepšovat. Pro struènost a  pøehlednost zápisu zaveïme oznaèení
+
+% ,   . \eqref{GrindEQ__5_62_}
+
+%\noindent Ze vztahu \eqref{GrindEQ__5_58_} a z podmínky \eqref{GrindEQ__5_59_} snadno získáme pøedpis
+
+% . \eqref{GrindEQ__5_63_}
+
+%\noindent Dosadíme-li do podmínky ortogonality \eqref{GrindEQ__5_61_} vztah \eqref{GrindEQ__5_58_} a \eqref{GrindEQ__5_63_}, pak postupnì dostaneme
+
+%  \eqref{GrindEQ__5_64_}
+
+% ,
+
+%\noindent kde \textbf{C}fDfD, \textbf{C}fIfD jsou kovarianèní matice. Ze vztahu \eqref{GrindEQ__5_64_} pak dále máme
+
+% . \eqref{GrindEQ__5_65_}
+
+%\noindent Pøedpokládejme nyní, e vstupní obraz \textbf{f}I je degradován lineárním operátorem reprezentovanım maticí \textbf{D} a šumem reprezentovanım vektorem \textbf{v}. Pro degradovanı obraz \textbf{f}D proto mùeme psát
+
+% . \eqref{GrindEQ__5_66_}
+
+%\noindent Uplatníme-li na vztah \eqref{GrindEQ__5_66_} operaci støední hodnoty a vısledek dosadíme do vztahu \eqref{GrindEQ__5_63_}, máme
+
+% , \eqref{GrindEQ__5_67_}
+
+%\noindent kde v je vektor støedních hodnot šumu. Dosazením vztahu \eqref{GrindEQ__5_66_} do \eqref{GrindEQ__5_65_} dále máme
+
+% . 
+
+%  \eqref{GrindEQ__5_68_}
+
+%\noindent Jestlie jsou náhodná pole \textbf{f}I a \textbf{v} navzájem nekorelovaná, vychází
+
+% . \eqref{GrindEQ__5_69_}
+
+%\noindent Uvedenı vztah mùeme dále zjednodušit za pøedpokladu, e pro kadé dva rùzné body obrazu je ideální signál i šum nekorelovanı. V tomto pøípadì jsou kovarianèní matice \textbf{C}fIfI, \textbf{C}vv diagonální. Zaveïme další zjednodušení a pøedpokládejme kovarianèní matice ve tvaru
+
+% ,   , \eqref{GrindEQ__5_70_}
+
+%\noindent kde \textbf{I} je jednotková matice. Ze vztahu \eqref{GrindEQ__5_69_} pak dostaneme pøedpis
+
+% . \eqref{GrindEQ__5_71_}

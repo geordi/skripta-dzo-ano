@@ -1,0 +1,227 @@
+\chapter*{Stochastický přístup k popisu obrazových signálů}
+
+V předchozích kapitolách jsme předpokládali, že obrazové signály popisujeme deterministicky jejich velikostí v jednotlivých bodech obrazu a zpracováváme jednotlivě, nezávisle na jiných obrazových signálech. Tato představa není ovšem vždy účelná. Často chceme například navrhnout nebo vyšetřit parametry systému zpracovávajícího nějakou třídu obrazových signálů, aniž bychom nějaký konkrétní jednotlivý signál měli předem na mysli. V takových případech lze použít přístupu stochastického. Při stochastickém přístupu je obraz charakterizován jistým souborem statistických veličin. V této kapitole popíšeme základní nástroje, které se při stochastickém přístupu používají. Ke studiu kapitoly jsou potřebné základní znalosti z počtu pravděpodobnosti (ve stručném přehledu je lze nalézt v dodatku A).
+
+\section*{Náhodné pole} \label{sec:nahodne_pole}
+
+Při stochastickém přístupu se signál považuje za náhodný proces (jednorozměrné signály) nebo za náhodné pole (vícerozměrné signály). Zavedení uvedených pojmů je věnována tato podkapitola. Nechť $\mathscr{S}$ je oblast v \textit{m}-rozměrném euklidovském prostoru. Nechť \textit{R} označuje bod této oblasti. Poloha bodu \textit{R} je popsána vektorem $\mathbf{r}$. Definujme nyní množinu $\{\mathbf{f}_R\}$ náhodných proměnných tak, že pro každý bod oblasti $\mathscr{S}$ zavedeme jednu náhodnou proměnnou. Je-li \textit{m} = 1 (jednorozměrný signál), pak se takto vytvořená množina náhodných proměnných nazývá stochastickým (náhodným) procesem. Je-li \textit{m} $>$ 1, pak se používá termínu náhodné pole nebo termínu vícerozměrný stochastický proces. Nechť $\Omega$ označuje množinu všech elementárních jevů (dodatek A) a $\omega_i$ je \textit{i}-tý elementární jev. Na náhodný proces (náhodné pole) lze nahlížet ze dvou pohledů: 1) Jedná se o množinu $\{\mathbf{f}_R(\omega_i) | R \in \mathscr{S}\}$ náhodných proměnných. 2) Jedná se množinu $\{f_{\omega_i}(\mathbf{r}) | \omega_i \in \Omega\}$ funkcí nad oblastí $\mathscr{S}$ - jedna funkce pro každý elementární jev $\omega_i$. Pro náhodný proces (náhodné pole) zavedeme značení $\mathbf{f}(\mathbf{r}, \omega_i)$ nebo také pouze stručně \textbf{f}(\textbf{r}). Při zpracování obrazů pracujeme nejčastěji s dvojrozměrnými náhodnými poli \textbf{f}(\textit{x},\textit{y}). Vezmeme-li v úvahu, že pro každou hodnotu \textbf{r} je \textbf{f}(\textbf{r}) náhodnou proměnnou v obvyklém smyslu, pak není obtížné zavést distribuční funkci $P_f(z, \mathbf{r})$ a hustotu pravděpodobnosti $p_f(z, \mathbf{r})$ náhodného pole. Jak distribuční funkce, tak hustota pravděpodobnosti jsou v tomto případě také funkcí polohy \textbf{r}. Distribuční funkce $P_f(z, \mathbf{r})$ je definována obvyklým způsobem (dodatek A) - tj. jako pravděpodobnost události \{f(\textbf{r}) $\leq$ \textit{z}\}. Je tedy
+
+\begin{equation} \label{eq:3_1}
+    P_f(z, \mathbf{r}) = \mathscr{P}\{ \mathbf{f}(\mathbf{r}) \leq z\}.
+\end{equation}
+Hustotu pravděpodobnosti $p_f$(\textit{z},\textbf{r}) získáme jako obvykle derivováním distribuční funkce:
+
+\begin{equation} \label{eq:3_2}
+    p_f(z, \mathbf{r}) = \mathrm{d} P_f(z, \mathbf{r}) / \mathrm{d} z.
+\end{equation}
+Uvažujme nyní v oblasti $\mathbf{S}$ \textit{n} bodů \textbf{r}$_1$, \textbf{r}$_2$, \dots, \textbf{r}$_n$. Podle dříve uvedeného odpovídají těmto bodům náhodné proměnné \textbf{f}(\textbf{r}$_1$), \textbf{f}(\textbf{r}$_2$), \dots, \textbf{f}(\textbf{r}$_n$). Můžeme tedy pro náhodné pole zavést sdruženou distribuční funkci a sdruženou hustotu pravděpodobnosti \textit{n}-tého řádu:
+
+\begin{equation} \label{eq:3_3}
+    P_f(z_1, z_2, \dots, z_n, \mathbf{r}_1, \mathbf{r}_2, \dots, \mathbf{r}_n) = \mathscr{P} \{ \mathbf{f}( \mathbf{r}_1) \le z_1, \mathbf{f}(\mathbf{r}_2) \leq z_2, \dots, \mathbf{f}(\mathbf{r}_n) \leq z_n \},
+\end{equation}
+
+\begin{equation} \label{eq:3_4}
+    p_f(z_1, z_2, \dots, z_n, \mathbf{r}_1, \mathbf{r}_2, \dots, \mathbf{r}_n) = \frac{\partial^n P_f( (z_1, z_2, \dots, z_n, \mathbf{r}_1, \mathbf{r}_2, \dots, \mathbf{r}_n )}{\partial z_1 \partial z_2 \dots \partial z_n}.
+\end{equation}
+
+\section*{Momenty náhodného pole}
+
+\noindent Předpokládejme na okamžik, že signál reprezentujeme jeho \textit{n} vzorky získanými v bodech \textbf{r}$_1,$\textbf{r}$_2$, \dots, \textbf{r}$_n$. Pokud bychom za této situace měli k dispozici sdruženou hustotu pravděpodobnosti \textit{n}-tého řádu, byl by takto signál vyčerpávajícím způsobem popsán. Bohužel jsou však postupy založené na sdružené pravděpodobnosti vyšších řádů teoreticky i prakticky obtížně zvládnutelné. Nejlépe jsou zatím propracovány postupy založené na sdružené pravděpodobnosti druhého řádu, které vyšetřují, jak jsou svázány vlastnosti obrazu ve dvou jeho různých bodech. Máme-li pro náhodné pole zavedenu sdruženou hustotu pravděpodobnosti druhého řádu, můžeme definovat jeho střední hodnotu, korelaci a kovarianci. Střední hodnota $\mu$(\textbf{r}) náhodného pole je definována vztahem
+
+\begin{equation} \label{eq:3_5}
+    \mu(\mathbf{r}) = \mathsf{E}\{ \mathbf{f}(\mathbf{r}) \} \int\limits_{-\infty}^{\infty} z p_{\mathrm{f}}(z, \mathbf{r})\,dz.
+\end{equation}
+Autokorelace $R_\mathrm{ff}(\mathbf{r}_1, \mathbf{r}_2)$ náhodného pole \textbf{f}(\textbf{r}) je definována jako korelace náhodných proměnných \textbf{f}(\textbf{r}$_1$), \textbf{f}(\textbf{r}$_2$). Je tedy
+
+\begin{equation} \label{eq:3_6}
+    R_{\mathrm{ff}}(\mathbf{r}_1, \mathbf{r}_2) = \mathsf{E}\{ \mathbf{f}(\mathbf{r}_) \mathbf{f}(\mathbf{r}_2) \} \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} z_1 z_2 p_\mathrm{f}(z_1, z_2, \mathbf{r}_1, \mathbf{r}_2 ) \,dz_1\,dz_2.
+\end{equation}
+Podobně autokovariance \textit{C}$_{\mathrm{ff}}$(\textbf{r}$_1$,\textbf{r}$_2$) náhodného pole je definována jako kovariance náhodných proměnných \textbf{f}(\textbf{r}$_1$), \textbf{f}(\textbf{r}$_2$). Odtud máme
+
+\begin{equation} \label{eq:3_7}
+    C_{\mathrm{ff}}(\mathbf{r}_1, \mathbf{r}_2) = E \left\{ \left[ \mathbf{f}(\mathbf{r}_1) - \mu_{\mathrm{f}}(\mathbf{r}_1) \right] \left[ \mathbf{f}(\mathbf{r}_2) - \mu_{\mathrm{f}}(\mathbf{r}_2) \right] \right\}.
+\end{equation}
+Roznásobením výrazů v hranatých závorkách a uplatněním operace střední hodnoty na každý z takto vzniklých členů lze snadno dokázat, že platí
+
+\begin{equation} \label{eq:3_8}
+    C_{\mathrm{ff}}(\mathbf{r}_1, \mathbf{r}_2) = R_{\mathrm{ff}}(\mathbf{r}_1, \mathbf{r}_2) - \mu_\mathrm{f}(\mathbf{r}_1) \mu_{\mathrm{f}}(\mathbf{r}_2).
+\end{equation}
+Analogicky můžeme zavést křížovou korelaci \textit{R}$_{\mathrm{fg}}$(\textbf{r}$_1$, \textbf{r}$_2$) a křížovou kovarianci \textit{C}$_{\mathrm{fg}}$(\textbf{r}$_1$, \textbf{r}$_2$) náhodných polí \textbf{f}(\textbf{r}) a \textbf{g}(\textbf{r}):
+
+\begin{equation} \label{eq:3_9}
+    R_{\mathrm{fg}}(\mathbf{r}_1, \mathbf{r}_2) = E\{ \mathbf{f}(\mathbf{r}_1) \mathbf{g}(\textbf{r}_2) \},
+\end{equation}
+
+\begin{equation} \label{eq:3_10}
+    C_{\mathrm{fg}}(\mathbf{r}_1, \mathbf{r}_2) = E\{ [ \mathbf{f}(\mathbf{r}_1) - \mu_{\mathrm{f}}(\mathbf{r}_1) ] [ \mathbf{g}(\mathbf{r}_2) - \mu_{\mathrm{g}}(\mathbf{r}_2) ] \}.
+\end{equation}
+Náhodné pole \textbf{f}(\textbf{r}) je nekorelované právě tehdy, jestliže pro každé dva různé vektory \textbf{r}$_1$,\textbf{r}$_2$ platí \textit{C}$_{\mathrm{ff}}$(\textbf{r}$_1$, \textbf{r}$_2$) = 0. Podobně jsou náhodná pole \textbf{f}(\textbf{r}) a \textbf{g}(\textbf{r}) vzájemně nekorelovaná právě tehdy, jestliže pro každé dva vektory \textbf{r}$_1$, \textbf{r}$_2$ platí \textit{C}$_{\mathrm{fg}}$(\textbf{r}$_1$, \textbf{r}$_2$) = 0.
+
+\section*{Homogenní a ergodické náhodné pole}
+
+Kromě toho, že se v praxi omezujeme na sdružené pravděpodobnosti druhého řádu, zavádíme obvykle ještě další zjednodušující předpoklady. Často se předpokládá homogenita a ergodicita náhodného pole. Náhodné pole se nazývá homogenním, jestliže jeho střední hodnota $\mu$(\textbf{r}) není závislá na \textbf{r} (pro všechna \textbf{r} je střední hodnota stejná) a jestliže jeho autokorelace \textit{R}$_{\mathrm{ff}}$(\textbf{r}$_1$, \textbf{r}$_2$) závísí pouze na rozdílu \textbf{r}$_2$ $-$\textbf{r}$_1$. Uvedené podmínky můžeme zapsat pomocí vztahů
+
+\begin{equation} \label{eq:3_11}
+    \mu_{\mathrm{f}}(\mathbf{r}) = \mu_{\mathrm{f}} = \mathrm{konstanta},
+\end{equation}
+
+\begin{equation} \label{eq:3_12}
+    R_{\mathrm{ff}}(\mathbf{r}_1, \mathbf{r}_2) = R_{\mathrm{ff}}(\mathbf{r}_1 + \mathbf{r}_0, \mathbf{r}_2 + \mathbf{r}_0),
+\end{equation}
+kde \textbf{r}$_0$ je libovolný vektor. Jestliže ve vztahu \eqref{eq:3_12} postupně položíme \textbf{r}$_0$= $-$\textbf{r}$_2$ a \textbf{r}$_0$ = $-$\textbf{r}$_1$, získáme
+
+\begin{equation} \label{eq:3_13}
+    R_{\mathrm{ff}}(\mathbf{r}_1, \mathbf{r}_2) = R_{\mathrm{ff}}(\textbf{r}_1 - \mathbf{r}_2, 0) = R_{\mathrm{ff}}(0, \mathbf{r}_2 - \mathbf{r}_1).
+\end{equation}
+S ohledem na to, že z definice autokorelace vyplývá \textit{R}$_{\mathrm{ff}}$(\textbf{r}$_1$, \textbf{r}$_2$) = \textit{R}$_{\mathrm{ff}}$(\textbf{r}$_2$, \textbf{r}$_1$), a zavedeme-li zápis  \textit{R}$_{\mathrm{ff}}$(\textbf{r}, 0 )$\equiv$ \textit{R}$_{\mathrm{ff}}$(\textbf{r}), pak ze vztahu \eqref{eq:3_13} dostáváme \textit{R}$_{\mathrm{ff}}$(\textbf{r}$_1$-\textbf{r}$_2$) = \textit{R}$_{\mathrm{ff}}$(\textbf{r}$_2$ - \textbf{r}$_1$). Proto platí
+
+\begin{equation} \label{eq:3_14}
+    R_{\mathrm{ff}}(\mathbf{r}) = R_{\mathrm{ff}}(- \mathbf{r}).
+\end{equation}
+Rozepíšeme-li vektor \textbf{r} jako \textbf{r}=(\textit{a}, \textit{b}), pak pro výpočet autokorelace \textit{R}$_{\mathrm{ff}}$ homogenního pole máme
+
+\begin{equation} \label{eq:3_15}
+    R_{\mathrm{ff}}(\mathbf{r}) = R_{\mathrm{ff}}(a, b) = \mathrm{E} \{ \mathbf{f}(x + a, y + b) \mathbf{f}(x, y) \} = \mathrm{E} \{\mathbf{f}(x, y) \mathbf{f}(x - a, y - b) \}.
+\end{equation}
+Poznamenejme ještě, že pojem homogenity náhodného pole je totožný s pojmem stacionarita v širším smyslu, se kterým se můžeme v literatuře také setkat.
+
+Pojem ergodicity souvisí s možností pohlížet na homogenní náhodné pole jako na množinu \{\textit{f}$_{\omega_i}$(\textbf{r})\} funkcí, jak bylo vysvětleno v podkapitole \ref{sec:nahodne_pole}. Nechť $\mathscr{S}$ je oblast, nad níž náhodné pole (v našem případě obrazový signál) uvažujeme. Míra této oblasti nechť je \textit{S}. Předpokládejme, že oblast $\mathscr{S}$ je dostatečně veliká - ideálně nekonečná. Stanovme střední hodnotu signálu nad oblastí $\mathscr{S}$. Máme
+
+\begin{equation} \label{eq:3_16}
+    \mathbf{E} = \lim\limits_{S \rightarrow \infty} \frac{1}{S} \int\int_{\mathscr{S}} \mathbf{f}(x, y)\,dx\,dy.
+\end{equation}
+Vztahu \eqref{eq:3_16} je třeba rozumět tak, že integraci provádíme jednotlivě pro každý elementární jev $\omega_i$. Pro každý elementární jev obdržíme hodnotu \textbf{E}(${\omega_i}$). \textbf{E} je zde tedy náhodnou proměnnou (nezaměňovat s~operátorem střední hodnoty). Jestliže náhodná proměnná \textbf{E} nabývá pro všechny elementární jevy stejné hodnoty, pak takové náhodné pole nazveme ergodickým vzhledem ke střední hodnotě. Podobně můžeme pro náhodné pole \textbf{f}(\textit{x},\textit{y}) určit
+
+\begin{equation} \label{eq:3_17}
+    \mathbf{R}(a, b) = \lim\limits_{S \rightarrow \infty} \frac{1}{S} \int\int_{\mathscr{S}} \mathbf{f}(x - a, y - b) \mathbf{f}(x, y)\,dx\,dy.
+\end{equation}
+Stejně jako v předchozím případě, integrujeme i zde pro každý elementární jev jednotlivě a \textbf{R}(\textit{a},\textit{b}) je proto náhodné pole. Jestliže pro libovolně zvolené \textit{a},\textit{b} nabývá \textbf{R}(\textit{a},\textit{b}) pro všechny elementární jevy téže hodnoty, pak náhodné pole \textbf{f}(\textit{x},\textit{y}) nazveme ergodickým vzhledem k autokorelaci.
+
+\section*{Výkonová spektrální hustota} \label{sec:vykonova_spektralni_hustota}
+
+Výkonová spektrální hustota \textit{G}$_{\mathrm{ff}}$(\textit{u},\textit{v}) homogenního náhodného pole je Fourierovou transformací jeho autokorelace. Je tedy
+
+\begin{equation} \label{eq:3_18}
+    G_{\mathrm{ff}}(u, v) = \mathscr{F} \{ R_{\mathrm{ff}}(a, b) \} = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} R_{\mathrm{ff}}(a, b) \exp \left[ - \mathrm{j} 2 \pi \left(au + bv \right) \right] \,da\,db.
+\end{equation}
+Na základě znalosti výkonové spektrální hustoty lze autokorelaci určit inverzní Fourierovou transformací pomocí vztahu
+
+\begin{equation} \label{eq:3_19}
+    R_{\mathrm{ff}}(a, b) = \mathscr{F}^{-1} \left\{ G_{\mathrm{ff}}(u, v) \right\} = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} G_{\mathrm{ff}}(u, v) \exp \left[ \mathrm{j} 2 \pi \left(au + bv \right) \right] \,du\,dv.
+\end{equation}
+Jestliže ve vztahu \eqref{eq:3_19} položíme \textit{a} = \textit{b} = 0, můžeme dokázat následující vlastnost:
+
+\begin{equation} \label{eq:3_20}
+    \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} G_{\mathrm{ff}}(u, v)\,du\,dv = R_{\mathrm{ff}}(0, 0) = \mathrm{E} \left\{ \left[ \mathbf{f} (x, y) \right]^2 \right\} \geq 0.
+\end{equation}
+
+\section*{Lineární operace nad náhodným polem}
+
+Nechť \textbf{f}(\textit{x},\textit{y}) je náhodné pole reprezentující obrazový signál. Náhodné pole je charakterizováno střední hodnotou $\mu_\mathrm{f}$(\textit{x},\textit{y}), autokorelací \textit{R}$_{\mathrm{ff}}$(\textit{a},\textit{b}) a výkonovou spektrální hustotou \textit{G}$_{\mathrm{ff}}$(\textit{u},\textit{v}). Na náhodné pole \textbf{f}(\textit{x},\textit{y}) aplikujeme operátor $\mathscr{O}$ a získáme tak náhodné pole \textbf{g}(\textit{x},\textit{y}). Je tedy
+
+\begin{equation} \label{eq:3_21}
+    \mathbf{g}(x, y) = \mathscr{O}\{\mathbf{f}(x, y)\}.
+\end{equation}
+Naším cílem nyní bude pro takto získané náhodné pole \textbf{g}(\textit{x},\textit{y}) stanovit statistické veličiny, které jej popisují. Hledáme tedy předpis pro střední hodnotu, autokorelaci a výkonovou spektrální hustotu náhodného pole \textbf{g}(\textit{x},\textit{y}), a to ve vztahu k odpovídajícím veličinám vstupního náhodného pole \textbf{f}(\textit{x},\textit{y}). Pro stanovení uvedených charakteristik náhodného pole \textbf{g}(\textit{x},\textit{y}) použijeme závěrů z odstavce 1.2.4. V tomto odstavci jsme odvodili, že je-li $\mathscr{O}$ lineární operace invariantní vůči posuvu, pak operaci $\mathscr{O}$\{\textit{f}(\textit{x},\textit{y})\} je možné provést jako konvoluci \textit{f}(\textit{x},\textit{y})*\textit{h}(\textit{x},\textit{y}), kde \textit{h}(\textit{x},\textit{y}) = $\mathscr{O}\{\delta(x, y)\}$ je odezva operátoru na Diracův impulz (impulzová charakteristika operátoru). Chápejme podle podkapitoly \ref{sec:nahodne_pole} náhodné pole \textbf{f}(\textit{x},\textit{y}) jako množinu \{\textit{f}$_{\omega_i}$(\textit{x},\textit{y})\} funkcí. Pro výstupní náhodné pole \textbf{g}(\textit{x},\textit{y}) pak máme
+
+\begin{equation} \label{eq:3_22}
+    \mathbf{g}(x, y) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \mathbf{f}(x - a, y - b) h(a, b)\,da\,db.
+\end{equation}
+Výrazu \eqref{eq:3_22} je třeba rozumět tak, že pro každý elementární jev $\omega_i$ dává funkce \textit{f}$_{\omega_i}$(\textit{x},\textit{y}) množiny \textbf{f}(\textit{x},\textit{y}) vzniknout právě jedné funkci \textit{g}$_{\omega_i}$(\textit{x},\textit{y}) množiny \textbf{g}(\textit{x},\textit{y}). Je tedy \textbf{g}(\textit{x},\textit{y}) náhodné pole, jak jsme již dříve předeslali. Lze navíc ukázat, že je-li náhodné pole \textbf{f}(\textit{x},\textit{y}) homogenní, pak je homogenní i pole \textbf{g}(\textit{x},\textit{y}). Hledané vztahy pro veličiny charakterizující výstupní náhodné pole uvedeme ve formě tvrzení, která dokážeme. Předpokládáme, že vstupní náhodné pole \textbf{f} je homogenní.
+
+\noindent Pro střední hodnotu $\mu_\mathrm{g}$ náhodného pole \textbf{g}(\textit{x},\textit{y}) platí 
+
+\begin{equation} \label{eq:3_23}
+    \mu_\mathrm{g} = \mu_\mathrm{f} H(0,0),
+\end{equation}
+kde \textit{H}(0,0) je hodnota Fourierova obrazu \textit{H}(\textit{u},\textit{v}) funkce \textit{h}(\textit{x},\textit{y}) v bodě \textit{u} = 0, \textit{v} = 0.
+
+\noindent \textbf{Důkaz.} Tvrzení dokážeme tak, že na obě strany vztahu \eqref{eq:3_22} uplatníme operaci střední hodnoty. Postupně dostaneme
+
+\begin{equation}
+    \mu_{\mathrm{g}} = \mathrm{E} \left\{ \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \mathbf{f}(x - a, y - b) h(a, b)\,da\,db \right\} = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} \mathrm{E} \left\{ \mathbf{f} \left( x - a, y - b \right) \right\} h \left( a, b \right)\,da\,db = \mu_{\mathrm{f}} \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} h(a, b)\,da\,db = \mu_{\mathrm{f}} \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} h(a, b) \exp \left[ - \mathrm{j} 2 \pi (0a + 0b) \right] \,da\,db = \mu_{\mathrm{f}} H(0, 0).\nonumber
+\end{equation}
+Pro autokorelaci \textit{R}$_{\mathrm{gg}}$ náhodného pole \textbf{g}(\textit{x},\textit{y}) platí
+
+\begin{equation} \label{eq:3_24}
+    R_{\mathrm{gg}}(a, b) = R_{\mathrm{ff}}(a, b) * h(-a, -b) * h(a, b).
+\end{equation}
+\textbf{Důkaz.} Jestliže obě strany rovnice \eqref{eq:3_22} násobíme \textbf{g}(\textit{x}$-$$\alpha$, \textit{y}$-$$\beta$) a uplatníme operaci střední hodnoty, získáme
+
+\begin{equation} \label{eq:3_25}
+    R_{\mathrm{gg}}(\alpha, \beta) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} R_{\mathrm{fg}}(\alpha - a, \beta - b) h(a, b)\,da\,db = R_{\mathrm{fg}}(\alpha, \beta) * h(\alpha, \beta).
+\end{equation}
+Podobně násobíme obě strany rovnice \eqref{eq:3_22} výrazem \textbf{f}(\textit{x}+$\alpha$, \textit{y}+$\beta$). Uplatněním operace střední hodnoty a substituce \textit{a}$'$= $-$\textit{a}, \textit{b}$'$= $-$\textit{b} pak postupně máme:
+
+\begin{equation} \label{eq:3_26}
+    R_{\mathrm{fg}}(\alpha, \beta) = \int\limits_{-\infty}^{\infty} \int\limits_{-\infty}^{\infty} R_{\mathrm{ff}}(\alpha + a, \beta + b) h(a, b)\,da\,db = R_{\mathrm{ff}}(\alpha, \beta) * h(-\alpha, -\beta).
+\end{equation}
+Dosazením výsledku \eqref{eq:3_26} do \eqref{eq:3_25} již získáme dokazované tvrzení.
+
+\noindent Pro výkonovou spektrální hustotu náhodného pole \textbf{g}(\textit{x},\textit{y}) platí
+
+\begin{equation} \label{eq:3_27}
+    G_{\mathrm{gg}}(u, v) = G_{\mathrm{ff}}(u, v) | H(u, v) |^2.
+\end{equation}
+\textrm{Důkaz.} Dokazované tvrzení vyplývá z tvrzení předchozího. Stačí provést Fourierovu transformaci rovnice \eqref{eq:3_24}, využít vlastností \eqref{eq:2_27b} Fourierovy transformace a vzít v úvahu, že  \textit{H}*(\textit{u},\textit{v})\textit{H}(\textit{u},\textit{v}) = \textbar \textit{H}(\textit{u},\textit{v})\textbar$^2$.
+
+\section*{Statistická analýza obrazových transformací} \label{sec:statisticka_analyza_obrazovych_transformaci}
+
+V této podkapitole se budeme zabývat transformacemi diskrétního signálu z pohledu statistické analýzy. Předpokládáme, že vstupní signál je popsán náhodným polem \textbf{f}(\textit{m},\textit{n}), kde \textit{m} = 0, 1, \dots, \textit{M}$-$1, \textit{n} = 0, 1, \dots, \textit{N}$-$1. Transformací obdržíme signál, který je popsán náhodným polem \textbf{F}(\textit{k},\textit{l}), \textit{k} = 0, 1, \dots, \textit{M}$-$1, \textit{l} = 0, 1, \dots, \textit{N}$-$1. Ve shodě s výrazem \eqref{eq:1_34} máme
+
+\begin{equation} \label{eq:3_28}
+    \mathbf{F}(k, l) = \sum\limits_{m=0}^{M-1}\sum\limits_{n=0}^{N-1} \mathbf{f}(m, n) \varphi_{k, l}^*(m, n).
+\end{equation}
+Pro stručnost přepíšeme uvedený vztah do maticového tvaru (maticový zápis transformace signálu jsme zavedli již v podkapitole \ref{sec:transformace_signalu}, na rozdíl od uvedené podkapitoly jsou zde však \textbf{f},\textbf{F} náhodné vektory). Dostaneme
+
+\begin{equation} \label{eq:3_29}
+    \mathbf{F} = \mathbf{\Phi}\mathbf{f},
+\end{equation}
+kde \textbf{f}, \textbf{F} jsou sloupcové náhodné vektory rozměru \textit{MN} a $\mathbf{\Phi}$ je matice rozměru \textit{MN}$\times$\textit{MN}. Úlohou bude určit statistické charakteristiky (střední hodnotu, korelaci a kovarianci) výstupního náhodného pole \textbf{F} na základě odpovídajících charakteristik vstupního náhodného pole \textbf{f}. Výraz pro střední hodnotu lze získat uplatněním operace střední hodnoty na obě strany rovnice \eqref{eq:3_29}. Získáme
+
+\begin{equation} \label{eq:3_30}
+    \mu_{\mathrm{F}} = \mathrm{E} \{ \mathbf{F} \} = \mathbf{\Phi} \mathrm{E} \{ \mathbf{f} \} = \mathbf{\Phi} \mu_{\mathrm{f}},
+\end{equation}
+kde $\mu_{\mathrm{f}}$, $\mu_{\mathrm{F}}$ jsou vektory středních hodnot rozměru \textit{MN}. Pro autokorelaci výstupního náhodného pole dostáváme
+
+\begin{equation} \label{eq:3_31}
+    \mathbf{R}_{\mathrm{FF}} = \mathrm{E} \left\{ \mathbf{F} \mathbf{F}^{*^{\top}}\right\} = \mathrm{E} \left\{ \mathbf{\Phi} \mathbf{f} \mathbf{f}^{*^{\top}} \mathbf{\Phi}^{*^{\top}} \right\} = \mathbf{\Phi} \mathbf{R}_{\mathrm{ff}} \mathbf{\Phi}^{*^{\top}},
+\end{equation}
+kde $R_{\mathrm{ff}}$, $R_{\mathrm{FF}}$ jsou autokorelační matice vstupního a výstupního náhodného pole. Obě matice mají rozměr \textit{MN}$\times$\textit{MN}. Podobně pro autokovarianci odvodíme
+
+\begin{equation} \label{eq:3_32}
+    \mathbf{C}_{\mathrm{FF}} = \mathrm{E} \left\{ \left[ \mathbf{F} - \mu_{\mathrm{F}} \right] \left[ \mathbf{F} - \mu_{\mathrm{F}} \right]^{*^{\top}} \right\} = \mathrm{E} \left\{ \left[ \mathbf{\Phi} \mathbf{f} - \mathbf{\Phi} \mu_\mathrm{f} \right] \left[ \mathbf{\Phi} \mathbf{f} - \mathbf{\Phi}\mu_\mathrm{f} \right]^{*^{\top}} \right\} = \mathbf{\Phi} \mathbf{C}_{\mathrm{ff}} \mathbf{\Phi}^{*^{\top}},
+\end{equation}
+kde \textbf{C}$_{ff}$, \textbf{C}$_{\mathrm{FF}}$ jsou autokovarianční matice vstupního a výstupního náhodného pole. Obě matice mají opět rozměr \textit{MN}$\times$\textit{MN}. Poznamenejme nakonec, že má-li transformace nějaké speciální vlastnosti (je-li např. separabilní), pak lze za jistých okolností také pro statistické charakteristiky transformovaného signálu odvodit speciální vztahy, které umožňují efektivnější výpočet než obecné vztahy, které jsme zde právě uvedli. Podrobnější výklad v tomto směru by však pravděpodobně přesáhl skromné možnosti tohoto učebního textu.
+
+\noindent \textbf{Příklad 3.1:} Uvažujme homogenní diskrétní náhodné pole \textbf{f}(\textit{m},\textit{n}). Ukážeme, že pro výkonovou spektrální hustotu platí vztah
+
+\begin{equation}
+    G_{\mathrm{ff}} = \frac{1}{\sqrt{MN}} \mathrm{E} \left\{ \left| \mathbf{F}(k, l) \right|^2 \right\}.\nonumber
+\end{equation}
+Z podkapitoly \ref{sec:vykonova_spektralni_hustota} víme, že výkonová spektrální hustota je Fourierovou transformací autokorelace  homogenního náhodného pole. Je tedy
+
+\begin{equation}
+    G_{\mathrm{ff}} = \mathscr{F} \left\{ R_{\mathrm{ff}}(m, n) \right\}.\nonumber
+\end{equation}
+Z podmínky homogenity plyne (přestože jsou hodnoty \textbf{f}(\textit{m},\textit{n}) reálné, použijeme od této chvíle k jejich reprezentaci komplexních čísel - imaginární složka bude však nulová)
+
+\begin{equation}
+    R_{\mathrm{ff}}(m, n) = \mathrm{E} \left\{ \mathbf{f}^{*}(r - m, s - n) \mathbf(r, s) \right\} = \mathrm{E} \left\{ \frac{1}{MN} \sum\limits_{r=0}^{M-1}\sum\limits_{s=0}^{N-1} \mathbf{f}^{*} (r - m, s - n) \mathbf{f}(r, s) \right\}.\nonumber
+\end{equation}
+Na základě linearity Fourierovy transformace máme
+
+\begin{equation}
+    \mathscr{F}\left\{ R_{\mathrm{ff}}(m, n) \right\} = \mathrm{E} \left\{ \mathscr{F} \left[ \frac{1}{MN} \sum\limits_{r=0}^{M-1}\sum\limits_{s=0}^{N-1} \mathbf{f}^{*} (r - m, s - n) \mathbf{f}(r, s) \right] \right\}.\nonumber
+\end{equation}
+Uplatněním korelačního teorému \eqref{eq:2_57} vychází
+
+\begin{equation}
+    G_{\mathrm{ff}}(k, l) = \mathscr{F} \left\{ R_{\mathrm{ff}}(m, n) \right\} \frac{1}{\sqrt{MN}} \mathrm{E} \left\{ \mathbf{F} (k, l) \mathbf{F}^{*}(k, l) \right\} = \frac{1}{\sqrt{MN}} \mathrm{E} \left\{ \left| \mathbf{F}(k, l) \right|^2 \right\}.\nonumber
+\end{equation}
+Jestliže by náhodné pole \textbf{f}(\textit{m},\textit{n}) bylo navíc ergodické vzhledem k autokorelaci, pak by dále platilo
+
+\begin{equation}
+    G_{\mathrm{ff}}(k, l) = \frac{1}{\sqrt{MN}} \left| F(k, l) \right|^2.\nonumber
+\end{equation}
+
