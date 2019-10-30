@@ -231,7 +231,7 @@ Provedeme-li skalární součin obou stran rovnice \eqref{eq:1_31} s $\varphi$(\
 Rozepíšeme-li skalární součin podle \eqref{eq:1_18}, pak lze vztah \eqref{eq:1_32} přepsat na
 
 \begin{equation} \label{eq:1_33}
-    F(u, v) = \iint\limits_{\Omega} f(x, y) \varphi^*(u, v, x, y)\, dx\, dy.
+    F(u) = \int\limits_{\Omega} f(x, y) \varphi^*(u, x)\, dx\, dy.
 \end{equation}
 
 Vztah \eqref{eq:1_33} opět podává návod, jak pro zadaný signál \textit{f}(\textit{x}) a pro zadané ortonormální bázové jádro $\varphi$(\textit{u},\textit{x}) určit funkci \textit{F}(\textit{u}), která signál reprezentuje. Jak je již obvyklé, získáme podobně snadno také předpisy pro funkce \textit{F}(\textit{k},\textit{l}), \textit{F}(\textit{u},\textit{v}) použité ve vztazích \eqref{eq:1_4}, \eqref{eq:1_5}:
@@ -349,6 +349,14 @@ Poznamenejme, že vlastnost popsaná vztahem \eqref{eq:1_47} má zásadní význ
 kde j je komplexní jednotka. Doporučujeme čtenáři, aby se alespoň neformálně pokusil uvedenou vlastnost zdůvodnit. Návod: Uvažte, že pro \textit{x}=\textit{y}=0 se v prvním případě jedná o integraci funkce nabývající hodnoty 1 nad nekonečnou oblastí. Pro \textit{x}$\neq$0, \textit{y}$\neq$0 se podle Eulerova vztahu $e^{\mathrm{j}\varphi} = \cos\varphi + \mathrm{j} \sin\varphi$ jedná o integraci funkcí typu $\cos\varphi\cos\psi$, $\cos\varphi\sin\psi$, $\sin\varphi\cos\psi$, $\sin\varphi\sin\psi$ ($\varphi=2\pi ux$, $\psi=2\pi vy$,) nad nekonečnou oblastí. Obdobně lze postupovat i v případě druhého vztahu.
 
 \subsection*{Lineární sumace bodových zdrojů, konvoluce}
+
+Již dříve jsme poznamenali, že na většinu úprav obrazu lze pohlížet jako na operátor.
+Zásadní otázkou zůstává, jak účinek operátoru vypočítat a jak operátor nějakým univerzálním a praktickým způsobem popsat.
+V této podkapitole ukážeme řešení obou problémů.
+Zavedeme k tomu pojem konvoluce, což je operace, která se ve zpracování obrazu používá mimořádně často.
+Jak se v průběhu výkladu ukáže, nelze konvoluce využít k výpočtu účinku zcela obecných operátorů,
+ale jen těch, které jsou lineární a invariantní vůči posunu.
+To však konvoluci na významu neubírá.
 
 Uvažujme funkci \textit{f}(\textit{x},\textit{y}). Podle \eqref{eq:1_47} můžeme \textit{f}(\textit{x},\textit{y}) s využitím Diracova impulzu zapsat ve tvaru
 
